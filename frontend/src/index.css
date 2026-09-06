@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme {
+  --color-ink: #0e1a2b;
+  --color-ink-soft: #16243a;
+  --color-sky: #3b82f6;
+  --color-sky-light: #60a5fa;
+  --color-cloud: #f7fafc;
+  --color-slate: #475569;
+
+  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-pill: 999px;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-slate);
+  background-color: var(--color-cloud);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--color-ink);
+}

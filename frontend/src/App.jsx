@@ -3,6 +3,7 @@ import { AppLayout } from "./Components/Layout/AppLayout";
 import { Home } from "./Pages/Home";
 import { About } from "./Pages/About";
 import { Courses } from "./Pages/Courses";
+import { CourseDetails } from "./Pages/CourseDetails";
 import { AITools } from "./Pages/AITools";
 import { Contact } from "./Pages/Contact";
 import { SignUp } from "./Pages/SignUp";
@@ -23,7 +24,10 @@ const App = () => {
         path: "/courses",
         element: <Courses />
       }, {
-        path: "/aitools",
+        path: "/courses/:slug",
+        element: <CourseDetails />
+      }, {
+        path: "/ai-tools",
         element: <AITools />
       }, {
         path: "/contact",

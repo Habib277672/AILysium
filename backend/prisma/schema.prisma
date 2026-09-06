@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum CourseStatus {
+  AVAILABLE
+  COMING_SOON
+  UNPUBLISHED
+}
+
+model User {
+  id              String    @id @default(cuid())
+  fullName        String
+  email           String    @unique
+  phoneNumber     String
+  passwordHash    String
+  role            Role      @default(STUDENT)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  enrollments             Enrollment[]
+  payments                Payment[]
+  sessions                Session[]
+  emailVerificationTokens EmailVerificationToken[]
+
+  @@map("users")
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String
+  price       Int
+  status      CourseStatus @default(COMING_SOON)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  enrollments Enrollment[]
+  payments    Payment[]
+
+  @@map("courses")
+}
+
+model Enrollment {
+  id            String        @id @default(cuid())
+  userId        String
+  courseId      String
+  paymentStatus PaymentStatus @default(PENDING)
+  enrolledAt    DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  course  Course   @relation(fields: [courseId], references: [id])
+  payment Payment?
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  courseId      String
+  enrollmentId  String        @unique
+  amount        Int
+  provider      String
+  transactionId String?
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  user       User       @relation(fields: [userId], references: [id])
+  course     Course     @relation(fields: [courseId], references: [id])
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+
+  @@map("payments")
+}
+
+// One row per active login session/device. The refresh token is the
+// long-lived credential — storing it here (rather than only trusting a
+// signed JWT) lets us revoke a single session on logout, or all sessions
+// for a user, by deleting/invalidating rows instead of waiting for a JWT
+// to expire on its own.
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  refreshToken String    @unique
+  userAgent    String?
+  ipAddress    String?
+  valid        Boolean   @default(true)
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Short-lived token emailed via Resend after registration. Deleted/expired
+// after use so it can't be replayed.
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+}
