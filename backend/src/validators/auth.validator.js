@@ -8,10 +8,9 @@ export const registerSchema = z.object({
         .max(80, { message: "Full name must be at most 80 characters long" }),
 
     email: z
-        .string()
+        .email({ message: "Invalid email address" })   // <-- changed from z.string().email(...)
         .trim()
         .toLowerCase()
-        .email({ message: "Invalid email address" })
         .max(120, { message: "Email must be at most 120 characters long" }),
 
     // Requires international format, e.g. +923001234567
@@ -30,10 +29,9 @@ export const registerSchema = z.object({
 
 export const loginSchema = z.object({
     email: z
-        .string()
+        .email({ message: "Invalid email address" })   // <-- same change here
         .trim()
         .toLowerCase()
-        .email({ message: "Invalid email address" })
         .max(120, { message: "Email must be at most 120 characters long" }),
 
     password: z
