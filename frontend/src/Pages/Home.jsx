@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
+import { api } from "../lib/api";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
@@ -21,38 +23,15 @@ const impactStats = [
     { label: "From zero to builder", value: "100%" },
 ];
 
-const programs = [
-    {
-        slug: "kids-ai",
-        name: "Kids AI",
-        price: "PKR 4,999",
-        status: "Available",
-        duration: "12 weeks",
-        description:
-            "A 12-week journey for ages 17-18, from AI basics to building your own web project.",
-        mentor: "Muhammad Abdullah",
-    },
-    {
-        slug: "vip-mentorship",
-        name: "VIP One-on-One Mentorship",
-        price: "Coming Soon",
-        status: "Coming Soon",
-        duration: "Flexible",
-        description:
-            "Master AI at your own pace. Work directly with an AiLysium mentor who builds with you, week by week.",
-        mentor: null,
-    },
-    {
-        slug: "freelancer-ai",
-        name: "Freelancer AI",
-        price: "PKR 35,000",
-        status: "Coming Soon",
-        duration: "4+ months",
-        description:
-            "Coming soon. A freelancer track to find clients and start earning with your new skills.",
-        mentor: "Seerat Munir",
-    },
-];
+const statusLabel = {
+    AVAILABLE: "Available",
+    COMING_SOON: "Coming Soon",
+};
+
+const statusBadgeVariant = {
+    AVAILABLE: "success",
+    COMING_SOON: "warning",
+};
 
 // Source data gave only a one-line "focuses on" summary per testimonial,
 // not a verbatim quote — written as descriptions, not fabricated quotes.
@@ -116,7 +95,27 @@ const chipItem = {
     show: { opacity: 1, y: 0 },
 };
 
+const HOME_COURSE_LIMIT = 3;
+
 export const Home = () => {
+    const [courses, setCourses] = useState([]);
+    const [coursesLoading, setCoursesLoading] = useState(true);
+    const [coursesError, setCoursesError] = useState("");
+
+    useEffect(() => {
+        const loadCourses = async () => {
+            try {
+                const { data } = await api.get("/courses");
+                setCourses(data.slice(0, HOME_COURSE_LIMIT));
+            } catch (err) {
+                setCoursesError("Couldn't load programs right now.");
+            } finally {
+                setCoursesLoading(false);
+            }
+        };
+        loadCourses();
+    }, []);
+
     return (
         <div>
             {/* Hero */}
@@ -228,7 +227,7 @@ export const Home = () => {
                 </div>
             </section>
 
-            {/* Programs */}
+            {/* Programs (real data, limited to 3) */}
             <section className="bg-white py-20">
                 <div className="mx-auto max-w-6xl px-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -241,51 +240,79 @@ export const Home = () => {
                         </p>
                     </div>
 
-                    <div className="mt-10 grid gap-6 md:grid-cols-3">
-                        {programs.map((program) => (
-                            <Card
-                                key={program.slug}
-                                className="group flex flex-col overflow-hidden border-t-4 border-t-sky transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-ink/10"
-                            >
-                                <Badge
-                                    variant={program.status === "Available" ? "success" : "warning"}
-                                >
-                                    {program.status}
-                                </Badge>
-                                <h3 className="mt-4 font-heading text-xl font-semibold text-ink">
-                                    {program.name}
-                                </h3>
-                                <p className="mt-2 flex-1 text-sm text-slate">
-                                    {program.description}
-                                </p>
-                                <div className="mt-4 space-y-1 text-sm text-slate">
-                                    <p>
-                                        <span className="font-medium text-ink">Price:</span>{" "}
-                                        {program.price}
-                                    </p>
-                                    <p>
-                                        <span className="font-medium text-ink">Duration:</span>{" "}
-                                        {program.duration}
-                                    </p>
-                                    {program.mentor && (
-                                        <p>
-                                            <span className="font-medium text-ink">Mentor:</span>{" "}
-                                            {program.mentor}
+                    {coursesLoading && (
+                        <p className="mt-10 text-center text-sm text-slate">
+                            Loading programs…
+                        </p>
+                    )}
+
+                    {!coursesLoading && coursesError && (
+                        <p className="mt-10 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+                            {coursesError}
+                        </p>
+                    )}
+
+                    {!coursesLoading && !coursesError && (
+                        <>
+                            <div className="mt-10 grid gap-6 md:grid-cols-3">
+                                {courses.map((course) => (
+                                    <Card
+                                        key={course.slug}
+                                        className="group flex flex-col overflow-hidden border-t-4 border-t-sky transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-ink/10"
+                                    >
+                                        <Badge variant={statusBadgeVariant[course.status]}>
+                                            {statusLabel[course.status]}
+                                        </Badge>
+                                        <h3 className="mt-4 font-heading text-xl font-semibold text-ink">
+                                            {course.title}
+                                        </h3>
+                                        <p className="mt-2 flex-1 text-sm text-slate">
+                                            {course.description}
                                         </p>
-                                    )}
+                                        <div className="mt-4 space-y-1 text-sm text-slate">
+                                            <p>
+                                                <span className="font-medium text-ink">Price:</span>{" "}
+                                                PKR {course.price.toLocaleString()}
+                                            </p>
+                                            <p>
+                                                <span className="font-medium text-ink">Duration:</span>{" "}
+                                                {course.duration}
+                                            </p>
+                                            {course.mentor && (
+                                                <p>
+                                                    <span className="font-medium text-ink">Mentor:</span>{" "}
+                                                    {course.mentor}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <Button
+                                            as={Link}
+                                            to={`/courses/${course.slug}`}
+                                            variant="outline"
+                                            size="sm"
+                                            className="mt-6 group-hover:border-sky group-hover:text-sky"
+                                        >
+                                            View programme
+                                        </Button>
+                                    </Card>
+                                ))}
+
+                                {courses.length === 0 && (
+                                    <p className="col-span-full py-10 text-center text-sm text-slate">
+                                        No programs are available right now. Check back soon.
+                                    </p>
+                                )}
+                            </div>
+
+                            {courses.length > 0 && (
+                                <div className="mt-10 text-center">
+                                    <Button as={Link} to="/courses" variant="outline" size="lg">
+                                        View more programs
+                                    </Button>
                                 </div>
-                                <Button
-                                    as={Link}
-                                    to={`/courses/${program.slug}`}
-                                    variant="outline"
-                                    size="sm"
-                                    className="mt-6 group-hover:border-sky group-hover:text-sky"
-                                >
-                                    View programme
-                                </Button>
-                            </Card>
-                        ))}
-                    </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </section>
 

@@ -3,56 +3,61 @@ import crypto from "crypto";
 import { prisma } from "../lib/prisma.js";
 
 const ACCESS_TOKEN_TTL = "15m";
-const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const EMAIL_VERIFICATION_TTL_MS = 60 * 60 * 1000; // 1 hour
+const REFRESH_TOKEN_TTL = "7d";
+const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const EMAIL_VERIFICATION_TTL_MS = 60 * 60 * 1000;
+const PASSWORD_RESET_TTL_MS = 30 * 60 * 1000;
 
-// --- Access tokens (short-lived, stateless JWT) -----------------------
+// --- Sessions -----------------------------------------------------------
 
-export const createAccessToken = (user) => {
-    return jwt.sign(
-        { sub: user.id, role: user.role },
-        process.env.JWT_ACCESS_SECRET,
-        { expiresIn: ACCESS_TOKEN_TTL }
-    );
-};
-
-export const verifyJWTToken = (token) => {
-    return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-};
-
-// --- Refresh tokens (long-lived, backed by the sessions table) --------
-// The refresh token itself is a random opaque string, NOT a JWT. Storing
-// it (hashed would be even stronger, but keeping this simple per your
-// request) in the `sessions` table is what makes "is this session still
-// valid?" a real database check instead of just trusting an unexpired JWT
-// — so logout / revoke-all-sessions actually works.
-
-export const createRefreshToken = async ({ userId, userAgent, ipAddress }) => {
-    const refreshToken = crypto.randomBytes(48).toString("hex");
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
-
-    await prisma.session.create({
+export const createSession = ({ userId, userAgent, ipAddress }) =>
+    prisma.session.create({
         data: {
             userId,
-            refreshToken,
             userAgent: userAgent ?? null,
             ipAddress: ipAddress ?? null,
-            expiresAt,
+            expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
         },
     });
 
-    return refreshToken;
-};
+export const findSessionById = (id) => prisma.session.findUnique({ where: { id } });
 
-// Creates a full session (access + refresh) for a freshly authenticated
-// user — used by both register and login.
-export const createSession = async ({ req, res, user }) => {
-    const accessToken = createAccessToken(user);
-    const refreshToken = await createRefreshToken({
+// --- Tokens ---------------------------------------------------------------
+// Access token carries everything a route guard needs (sub/role/sessionId)
+// so no DB hit is required just to check who's asking. Refresh token
+// carries ONLY sessionId — on its own it proves nothing about identity
+// without the session row still being valid in the DB.
+
+export const createAccessToken = (user, sessionId) =>
+    jwt.sign(
+        { sub: user.id, role: user.role, sessionId },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: ACCESS_TOKEN_TTL }
+    );
+
+export const createRefreshToken = (sessionId) =>
+    jwt.sign({ sessionId }, process.env.JWT_REFRESH_SECRET, {
+        expiresIn: REFRESH_TOKEN_TTL,
+    });
+
+export const verifyJWTToken = (token) =>
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+const verifyRefreshJWTToken = (token) =>
+    jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+// One shared helper for register + login — creates the session row ONCE,
+// signs both tokens off it, sets both cookies. Never called during
+// refresh, which is exactly what stops sessions from multiplying.
+export const authenticateUser = async ({ req, res, user }) => {
+    const session = await createSession({
         userId: user.id,
         userAgent: req.headers["user-agent"],
         ipAddress: req.ip,
     });
+
+    const accessToken = createAccessToken(user, session.id);
+    const refreshToken = createRefreshToken(session.id);
 
     const baseConfig = {
         httpOnly: true,
@@ -64,14 +69,14 @@ export const createSession = async ({ req, res, user }) => {
     res.cookie("refresh_token", refreshToken, { ...baseConfig, maxAge: REFRESH_TOKEN_TTL_MS });
 };
 
-// Given a valid refresh token, issues a brand-new access + refresh token
-// pair (rotation — the old refresh token is invalidated so it can't be
-// reused if it was ever stolen/replayed).
+// The actual fix: verifies the refresh JWT, checks the session row is
+// still valid/unexpired, then just RE-SIGNS both tokens off the SAME
+// session id. No prisma.session.create, no prisma.session.update — zero
+// writes. Two parallel requests hitting this at once both succeed
+// independently; there's no shared mutable row to race over anymore.
 export const refreshTokenFn = async (refreshToken) => {
-    const session = await prisma.session.findUnique({
-        where: { refreshToken },
-        include: { user: true },
-    });
+    const decoded = verifyRefreshJWTToken(refreshToken);
+    const session = await findSessionById(decoded.sessionId);
 
     if (!session || !session.valid || session.expiresAt < new Date()) {
         const error = new Error("Invalid or expired session");
@@ -79,49 +84,35 @@ export const refreshTokenFn = async (refreshToken) => {
         throw error;
     }
 
-    // Rotate: invalidate the old session, issue a new one.
-    await prisma.session.update({
-        where: { id: session.id },
-        data: { valid: false },
-    });
+    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    if (!user) {
+        const error = new Error("User not found");
+        error.status = 401;
+        throw error;
+    }
 
-    const newAccessToken = createAccessToken(session.user);
-    const newRefreshToken = await createRefreshToken({
-        userId: session.user.id,
-        userAgent: session.userAgent,
-        ipAddress: session.ipAddress,
-    });
+    const newAccessToken = createAccessToken(user, session.id);
+    const newRefreshToken = createRefreshToken(session.id);
 
-    return { newAccessToken, newRefreshToken, user: session.user };
+    return { newAccessToken, newRefreshToken, user, sessionId: session.id };
 };
 
-export const clearUserSession = async (refreshToken) => {
-    if (!refreshToken) return;
-    await prisma.session
-        .update({ where: { refreshToken }, data: { valid: false } })
-        .catch(() => {
-            // Session may already be gone/invalid — logout should never fail
-            // just because the token was already stale.
-        });
+export const clearUserSession = async (sessionId) => {
+    if (!sessionId) return;
+    await prisma.session.delete({ where: { id: sessionId } }).catch(() => { });
 };
 
-// --- Email verification -------------------------------------------------
+// --- Email verification (unchanged logic) --------------------------------
 
 export const createEmailVerificationToken = async (userId) => {
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS);
-
-    await prisma.emailVerificationToken.create({
-        data: { userId, token, expiresAt },
-    });
-
+    await prisma.emailVerificationToken.create({ data: { userId, token, expiresAt } });
     return token;
 };
 
 export const consumeEmailVerificationToken = async (token) => {
-    const record = await prisma.emailVerificationToken.findUnique({
-        where: { token },
-    });
+    const record = await prisma.emailVerificationToken.findUnique({ where: { token } });
 
     if (!record || record.expiresAt < new Date()) {
         const error = new Error("Invalid or expired verification link");
@@ -130,12 +121,33 @@ export const consumeEmailVerificationToken = async (token) => {
     }
 
     await prisma.$transaction([
-        prisma.user.update({
-            where: { id: record.userId },
-            data: { emailVerifiedAt: new Date() },
-        }),
+        prisma.user.update({ where: { id: record.userId }, data: { emailVerifiedAt: new Date() } }),
         prisma.emailVerificationToken.delete({ where: { id: record.id } }),
     ]);
 
+    return record.userId;
+};
+
+// --- Password reset -------------------------------------------------------
+
+export const createPasswordResetToken = async (userId) => {
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS);
+    await prisma.passwordResetToken.create({ data: { userId, token, expiresAt } });
+    return token;
+};
+
+export const consumePasswordResetToken = async (token) => {
+    const record = await prisma.passwordResetToken.findUnique({ where: { token } });
+
+    if (!record || record.expiresAt < new Date()) {
+        const error = new Error("Invalid or expired reset link");
+        error.status = 400;
+        throw error;
+    }
+
+    // Deleted immediately, before the caller even changes the password —
+    // a reset link is single-use no matter what happens next.
+    await prisma.passwordResetToken.delete({ where: { id: record.id } });
     return record.userId;
 };

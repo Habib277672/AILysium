@@ -40,6 +40,7 @@ export const getEnrollments = async (req, res, next) => {
         res.json(
             enrollments.map((enrollment) => ({
                 enrollmentId: enrollment.id,
+                userId: enrollment.user.id,
                 userName: enrollment.user.fullName,
                 email: enrollment.user.email,
                 phoneNumber: enrollment.user.phoneNumber,

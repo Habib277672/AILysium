@@ -1,9 +1,5 @@
 import { refreshTokenFn, verifyJWTToken } from "../services/auth.services.js";
 
-// Runs on every request. Attaches `req.user` (or null) so downstream route
-// handlers can check "is someone logged in?" without each one re-parsing
-// cookies/tokens itself. Never blocks the request on its own — routes that
-// require authentication use `requireAuth` (below) as an additional guard.
 export const verifyAuthentication = async (req, res, next) => {
     const accessToken = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
@@ -15,20 +11,19 @@ export const verifyAuthentication = async (req, res, next) => {
 
     if (accessToken) {
         try {
-            const decodedToken = verifyJWTToken(accessToken);
-            req.user = decodedToken;
+            req.user = verifyJWTToken(accessToken); // { sub, role, sessionId }
             return next();
         } catch (error) {
-            // Access token invalid/expired — fall through to try the refresh
-            // token below instead of failing the request outright.
+            // expired/invalid — fall through to refresh
         }
     }
 
     if (refreshToken) {
         try {
-            const { newAccessToken, newRefreshToken, user } = await refreshTokenFn(refreshToken);
+            const { newAccessToken, newRefreshToken, user, sessionId } =
+                await refreshTokenFn(refreshToken);
 
-            req.user = { sub: user.id, role: user.role };
+            req.user = { sub: user.id, role: user.role, sessionId };
 
             const baseConfig = {
                 httpOnly: true,
@@ -36,11 +31,7 @@ export const verifyAuthentication = async (req, res, next) => {
                 sameSite: "lax",
             };
 
-            res.cookie("access_token", newAccessToken, {
-                ...baseConfig,
-                maxAge: 15 * 60 * 1000,
-            });
-
+            res.cookie("access_token", newAccessToken, { ...baseConfig, maxAge: 15 * 60 * 1000 });
             res.cookie("refresh_token", newRefreshToken, {
                 ...baseConfig,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -57,9 +48,6 @@ export const verifyAuthentication = async (req, res, next) => {
     return next();
 };
 
-// Hard gate for routes that require a logged-in user. Must run AFTER
-// verifyAuthentication in the middleware chain, since it relies on
-// req.user already being set.
 export const requireAuth = (req, res, next) => {
     if (!req.user) {
         const error = new Error("Authentication required");
@@ -69,9 +57,6 @@ export const requireAuth = (req, res, next) => {
     return next();
 };
 
-// Hard gate for admin-only routes, per the "only role: admin can access
-// /admin/* routes and APIs" business rule. Must run after requireAuth
-// (or verifyAuthentication) so req.user is populated.
 export const requireAdmin = (req, res, next) => {
     if (!req.user) {
         const error = new Error("Authentication required");

@@ -1,8 +1,16 @@
 import { prisma } from "../lib/prisma.js";
 
-// POST /api/enrollments — create or validate an enrollment
 export const createEnrollment = async (req, res, next) => {
     try {
+        // Admin accounts manage the catalog, not consume it — an admin
+        // enrolling in their own course would pollute real enrollment
+        // data and the admin report with a non-real, non-paying "student."
+        if (req.user.role === "ADMIN") {
+            const err = new Error("Admin accounts cannot enroll in courses");
+            err.status = 403;
+            throw err;
+        }
+
         const { courseId } = req.body;
 
         if (!courseId) {
@@ -18,9 +26,6 @@ export const createEnrollment = async (req, res, next) => {
             throw err;
         }
 
-        // Enforced again here (not just at the DB level) so we can return a
-        // clear, specific error instead of a raw Prisma unique-constraint
-        // failure if someone tries to re-enroll in the same course.
         const existingEnrollment = await prisma.enrollment.findUnique({
             where: {
                 userId_courseId: {

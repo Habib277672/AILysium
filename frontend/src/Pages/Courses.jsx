@@ -1,19 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../lib/api";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
-import { courses } from "../data/courses";
 
-const statusFilters = ["All", "Available", "Coming Soon"];
+const statusFilters = ["All", "AVAILABLE", "COMING_SOON"];
+
+const statusLabel = {
+    AVAILABLE: "Available",
+    COMING_SOON: "Coming Soon",
+};
+
+const statusBadgeVariant = {
+    AVAILABLE: "success",
+    COMING_SOON: "warning",
+};
 
 export const Courses = () => {
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const [filter, setFilter] = useState("All");
 
+    useEffect(() => {
+        const loadCourses = async () => {
+            try {
+                // Public endpoint — no auth required, works whether or not
+                // someone is logged in. Backend already excludes UNPUBLISHED.
+                const { data } = await api.get("/courses");
+                setCourses(data);
+            } catch (err) {
+                setError("Couldn't load programs right now. Please try refreshing.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadCourses();
+    }, []);
+
     const visibleCourses =
-        filter === "All"
-            ? courses
-            : courses.filter((course) => course.status === filter);
+        filter === "All" ? courses : courses.filter((course) => course.status === filter);
 
     return (
         <div>
@@ -57,62 +84,81 @@ export const Courses = () => {
                                 : "border-slate/20 text-slate hover:border-sky/50 hover:text-sky"
                                 }`}
                         >
-                            {status}
+                            {status === "All" ? "All" : statusLabel[status]}
                         </button>
                     ))}
                 </div>
 
-                <div className="mt-8 grid gap-6 md:grid-cols-3">
-                    {visibleCourses.map((course) => (
-                        <Card
-                            key={course.slug}
-                            className="flex flex-col border-t-4 border-t-sky"
-                        >
-                            <Badge
-                                variant={course.status === "Available" ? "success" : "warning"}
-                            >
-                                {course.status}
-                            </Badge>
-                            <h2 className="mt-4 font-heading text-xl font-semibold text-ink">
-                                {course.title}
-                            </h2>
-                            <p className="mt-2 flex-1 text-sm text-slate">
-                                {course.shortDescription}
-                            </p>
-                            <div className="mt-4 space-y-1 text-sm text-slate">
-                                <p>
-                                    <span className="font-medium text-ink">Price:</span>{" "}
-                                    {course.price}
-                                </p>
-                                <p>
-                                    <span className="font-medium text-ink">Duration:</span>{" "}
-                                    {course.duration}
-                                </p>
-                                {course.mentor && (
-                                    <p>
-                                        <span className="font-medium text-ink">Mentor:</span>{" "}
-                                        {course.mentor}
-                                    </p>
-                                )}
-                            </div>
-                            <Button
-                                as={Link}
-                                to={`/courses/${course.slug}`}
-                                variant="outline"
-                                size="sm"
-                                className="mt-6"
-                            >
-                                View details
-                            </Button>
-                        </Card>
-                    ))}
+                {loading && (
+                    <p className="mt-10 text-center text-sm text-slate">
+                        Loading programs…
+                    </p>
+                )}
 
-                    {visibleCourses.length === 0 && (
-                        <p className="col-span-full py-10 text-center text-sm text-slate">
-                            No programs match this filter yet.
-                        </p>
-                    )}
-                </div>
+                {!loading && error && (
+                    <p className="mt-10 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+                        {error}
+                    </p>
+                )}
+
+                {!loading && !error && (
+                    <div className="mt-8 grid gap-6 md:grid-cols-3">
+                        {visibleCourses.map((course) => (
+                            <Card
+                                key={course.slug}
+                                className="flex flex-col overflow-hidden border-t-4 border-t-sky"
+                            >
+                                {course.imageUrl && (
+                                    <img
+                                        src={course.imageUrl}
+                                        alt={course.title}
+                                        className="-mx-6 -mt-6 mb-4 h-40 w-[calc(100%+3rem)] object-cover"
+                                    />
+                                )}
+                                <Badge variant={statusBadgeVariant[course.status]}>
+                                    {statusLabel[course.status]}
+                                </Badge>
+                                <h2 className="mt-4 font-heading text-xl font-semibold text-ink">
+                                    {course.title}
+                                </h2>
+                                <p className="mt-2 flex-1 text-sm text-slate">
+                                    {course.description}
+                                </p>
+                                <div className="mt-4 space-y-1 text-sm text-slate">
+                                    <p>
+                                        <span className="font-medium text-ink">Price:</span> PKR{" "}
+                                        {course.price.toLocaleString()}
+                                    </p>
+                                    <p>
+                                        <span className="font-medium text-ink">Duration:</span>{" "}
+                                        {course.duration}
+                                    </p>
+                                    {course.mentor && (
+                                        <p>
+                                            <span className="font-medium text-ink">Mentor:</span>{" "}
+                                            {course.mentor}
+                                        </p>
+                                    )}
+                                </div>
+                                <Button
+                                    as={Link}
+                                    to={`/courses/${course.slug}`}
+                                    variant="outline"
+                                    size="sm"
+                                    className="mt-6"
+                                >
+                                    View details
+                                </Button>
+                            </Card>
+                        ))}
+
+                        {visibleCourses.length === 0 && (
+                            <p className="col-span-full py-10 text-center text-sm text-slate">
+                                No programs match this filter yet.
+                            </p>
+                        )}
+                    </div>
+                )}
             </section>
         </div>
     );

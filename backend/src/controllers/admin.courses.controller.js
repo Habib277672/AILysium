@@ -13,15 +13,28 @@ const courseSchema = z.object({
     description: z.string().trim().min(1),
     price: z.number().int().nonnegative(),
     status: z.enum(["AVAILABLE", "COMING_SOON", "UNPUBLISHED"]).default("COMING_SOON"),
-    // Optional — if omitted, generated from title. Letting an admin override
-    // it matters because auto-slugging "Freelancer AI" vs the live site's
-    // "Flantsers AI" typo, or any future renames, shouldn't be forced.
+    // Optional — if omitted, generated from title.
     slug: z.string().trim().min(2).max(140).optional(),
+
+    duration: z.string().trim().min(1, { message: "Duration is required" }),
+    format: z.string().trim().min(1, { message: "Format is required" }),
+    mentor: z.string().trim().min(1).optional().nullable(),
+
+    // Bullet-list fields — accept an array of non-empty strings. Empty
+    // array is valid (e.g. a brand-new course with no benefits written
+    // yet), but individual empty strings inside the array are rejected so
+    // admin can't accidentally save blank bullets.
+    benefits: z.array(z.string().trim().min(1)).default([]),
+    toolsCovered: z.array(z.string().trim().min(1)).default([]),
+
+    ageRange: z.string().trim().min(1).optional().nullable(),
+    projectsCount: z.number().int().nonnegative().optional().nullable(),
+    imageUrl: z.string().trim().url({ message: "imageUrl must be a valid URL" }).optional().nullable(),
 });
 
 const updateCourseSchema = courseSchema.partial();
 
-// GET /api/admin/courses — list all courses, any status (unlike the public
+// GET /api/admin/courses — list all courses, any status
 export const getAllCourses = async (req, res, next) => {
     try {
         const courses = await prisma.course.findMany({
@@ -62,7 +75,7 @@ export const createCourse = async (req, res, next) => {
     }
 }
 
-// PATCH /api/admin/courses/:id — edit a course (partial update, includes
+// PATCH /api/admin/courses/:id — edit a course (partial update)
 export const updateCourse = async (req, res, next) => {
     try {
         const { data, error } = updateCourseSchema.safeParse(req.body);
@@ -113,10 +126,6 @@ export const deleteCourse = async (req, res, next) => {
             throw err;
         }
 
-        // Refuse to delete a course that already has enrollments/payment
-        // history attached — deleting it would either orphan or cascade-delete
-        // real enrollment/payment records, destroying financial history.
-        // Unpublishing (PATCH status: UNPUBLISHED) is the safe alternative.
         if (course.enrollments.length > 0) {
             const err = new Error(
                 "This course has existing enrollments and cannot be deleted. Set its status to UNPUBLISHED instead."

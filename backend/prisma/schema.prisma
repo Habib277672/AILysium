@@ -39,6 +39,7 @@ model User {
   payments                Payment[]
   sessions                Session[]
   emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
 
   @@map("users")
 }
@@ -50,6 +51,17 @@ model Course {
   description String
   price       Int
   status      CourseStatus @default(COMING_SOON)
+
+  duration      String
+  mentor        String?
+  format        String
+  benefits      String[]
+
+  ageRange      String?
+  projectsCount Int?
+  toolsCovered  String[]
+  imageUrl      String?
+
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -93,20 +105,19 @@ model Payment {
   @@map("payments")
 }
 
-// One row per active login session/device. The refresh token is the
-// long-lived credential — storing it here (rather than only trusting a
-// signed JWT) lets us revoke a single session on logout, or all sessions
-// for a user, by deleting/invalidating rows instead of waiting for a JWT
-// to expire on its own.
+// Session no longer stores the refresh token value itself — the refresh
+// JWT just carries this row's id as its payload. That's what makes
+// refresh a pure verify+re-sign operation with NO database write, which
+// is the actual fix for both the session-multiplying bug and the
+// parallel-request race.
 model Session {
-  id           String    @id @default(cuid())
-  userId       String
-  refreshToken String    @unique
-  userAgent    String?
-  ipAddress    String?
-  valid        Boolean   @default(true)
-  expiresAt    DateTime
-  createdAt    DateTime  @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  userAgent  String?
+  ipAddress  String?
+  valid      Boolean  @default(true)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -125,4 +136,16 @@ model EmailVerificationToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("email_verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }

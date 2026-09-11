@@ -1,14 +1,51 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
-import { getCourseBySlug } from "../data/courses";
+
+const statusLabel = {
+    AVAILABLE: "Available",
+    COMING_SOON: "Coming Soon",
+};
 
 export const CourseDetails = () => {
     const { slug } = useParams();
-    const course = getCourseBySlug(slug);
+    const { user, loading: authLoading } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
 
-    if (!course) {
+    const [course, setCourse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+        setNotFound(false);
+
+        const loadCourse = async () => {
+            try {
+                const { data } = await api.get(`/courses/${slug}`);
+                setCourse(data);
+            } catch (err) {
+                setNotFound(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadCourse();
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <div className="mx-auto max-w-3xl px-6 py-24 text-center text-sm text-slate">
+                Loading…
+            </div>
+        );
+    }
+
+    if (notFound || !course) {
         return (
             <div className="mx-auto max-w-3xl px-6 py-24 text-center">
                 <Badge variant="warning">Not found</Badge>
@@ -26,14 +63,14 @@ export const CourseDetails = () => {
         );
     }
 
-    const isAvailable = course.status === "Available";
-
-    // Enroll CTA: per the enrollment flow in the project data, "visitor
-    // clicks Enroll -> system checks authentication." Auth isn't built yet
-    // (Phase 5), so for now this always routes to /login, matching the
-    // documented flow's first gate. This will be replaced with a real
-    // authenticated check once auth exists.
-    const enrollHref = "/login";
+    const isAvailable = course.status === "AVAILABLE";
+    const enrollHref = !authLoading && user ? `/enroll/${course.id}` : "/login";
+    const enrollDisabled = !isAvailable || isAdmin;
+    const enrollLabel = isAdmin
+        ? "Admin accounts can't enroll"
+        : isAvailable
+            ? "Enroll now"
+            : "Coming Soon";
 
     return (
         <div>
@@ -50,40 +87,26 @@ export const CourseDetails = () => {
                 <div className="pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 rounded-full bg-sky/25 blur-[120px]" />
 
                 <div className="relative mx-auto max-w-4xl px-6 py-24">
-                    <Link
-                        to="/courses"
-                        className="text-sm text-white/60 hover:text-sky-light"
-                    >
+                    <Link to="/courses" className="text-sm text-white/60 hover:text-sky-light">
                         ← All programs
                     </Link>
                     <div className="mt-6 flex flex-wrap items-center gap-3">
                         <Badge variant={isAvailable ? "success" : "warning"}>
-                            {course.status}
+                            {statusLabel[course.status]}
                         </Badge>
                         <span className="text-sm text-white/60">{course.duration}</span>
+                        {course.ageRange && (
+                            <span className="text-sm text-white/60">Ages {course.ageRange}</span>
+                        )}
                     </div>
                     <h1 className="mt-4 font-heading text-4xl font-extrabold leading-tight md:text-5xl">
                         {course.title}
                     </h1>
-                    <p className="mt-6 max-w-xl text-white/70">
-                        {course.shortDescription}
-                    </p>
-
-                    {course.ageNote && (
-                        <p className="mt-6 max-w-xl rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-                            {course.ageNote}
-                        </p>
-                    )}
+                    <p className="mt-6 max-w-xl text-white/70">{course.description}</p>
 
                     <div className="mt-9 flex flex-wrap items-center gap-4">
-                        <Button
-                            as={Link}
-                            to={enrollHref}
-                            variant="primary"
-                            size="lg"
-                            disabled={!isAvailable}
-                        >
-                            {isAvailable ? "Enroll now" : "Coming Soon"}
+                        <Button as={Link} to={enrollHref} variant="primary" size="lg" disabled={enrollDisabled}>
+                            {enrollLabel}
                         </Button>
                         <Button
                             as="a"
@@ -104,19 +127,38 @@ export const CourseDetails = () => {
             <section className="mx-auto max-w-4xl px-6 py-20">
                 <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
                     <div>
-                        <h2 className="font-heading text-2xl font-bold text-ink">
-                            What you'll get
-                        </h2>
-                        <ul className="mt-6 space-y-4">
-                            {course.benefits.map((benefit) => (
-                                <li key={benefit} className="flex gap-3 text-sm text-slate">
-                                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky/10 text-xs font-bold text-sky">
-                                        ✓
-                                    </span>
-                                    {benefit}
-                                </li>
-                            ))}
-                        </ul>
+                        {course.benefits.length > 0 && (
+                            <>
+                                <h2 className="font-heading text-2xl font-bold text-ink">
+                                    What you'll get
+                                </h2>
+                                <ul className="mt-6 space-y-4">
+                                    {course.benefits.map((benefit) => (
+                                        <li key={benefit} className="flex gap-3 text-sm text-slate">
+                                            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky/10 text-xs font-bold text-sky">
+                                                ✓
+                                            </span>
+                                            {benefit}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+
+                        {course.toolsCovered.length > 0 && (
+                            <>
+                                <h2 className="mt-10 font-heading text-2xl font-bold text-ink">
+                                    Tools you'll use
+                                </h2>
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {course.toolsCovered.map((tool) => (
+                                        <Badge key={tool} variant="sky">
+                                            {tool}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </>
+                        )}
 
                         <h2 className="mt-10 font-heading text-2xl font-bold text-ink">
                             Format
@@ -127,7 +169,7 @@ export const CourseDetails = () => {
                     <Card padding="lg" className="h-fit">
                         <p className="text-sm font-medium text-slate">Price</p>
                         <p className="mt-1 font-heading text-3xl font-bold text-ink">
-                            {course.price}
+                            PKR {course.price.toLocaleString()}
                         </p>
                         <div className="mt-6 space-y-3 text-sm text-slate">
                             <p className="flex justify-between">
@@ -140,9 +182,15 @@ export const CourseDetails = () => {
                                     <span className="font-medium text-ink">{course.mentor}</span>
                                 </p>
                             )}
+                            {course.projectsCount != null && (
+                                <p className="flex justify-between">
+                                    <span>Projects</span>
+                                    <span className="font-medium text-ink">{course.projectsCount}</span>
+                                </p>
+                            )}
                             <p className="flex justify-between">
                                 <span>Status</span>
-                                <span className="font-medium text-ink">{course.status}</span>
+                                <span className="font-medium text-ink">{statusLabel[course.status]}</span>
                             </p>
                         </div>
                         <Button
@@ -151,9 +199,9 @@ export const CourseDetails = () => {
                             variant="primary"
                             size="md"
                             className="mt-6 w-full"
-                            disabled={!isAvailable}
+                            disabled={enrollDisabled}
                         >
-                            {isAvailable ? "Enroll now" : "Coming Soon"}
+                            {enrollLabel}
                         </Button>
                     </Card>
                 </div>

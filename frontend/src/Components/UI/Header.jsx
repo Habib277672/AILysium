@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./Button";
+import { useAuth } from "../../context/AuthContext";
 
 const navLinks = [
     { to: "/", label: "Home" },
@@ -16,6 +17,22 @@ const navLinkClass = ({ isActive }) =>
 
 export const Header = () => {
     const [open, setOpen] = useState(false);
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const isAdmin = user?.role === "ADMIN";
+    // Admins land in the admin dashboard, not the student Profile page —
+    // an admin account has no enrollments of its own, so /profile would be
+    // an empty, meaningless page for them.
+    const accountLink = isAdmin
+        ? { to: "/admin", label: "Admin Dashboard" }
+        : { to: "/profile", label: user?.fullName?.split(" ")[0] };
+
+    const handleLogout = async () => {
+        await logout();
+        setOpen(false);
+        navigate("/");
+    };
 
     return (
         <header className="sticky top-0 z-50 border-b border-slate/10 bg-white/90 backdrop-blur">
@@ -36,12 +53,25 @@ export const Header = () => {
                 </nav>
 
                 <div className="hidden items-center gap-3 md:flex">
-                    <Button as={Link} to="/login" variant="ghost" size="sm">
-                        Log in
-                    </Button>
-                    <Button as={Link} to="/signup" variant="primary" size="sm">
-                        Sign up
-                    </Button>
+                    {user ? (
+                        <>
+                            <Button as={Link} to={accountLink.to} variant="ghost" size="sm">
+                                {accountLink.label}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={handleLogout}>
+                                Log out
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button as={Link} to="/login" variant="ghost" size="sm">
+                                Log in
+                            </Button>
+                            <Button as={Link} to="/signup" variant="primary" size="sm">
+                                Sign up
+                            </Button>
+                        </>
+                    )}
                 </div>
 
                 <button
@@ -87,12 +117,46 @@ export const Header = () => {
                         ))}
                     </nav>
                     <div className="mt-4 flex gap-3">
-                        <Button as={Link} to="/login" variant="ghost" size="sm" className="flex-1">
-                            Log in
-                        </Button>
-                        <Button as={Link} to="/signup" variant="primary" size="sm" className="flex-1">
-                            Sign up
-                        </Button>
+                        {user ? (
+                            <>
+                                <Button
+                                    as={Link}
+                                    to={accountLink.to}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    {isAdmin ? "Admin Dashboard" : "Profile"}
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1" onClick={handleLogout}>
+                                    Log out
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    as={Link}
+                                    to="/login"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    Log in
+                                </Button>
+                                <Button
+                                    as={Link}
+                                    to="/signup"
+                                    variant="primary"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    Sign up
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
