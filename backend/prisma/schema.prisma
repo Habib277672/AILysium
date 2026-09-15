@@ -51,6 +51,7 @@ model Course {
   description String
   price       Int
   status      CourseStatus @default(COMING_SOON)
+  isFeatured  Boolean      @default(false)
 
   duration      String
   mentor        String?

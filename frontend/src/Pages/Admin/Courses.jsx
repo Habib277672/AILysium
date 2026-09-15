@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Button } from "../../Components/UI/Button";
@@ -16,7 +17,6 @@ export const AdminCourses = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // null = closed, "new" = create form, a course object = editing it
     const [formTarget, setFormTarget] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
@@ -41,6 +41,7 @@ export const AdminCourses = () => {
         setSubmitting(true);
         try {
             await api.post("/admin/courses", payload);
+            toast.success("Course created.");
             setFormTarget(null);
             await loadCourses();
         } finally {
@@ -52,6 +53,7 @@ export const AdminCourses = () => {
         setSubmitting(true);
         try {
             await api.patch(`/admin/courses/${formTarget.id}`, payload);
+            toast.success("Course updated.");
             setFormTarget(null);
             await loadCourses();
         } finally {
@@ -68,13 +70,13 @@ export const AdminCourses = () => {
 
         try {
             await api.delete(`/admin/courses/${course.id}`);
+            toast.success("Course deleted.");
             await loadCourses();
         } catch (err) {
-            // Backend refuses to delete a course with existing enrollments
-            // (409) — surface that specific message instead of a generic one.
-            setDeleteError(
-                err.response?.data?.error || "Couldn't delete this course."
-            );
+            const message =
+                err.response?.data?.error || "Couldn't delete this course.";
+            setDeleteError(message);
+            toast.error(message);
         }
     };
 

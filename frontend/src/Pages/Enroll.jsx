@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
 import { Button } from "../Components/UI/Button";
 
 export const Enroll = () => {
+    const { user } = useAuth();
     const { courseId } = useParams();
     const navigate = useNavigate();
 
@@ -15,12 +18,6 @@ export const Enroll = () => {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        // There's no public "get course by id" endpoint (only by slug, for
-        // SEO-friendly URLs) — /enroll/:courseId uses the DB id directly since
-        // it's linked from AllCourses/Profile where the id is already in hand.
-        // Fetching the full list and filtering client-side is fine at this
-        // course count; if the catalog grows significantly, a dedicated
-        // GET /api/courses/id/:id endpoint would be worth adding.
         const loadCourse = async () => {
             try {
                 const { data } = await api.get("/courses");
@@ -45,13 +42,13 @@ export const Enroll = () => {
 
         try {
             const { data: enrollment } = await api.post("/enrollments", { courseId });
+            toast.success("Enrollment started — continue to payment.");
             navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
         } catch (err) {
-            // Covers "already enrolled" (409) and any validation errors (400)
-            // from the backend, surfaced directly rather than a generic message.
             const message =
                 err.response?.data?.error || "Couldn't start enrollment. Please try again.";
             setError(message);
+            toast.error(message);
             setSubmitting(false);
         }
     };
@@ -79,6 +76,7 @@ export const Enroll = () => {
     }
 
     const isAvailable = course.status === "AVAILABLE";
+    const isVerified = Boolean(user?.emailVerifiedAt);
 
     return (
         <div className="mx-auto max-w-2xl px-6 py-16">
@@ -91,6 +89,16 @@ export const Enroll = () => {
             </p>
 
             <Card padding="lg" className="mt-8">
+                {!isVerified && (
+                    <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                        You need to verify your email before enrolling.{" "}
+                        <Link to="/profile" className="font-medium underline">
+                            Go to your profile
+                        </Link>{" "}
+                        to resend the verification email.
+                    </p>
+                )}
+
                 <h2 className="font-heading text-xl font-semibold text-ink">
                     {course.title}
                 </h2>
@@ -121,9 +129,9 @@ export const Enroll = () => {
                     size="lg"
                     className="mt-6 w-full"
                     onClick={handleConfirm}
-                    disabled={!isAvailable || submitting}
+                    disabled={!isAvailable || submitting || !isVerified}
                 >
-                    {submitting ? "Starting enrollment..." : "Continue to payment"}
+                    {submitting ? "Enrolling..." : "Enroll"}
                 </Button>
             </Card>
         </div>

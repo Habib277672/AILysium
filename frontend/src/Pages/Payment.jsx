@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import { api } from "../lib/api";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
@@ -22,9 +23,6 @@ export const Payment = () => {
             return;
         }
 
-        // There's no GET /api/enrollments/:id endpoint (only /api/me/enrollments
-        // as a list) — reusing that list and finding the one we need. Same
-        // "fine at this scale, revisit if it grows" tradeoff as Enroll.jsx.
         const loadEnrollment = async () => {
             try {
                 const { data } = await api.get("/me/enrollments");
@@ -48,25 +46,23 @@ export const Payment = () => {
         setError("");
 
         try {
-            // The backend — not this button — is what actually decides the
-            // final paymentStatus. `simulateOutcome` only exists because there's
-            // no real gateway yet; a real integration replaces this whole
-            // function body, not the guarantee that the frontend never sets the
-            // outcome itself.
             const { data } = await api.post("/payments", {
                 enrollmentId,
                 simulateOutcome: outcome,
             });
 
             if (data.status === "CONFIRMED") {
+                toast.success("Payment confirmed — you're enrolled!");
                 navigate(`/payment/success?enrollmentId=${enrollmentId}`, { replace: true });
             } else {
+                toast.error("Payment failed. You can try again.");
                 navigate(`/payment/failed?enrollmentId=${enrollmentId}`, { replace: true });
             }
         } catch (err) {
             const message =
                 err.response?.data?.error || "Payment could not be processed. Please try again.";
             setError(message);
+            toast.error(message);
             setProcessing(false);
         }
     };
@@ -144,8 +140,6 @@ export const Payment = () => {
                     {processing ? "Processing..." : "Simulate Payment"}
                 </Button>
 
-                {/* Kept visible only to make the failure path testable without a
-            real gateway — safe to remove once one is connected. */}
                 <button
                     type="button"
                     onClick={() => handleSimulatePayment("fail")}

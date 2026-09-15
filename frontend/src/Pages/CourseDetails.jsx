@@ -17,6 +17,7 @@ export const CourseDetails = () => {
     const isAdmin = user?.role === "ADMIN";
 
     const [course, setCourse] = useState(null);
+    const [enrollment, setEnrollment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
 
@@ -26,8 +27,23 @@ export const CourseDetails = () => {
 
         const loadCourse = async () => {
             try {
-                const { data } = await api.get(`/courses/${slug}`);
-                setCourse(data);
+                const { data: courseData } = await api.get(`/courses/${slug}`);
+                setCourse(courseData);
+
+                // Only check enrollment status for a logged-in, non-admin user
+                // — an anonymous visitor can't be enrolled in anything, and
+                // admins can never enroll at all.
+                if (user && !isAdmin) {
+                    try {
+                        const { data: enrollments } = await api.get("/me/enrollments");
+                        const match = enrollments.find((e) => e.course.id === courseData.id);
+                        setEnrollment(match ?? null);
+                    } catch {
+                        // Non-fatal — the course details still render fine
+                        // even if this secondary call fails.
+                        setEnrollment(null);
+                    }
+                }
             } catch (err) {
                 setNotFound(true);
             } finally {
@@ -35,7 +51,7 @@ export const CourseDetails = () => {
             }
         };
         loadCourse();
-    }, [slug]);
+    }, [slug, user, isAdmin]);
 
     if (loading) {
         return (
@@ -64,13 +80,39 @@ export const CourseDetails = () => {
     }
 
     const isAvailable = course.status === "AVAILABLE";
-    const enrollHref = !authLoading && user ? `/enroll/${course.id}` : "/login";
-    const enrollDisabled = !isAvailable || isAdmin;
+    const isEnrolled = Boolean(enrollment);
+    const isFullyEnrolled = isEnrolled && enrollment.paymentStatus === "CONFIRMED";
+
+    // Pending enrollment -> straight to finishing payment, not back through
+    // /enroll (they've already enrolled, no need to redo that step).
+    // Anyone else -> normal enroll-or-login routing.
+    const enrollHref = isEnrolled
+        ? `/payment?enrollmentId=${enrollment.id}`
+        : !authLoading && user
+            ? `/enroll/${course.id}`
+            : "/login";
+
+    // Only a CONFIRMED enrollment makes this CTA truly inert — a PENDING
+    // one still has a real next step (pay), so it must stay clickable.
+    const enrollDisabled = isAdmin || isFullyEnrolled || (!isEnrolled && !isAvailable);
+
     const enrollLabel = isAdmin
         ? "Admin accounts can't enroll"
-        : isAvailable
-            ? "Enroll now"
-            : "Coming Soon";
+        : isFullyEnrolled
+            ? "Already enrolled"
+            : isEnrolled
+                ? "Complete payment"
+                : isAvailable
+                    ? "Enroll now"
+                    : "Coming Soon";
+
+    // Rendering as a real <button disabled> (not as={Link}) when disabled
+    // is the actual fix for click-blocking: an <a> tag has no native
+    // "disabled" state in HTML, so a disabled Link still navigates if
+    // clicked — only a genuine disabled <button> is truly unclickable.
+    const enrollButtonProps = enrollDisabled
+        ? { as: "button", type: "button", disabled: true }
+        : { as: Link, to: enrollHref };
 
     return (
         <div>
@@ -98,6 +140,11 @@ export const CourseDetails = () => {
                         {course.ageRange && (
                             <span className="text-sm text-white/60">Ages {course.ageRange}</span>
                         )}
+                        {isEnrolled && (
+                            <Badge variant={enrollment.paymentStatus === "CONFIRMED" ? "success" : "warning"}>
+                                {enrollment.paymentStatus === "CONFIRMED" ? "Enrolled" : "Enrollment pending"}
+                            </Badge>
+                        )}
                     </div>
                     <h1 className="mt-4 font-heading text-4xl font-extrabold leading-tight md:text-5xl">
                         {course.title}
@@ -105,7 +152,7 @@ export const CourseDetails = () => {
                     <p className="mt-6 max-w-xl text-white/70">{course.description}</p>
 
                     <div className="mt-9 flex flex-wrap items-center gap-4">
-                        <Button as={Link} to={enrollHref} variant="primary" size="lg" disabled={enrollDisabled}>
+                        <Button variant="primary" size="lg" {...enrollButtonProps}>
                             {enrollLabel}
                         </Button>
                         <Button
@@ -193,14 +240,7 @@ export const CourseDetails = () => {
                                 <span className="font-medium text-ink">{statusLabel[course.status]}</span>
                             </p>
                         </div>
-                        <Button
-                            as={Link}
-                            to={enrollHref}
-                            variant="primary"
-                            size="md"
-                            className="mt-6 w-full"
-                            disabled={enrollDisabled}
-                        >
+                        <Button variant="primary" size="md" className="mt-6 w-full" {...enrollButtonProps}>
                             {enrollLabel}
                         </Button>
                     </Card>

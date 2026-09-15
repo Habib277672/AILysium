@@ -11,6 +11,9 @@ import { AITools } from "./Pages/AITools";
 import { Contact } from "./Pages/Contact";
 import { SignUp } from "./Pages/SignUp";
 import { Login } from "./Pages/Login";
+import { ForgotPassword } from "./Pages/ForgotPassword";
+import { ResetPassword } from "./Pages/ResetPassword";
+import { VerifyEmail } from "./Pages/VerifyEmail";
 import { Profile } from "./Pages/Profile";
 import { AllCourses } from "./Pages/AllCourses";
 import { Enroll } from "./Pages/Enroll";
@@ -21,8 +24,6 @@ import { AdminEnrollments } from "./Pages/Admin/Enrollments";
 import { AdminCourses } from "./Pages/Admin/Courses";
 import { AdminUsers } from "./Pages/Admin/Users";
 import { AdminUserDetail } from "./Pages/Admin/UserDetail";
-import { ForgotPassword } from "./Pages/ForgotPassword";
-import { ResetPassword } from "./Pages/ResetPassword";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -36,6 +37,11 @@ const App = () => {
         { path: "/courses/:slug", element: <CourseDetails /> },
         { path: "/ai-tools", element: <AITools /> },
         { path: "/contact", element: <Contact /> },
+        // Standalone — must work for BOTH logged-out (fresh signup) and
+        // logged-in (resend from Profile) users. Neither ProtectedRoute
+        // nor GuestOnlyRoute is correct here; both would redirect away
+        // before the verify API call ever fires.
+        { path: "/verify-email", element: <VerifyEmail /> },
         {
           element: <ProtectedRoute studentOnly />,
           children: [

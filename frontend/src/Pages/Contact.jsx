@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
@@ -10,14 +11,8 @@ const PLACEHOLDER_EMAIL = "email@mybusiness.com";
 const PLACEHOLDER_PHONE = "+12345678900";
 const WHATSAPP_LINK = `https://wa.me/${PLACEHOLDER_PHONE.replace("+", "")}`;
 
-const programOptions = [
-    "Kids AI",
-    "VIP One-on-One Mentorship",
-    "Freelancer AI",
-];
+const programOptions = ["Kids AI", "VIP One-on-One Mentorship", "Freelancer AI"];
 
-// Source data lists these as FAQ *topics* only, with no answer text
-// provided — kept as clearly labeled placeholders rather than invented.
 const contactFaqs = [
     { question: "Kids AI installment payments", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
     { question: "Scheduling weekly sessions", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
@@ -47,10 +42,11 @@ export const Contact = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // NOTE: no /api/contact endpoint exists in the specified backend API —
-        // the project scope only defines auth/courses/enrollments/payments/admin
-        // routes. This is a frontend-only mock submission for now; wiring this
-        // to a real endpoint (or an email service) is a decision for later.
+        // Still a mock submission — no /api/contact endpoint exists (see the
+        // earlier flag when this page was first built). The toast fires here
+        // regardless, since from the user's perspective the form "worked";
+        // wiring this to a real endpoint later won't change this call site.
+        toast.success("Message sent — we'll get back to you soon.");
         setSubmitted(true);
     };
 

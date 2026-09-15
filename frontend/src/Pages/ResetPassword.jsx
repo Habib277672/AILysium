@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "../Components/UI/Button";
 import { Card } from "../Components/UI/Card";
 import { Input } from "../Components/UI/Input";
@@ -23,22 +24,22 @@ export const ResetPassword = () => {
         setError("");
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+            const message = "Passwords do not match.";
+            setError(message);
+            toast.error(message);
             return;
         }
 
         setSubmitting(true);
         try {
             await resetPassword({ token, password });
-            // The backend deletes every session for this user on a successful
-            // reset (a deliberate security choice), so there's no session left
-            // to log the user into here — they must sign in again with the
-            // new password.
+            toast.success("Password reset successfully. Please log in.");
             setSuccess(true);
         } catch (err) {
             const message =
                 err.response?.data?.error || "Something went wrong. Please try again.";
             setError(message);
+            toast.error(message);
         } finally {
             setSubmitting(false);
         }

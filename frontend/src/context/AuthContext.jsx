@@ -28,14 +28,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async ({ fullName, email, phoneNumber, password }) => {
+    // No session is created by the backend on register anymore — the
+    // account must be verified and then logged in separately. Deliberately
+    // NOT calling setUser here; doing so would make the app think someone
+    // is logged in when no session cookie actually exists.
     const { data } = await api.post("/auth/register", {
       fullName,
       email,
       phoneNumber,
       password,
     });
-    setUser(data.user);
-    return data.user;
+    return data;
+  };
+
+  const resendVerification = async ({ email }) => {
+    const { data } = await api.post("/auth/resend-verification", { email });
+    return data;
   };
 
   const logout = async () => {
@@ -59,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, forgotPassword, resetPassword }}
+      value={{ user, loading, login, register, resendVerification, logout, forgotPassword, resetPassword }}
     >
       {children}
     </AuthContext.Provider>

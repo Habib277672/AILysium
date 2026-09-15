@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { api } from "../../lib/api";
 import { Button } from "../UI/Button";
 import { Input } from "../UI/Input";
@@ -9,6 +10,7 @@ const emptyForm = {
     description: "",
     price: "",
     status: "COMING_SOON",
+    isFeatured: false,
     duration: "",
     mentor: "",
     format: "",
@@ -25,6 +27,7 @@ const courseToFormState = (course) => ({
     description: course?.description ?? "",
     price: course?.price?.toString() ?? "",
     status: course?.status ?? "COMING_SOON",
+    isFeatured: course?.isFeatured ?? false,
     duration: course?.duration ?? "",
     mentor: course?.mentor ?? "",
     format: course?.format ?? "",
@@ -41,17 +44,12 @@ const formStateToPayload = (form) => ({
     description: form.description.trim(),
     price: Number(form.price),
     status: form.status,
+    isFeatured: form.isFeatured,
     duration: form.duration.trim(),
     format: form.format.trim(),
     mentor: form.mentor.trim() || null,
-    benefits: form.benefits
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-    toolsCovered: form.toolsCovered
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
+    benefits: form.benefits.split(",").map((item) => item.trim()).filter(Boolean),
+    toolsCovered: form.toolsCovered.split(",").map((item) => item.trim()).filter(Boolean),
     ageRange: form.ageRange.trim() || null,
     projectsCount: form.projectsCount.trim() ? Number(form.projectsCount) : null,
     imageUrl: form.imageUrl.trim() || null,
@@ -86,15 +84,14 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
             });
 
             setForm((prev) => ({ ...prev, imageUrl: data.url }));
+            toast.success("Image uploaded.");
         } catch (err) {
-            setUploadError(
-                err.response?.data?.error || "Image upload failed. Please try again."
-            );
+            const message =
+                err.response?.data?.error || "Image upload failed. Please try again.";
+            setUploadError(message);
+            toast.error(message);
         } finally {
             setUploading(false);
-            // Reset the input so selecting the SAME file again (e.g. after a
-            // failed upload) still fires onChange — browsers don't fire change
-            // events for re-selecting an identical file otherwise.
             event.target.value = "";
         }
     };
@@ -109,10 +106,14 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
 
         try {
             await onSubmit(formStateToPayload(form));
+            // No success toast here — AdminCourses.jsx's handleCreate/
+            // handleUpdate own the "course created/updated" toast, since they
+            // know whether this was a create or an edit and this form doesn't.
         } catch (err) {
             const message =
                 err.response?.data?.error || "Something went wrong. Please try again.";
             setError(message);
+            toast.error(message);
         }
     };
 
@@ -167,6 +168,19 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
                     <option value="UNPUBLISHED">Unpublished</option>
                 </Input>
             </div>
+            <label className="flex items-center gap-3 rounded-xl border border-slate/20 px-4 py-3">
+                <input
+                    type="checkbox"
+                    checked={form.isFeatured}
+                    onChange={(event) =>
+                        setForm((prev) => ({ ...prev, isFeatured: event.target.checked }))
+                    }
+                    className="h-4 w-4 rounded border-slate/30 text-sky focus:ring-sky"
+                />
+                <span className="text-sm text-ink">
+                    Feature this course on the homepage
+                </span>
+            </label>
 
             <div className="grid gap-5 sm:grid-cols-2">
                 <Input id="mentor" label="Mentor (optional)" value={form.mentor} onChange={handleChange} />
@@ -202,12 +216,6 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
                 />
             </div>
 
-            {/* Course image — uploads to Cloudinary immediately on selection,
-          not deferred to form submit. This means the image is already
-          live in Cloudinary before the course is saved; an admin who
-          picks an image then cancels the whole form leaves an orphaned
-          (but harmless) image in the Cloudinary media library. Acceptable
-          tradeoff for now — flagged rather than solved with cleanup logic. */}
             <div>
                 <span className="mb-2 block text-sm font-medium text-ink">
                     Course image (optional)

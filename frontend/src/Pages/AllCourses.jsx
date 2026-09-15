@@ -8,11 +8,13 @@ import { Button } from "../Components/UI/Button";
 const statusBadgeVariant = {
     AVAILABLE: "success",
     COMING_SOON: "warning",
+    UNPUBLISHED: "ink",
 };
 
 const statusLabel = {
     AVAILABLE: "Available",
     COMING_SOON: "Coming Soon",
+    UNPUBLISHED: "No longer listed",
 };
 
 export const AllCourses = () => {
@@ -24,9 +26,6 @@ export const AllCourses = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                // Both requests run in parallel — this page needs both the full
-                // course catalog AND the user's own enrollments to compute
-                // "already enrolled" state per card.
                 const [coursesRes, enrollmentsRes] = await Promise.all([
                     api.get("/courses"),
                     api.get("/me/enrollments"),
@@ -46,6 +45,23 @@ export const AllCourses = () => {
         map[enrollment.course.id] = enrollment;
         return map;
     }, {});
+
+    const publicCourseIds = new Set(courses.map((c) => c.id));
+    const orphanedEnrolledCourses = enrollments
+        .filter((enrollment) => !publicCourseIds.has(enrollment.course.id))
+        .map((enrollment) => ({
+            id: enrollment.course.id,
+            slug: enrollment.course.slug,
+            title: enrollment.course.title,
+            status: "UNPUBLISHED",
+            description: "",
+            price: null,
+            duration: null,
+            mentor: null,
+            imageUrl: null,
+        }));
+
+    const displayedCourses = [...courses, ...orphanedEnrolledCourses];
 
     if (loading) {
         return (
@@ -73,21 +89,30 @@ export const AllCourses = () => {
                 See what you're already enrolled in, and discover what's next.
             </p>
 
-            {courses.length === 0 ? (
+            {displayedCourses.length === 0 ? (
                 <Card padding="lg" className="mt-10 text-center text-sm text-slate">
                     No programs are available right now. Check back soon.
                 </Card>
             ) : (
                 <div className="mt-10 grid gap-6 md:grid-cols-3">
-                    {courses.map((course) => {
+                    {displayedCourses.map((course) => {
                         const enrollment = enrollmentByCourseId[course.id];
                         const isAvailable = course.status === "AVAILABLE";
+                        const isUnpublished = course.status === "UNPUBLISHED";
 
                         return (
                             <Card
                                 key={course.id}
-                                className="flex flex-col border-t-4 border-t-sky"
+                                className="flex flex-col overflow-hidden border-t-4 border-t-sky"
                             >
+                                {course.imageUrl && (
+                                    <img
+                                        src={course.imageUrl}
+                                        alt={course.title}
+                                        className="-mx-6 -mt-6 mb-4 h-40 w-[calc(100%+3rem)] object-cover"
+                                    />
+                                )}
+
                                 <div className="flex flex-wrap items-center gap-2">
                                     <Badge variant={statusBadgeVariant[course.status]}>
                                         {statusLabel[course.status]}
@@ -110,41 +135,59 @@ export const AllCourses = () => {
                                 <h2 className="mt-4 font-heading text-xl font-semibold text-ink">
                                     {course.title}
                                 </h2>
-                                <p className="mt-2 flex-1 text-sm text-slate">
-                                    {course.description}
-                                </p>
-                                <p className="mt-4 font-heading text-lg font-bold text-ink">
-                                    PKR {course.price.toLocaleString()}
-                                </p>
+                                {course.description && (
+                                    <p className="mt-2 flex-1 text-sm text-slate">
+                                        {course.description}
+                                    </p>
+                                )}
+                                {course.price != null && (
+                                    <p className="mt-4 font-heading text-lg font-bold text-ink">
+                                        PKR {course.price.toLocaleString()}
+                                    </p>
+                                )}
 
-                                {enrollment ? (
-                                    enrollment.paymentStatus === "PENDING" ? (
+                                <div className="mt-6 flex flex-col gap-2">
+                                    {/* Unpublished courses have no live details page anymore
+                      (the public GET /courses/:slug excludes them) — no
+                      point linking to a page that'll 404. */}
+                                    {!isUnpublished && (
                                         <Button
                                             as={Link}
-                                            to={`/payment?enrollmentId=${enrollment.id}`}
+                                            to={`/courses/${course.slug}`}
+                                            variant="outline"
+                                            size="sm"
+                                        >
+                                            View details
+                                        </Button>
+                                    )}
+
+                                    {enrollment ? (
+                                        enrollment.paymentStatus === "PENDING" ? (
+                                            <Button
+                                                as={Link}
+                                                to={`/payment?enrollmentId=${enrollment.id}`}
+                                                variant="primary"
+                                                size="sm"
+                                            >
+                                                Complete payment
+                                            </Button>
+                                        ) : (
+                                            <Button variant="outline" size="sm" disabled>
+                                                Already enrolled
+                                            </Button>
+                                        )
+                                    ) : (
+                                        <Button
+                                            as={Link}
+                                            to={`/enroll/${course.id}`}
                                             variant="primary"
                                             size="sm"
-                                            className="mt-6"
+                                            disabled={!isAvailable || isUnpublished}
                                         >
-                                            Complete payment
+                                            {isAvailable ? "Enroll now" : "Coming Soon"}
                                         </Button>
-                                    ) : (
-                                        <Button variant="outline" size="sm" className="mt-6" disabled>
-                                            Already enrolled
-                                        </Button>
-                                    )
-                                ) : (
-                                    <Button
-                                        as={Link}
-                                        to={`/enroll/${course.id}`}
-                                        variant="primary"
-                                        size="sm"
-                                        className="mt-6"
-                                        disabled={!isAvailable}
-                                    >
-                                        {isAvailable ? "Enroll now" : "Coming Soon"}
-                                    </Button>
-                                )}
+                                    )}
+                                </div>
                             </Card>
                         );
                     })}

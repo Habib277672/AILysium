@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "../Components/UI/Button";
 import { Card } from "../Components/UI/Card";
 import { Input } from "../Components/UI/Input";
@@ -20,15 +21,13 @@ export const ForgotPassword = () => {
 
         try {
             await forgotPassword({ email });
-            // Backend always returns the same success message whether or not
-            // the account exists — this page mirrors that by always showing
-            // the "sent" state on a successful request, never revealing
-            // whether the email was actually registered.
+            toast.success("Reset link sent — check your email.");
             setSent(true);
         } catch (err) {
             const message =
                 err.response?.data?.error || "Something went wrong. Please try again.";
             setError(message);
+            toast.error(message);
         } finally {
             setSubmitting(false);
         }

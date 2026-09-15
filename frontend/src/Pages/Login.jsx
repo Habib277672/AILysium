@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "../Components/UI/Button";
 import { Card } from "../Components/UI/Card";
 import { Input } from "../Components/UI/Input";
@@ -27,13 +28,8 @@ export const Login = () => {
 
         try {
             const loggedInUser = await login(form);
+            toast.success(`Welcome back, ${loggedInUser.fullName.split(" ")[0]}!`);
 
-            // Admins always land in the admin dashboard — /profile is a
-            // student-only page (their own enrollments), which is meaningless
-            // for an admin account. `location.state?.from` (set when
-            // ProtectedRoute bounces someone to /login) is only honored for
-            // non-admins, since an admin should never have been trying to
-            // reach a student-only protected page in the first place.
             const destination =
                 loggedInUser.role === "ADMIN"
                     ? "/admin"
@@ -44,6 +40,7 @@ export const Login = () => {
             const message =
                 err.response?.data?.error || "Something went wrong. Please try again.";
             setError(message);
+            toast.error(message);
         } finally {
             setSubmitting(false);
         }

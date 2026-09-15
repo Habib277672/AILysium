@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Badge } from "../Components/UI/Badge";
@@ -13,10 +14,11 @@ const paymentBadgeVariant = {
 };
 
 export const Profile = () => {
-    const { user } = useAuth();
+    const { user, resendVerification } = useAuth();
     const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [resendState, setResendState] = useState("idle");
 
     useEffect(() => {
         const loadEnrollments = async () => {
@@ -32,9 +34,18 @@ export const Profile = () => {
         loadEnrollments();
     }, []);
 
-    // `user` comes from AuthContext, already populated by the time this page
-    // renders (ProtectedRoute waits for `loading` before allowing access) —
-    // no separate /api/me call needed here.
+    const handleResend = async () => {
+        setResendState("sending");
+        try {
+            await resendVerification({ email: user.email });
+            toast.success("Verification email sent again.");
+        } catch (err) {
+            toast.error("Couldn't resend the email. Please try again.");
+        } finally {
+            setResendState("sent");
+        }
+    };
+
     if (!user) return null;
 
     return (
@@ -51,15 +62,28 @@ export const Profile = () => {
                 {!user.emailVerifiedAt && (
                     <Card
                         padding="sm"
-                        className="border border-amber-200 bg-amber-50 text-sm text-amber-700"
+                        className="max-w-xs border border-amber-200 bg-amber-50 text-sm text-amber-700"
                     >
-                        Your email isn't verified yet. Check your inbox for a
-                        verification link.
+                        <p>
+                            Your email isn't verified yet. You'll need to verify before
+                            you can enroll in a course.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={handleResend}
+                            disabled={resendState !== "idle"}
+                            className="mt-2 font-medium text-amber-800 underline decoration-amber-400 hover:text-amber-900 disabled:no-underline disabled:opacity-60"
+                        >
+                            {resendState === "sent"
+                                ? "Verification email sent"
+                                : resendState === "sending"
+                                    ? "Sending..."
+                                    : "Resend verification email"}
+                        </button>
                     </Card>
                 )}
             </div>
 
-            {/* Account details */}
             <Card padding="lg" className="mt-8">
                 <h2 className="font-heading text-lg font-semibold text-ink">
                     Account details
@@ -94,7 +118,6 @@ export const Profile = () => {
                 </dl>
             </Card>
 
-            {/* Enrollments */}
             <div className="mt-10">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <h2 className="font-heading text-2xl font-bold text-ink">

@@ -2,11 +2,21 @@ import { prisma } from "../lib/prisma.js";
 
 export const createEnrollment = async (req, res, next) => {
     try {
-        // Admin accounts manage the catalog, not consume it — an admin
-        // enrolling in their own course would pollute real enrollment
-        // data and the admin report with a non-real, non-paying "student."
         if (req.user.role === "ADMIN") {
             const err = new Error("Admin accounts cannot enroll in courses");
+            err.status = 403;
+            throw err;
+        }
+
+        const user = await prisma.user.findUnique({ where: { id: req.user.sub } });
+
+        // This is the actual enforcement point for email verification —
+        // browsing is fine while unverified, but real enrollment (which
+        // leads to a real payment) requires a confirmed email first.
+        if (!user.emailVerifiedAt) {
+            const err = new Error(
+                "Please verify your email before enrolling in a course. Check your inbox, or resend the verification email from your profile."
+            );
             err.status = 403;
             throw err;
         }
