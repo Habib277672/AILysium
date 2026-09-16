@@ -99,11 +99,7 @@ export const refreshTokenFn = async (refreshToken) => {
 
 export const clearUserSession = async (sessionId) => {
     if (!sessionId) return;
-    // deleteMany, not delete: if the session was already removed (e.g. a
-    // password reset in another tab, or a double-fired logout), this is a
-    // harmless no-op instead of throwing — delete() requires the row to
-    // exist and throws (and logs, even when caught) if it doesn't.
-    await prisma.session.deleteMany({ where: { id: sessionId } });
+    await prisma.session.delete({ where: { id: sessionId } }).catch(() => { });
 };
 
 // --- Email verification (unchanged logic) --------------------------------

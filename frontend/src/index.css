@@ -1,23 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0f172a;
-  --color-ink-soft: #16243a;
+  /* Primary Brand Colors */
+  --color-ink: #000000;
+  --color-ink-soft: #080818;
 
-  --color-sky: #2563eb;
-  --color-sky-hover: #1d4ed8;
-  --color-sky-light: #60a5fa;
+  --color-sky: #0085fe;
+  --color-sky-hover: #006fd6;
+  --color-sky-light: #3b9ffb;
 
-  --color-cloud: #f8fafc;
-  --color-soft-blue: #eff6ff;
+  /* Backgrounds */
+  --color-cloud: #f8fcff;
+  --color-soft-blue: #e8f8ff;
 
-  --color-slate: #334155;
+  /* Text */
+  --color-slate: #242424;
   --color-muted: #64748b;
-  --color-border: #e2e8f0;
 
+  /* UI */
+  --color-border: #d6efff;
+
+  /* Extra Brand Shades */
+  --color-blue-soft: #c9e4ff;
+  --color-blue-pale: #eff8ff;
+
+  /* Fonts */
   --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
 
+  /* Radius */
   --radius-pill: 999px;
 }
 
@@ -25,6 +36,11 @@ body {
   font-family: var(--font-body);
   color: var(--color-slate);
   background-color: var(--color-cloud);
+}
+
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: 500px;
 }
 
 h1,

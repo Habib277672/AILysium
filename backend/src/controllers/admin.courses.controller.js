@@ -13,13 +13,17 @@ const courseSchema = z.object({
     description: z.string().trim().min(1),
     price: z.number().int().nonnegative(),
     status: z.enum(["AVAILABLE", "COMING_SOON", "UNPUBLISHED"]).default("COMING_SOON"),
+    // Optional — if omitted, generated from title.
     slug: z.string().trim().min(2).max(140).optional(),
-    isFeatured: z.boolean().default(false),
 
     duration: z.string().trim().min(1, { message: "Duration is required" }),
     format: z.string().trim().min(1, { message: "Format is required" }),
     mentor: z.string().trim().min(1).optional().nullable(),
 
+    // Bullet-list fields — accept an array of non-empty strings. Empty
+    // array is valid (e.g. a brand-new course with no benefits written
+    // yet), but individual empty strings inside the array are rejected so
+    // admin can't accidentally save blank bullets.
     benefits: z.array(z.string().trim().min(1)).default([]),
     toolsCovered: z.array(z.string().trim().min(1)).default([]),
 
