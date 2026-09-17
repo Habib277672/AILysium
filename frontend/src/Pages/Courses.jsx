@@ -1,21 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api } from "../lib/api";
-import { Button } from "../Components/UI/Button";
-import { Badge } from "../Components/UI/Badge";
-import { Card } from "../Components/UI/Card";
+import { CourseCard } from "../Components/UI/CourseCard";
 
 const statusFilters = ["All", "AVAILABLE", "COMING_SOON"];
-
-const statusLabel = {
-    AVAILABLE: "Available",
-    COMING_SOON: "Coming Soon",
-};
-
-const statusBadgeVariant = {
-    AVAILABLE: "success",
-    COMING_SOON: "warning",
-};
 
 export const Courses = () => {
     const [courses, setCourses] = useState([]);
@@ -45,25 +32,23 @@ export const Courses = () => {
     return (
         <div>
             {/* Hero */}
-            <section className="relative overflow-hidden bg-ink text-white">
-                <div
-                    className="pointer-events-none absolute inset-0 opacity-40"
-                    style={{
-                        backgroundImage:
-                            "radial-gradient(rgba(96,165,250,0.18) 1px, transparent 1px)",
-                        backgroundSize: "22px 22px",
-                    }}
-                />
-                <div className="pointer-events-none absolute -top-32 left-[-10%] h-96 w-96 rounded-full bg-sky/25 blur-[120px]" />
+            <section className="relative overflow-hidden bg-cloud py-24 md:py-32">
+                <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
+                <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
-                <div className="relative mx-auto max-w-3xl px-6 py-24 text-center">
-                    <Badge variant="sky" className="bg-white/10 text-sky-light">
+                <div className="relative mx-auto max-w-3xl px-6 text-center">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
+                        <span className="h-1 w-1 rounded-full bg-sky" />
                         Programs
-                    </Badge>
-                    <h1 className="mt-6 font-heading text-4xl font-extrabold leading-tight md:text-5xl">
-                        Find the right AI program for you
+                    </span>
+                    <h1 className="mt-5 font-heading text-4xl font-extrabold leading-tight text-ink md:text-5xl">
+                        Find the right{" "}
+                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                            AI program
+                        </span>{" "}
+                        for you
                     </h1>
-                    <p className="mt-6 text-white/70">
+                    <p className="mt-5 max-w-xl mx-auto text-base leading-relaxed text-muted">
                         Browse hands-on AI training for teen beginners, personalized
                         mentorship, and a freelancer-ready track — no account needed to
                         browse.
@@ -84,7 +69,7 @@ export const Courses = () => {
                                 : "border-slate/20 text-slate hover:border-sky/50 hover:text-sky"
                                 }`}
                         >
-                            {status === "All" ? "All" : statusLabel[status]}
+                            {status === "All" ? "All" : status === "AVAILABLE" ? "Available" : "Coming Soon"}
                         </button>
                     ))}
                 </div>
@@ -104,52 +89,7 @@ export const Courses = () => {
                 {!loading && !error && (
                     <div className="mt-8 grid gap-6 md:grid-cols-3">
                         {visibleCourses.map((course) => (
-                            <Card
-                                key={course.slug}
-                                className="flex flex-col overflow-hidden border-t-4 border-t-sky"
-                            >
-                                {course.imageUrl && (
-                                    <img
-                                        src={course.imageUrl}
-                                        alt={course.title}
-                                        className="-mx-6 -mt-6 mb-4 h-40 w-[calc(100%+3rem)] object-cover"
-                                    />
-                                )}
-                                <Badge variant={statusBadgeVariant[course.status]}>
-                                    {statusLabel[course.status]}
-                                </Badge>
-                                <h2 className="mt-4 font-heading text-xl font-semibold text-ink">
-                                    {course.title}
-                                </h2>
-                                <p className="mt-2 flex-1 text-sm text-slate">
-                                    {course.description}
-                                </p>
-                                <div className="mt-4 space-y-1 text-sm text-slate">
-                                    <p>
-                                        <span className="font-medium text-ink">Price:</span> PKR{" "}
-                                        {course.price.toLocaleString()}
-                                    </p>
-                                    <p>
-                                        <span className="font-medium text-ink">Duration:</span>{" "}
-                                        {course.duration}
-                                    </p>
-                                    {course.mentor && (
-                                        <p>
-                                            <span className="font-medium text-ink">Mentor:</span>{" "}
-                                            {course.mentor}
-                                        </p>
-                                    )}
-                                </div>
-                                <Button
-                                    as={Link}
-                                    to={`/courses/${course.slug}`}
-                                    variant="outline"
-                                    size="sm"
-                                    className="mt-6"
-                                >
-                                    View details
-                                </Button>
-                            </Card>
+                            <CourseCard key={course.slug} course={course} />
                         ))}
 
                         {visibleCourses.length === 0 && (

@@ -12,7 +12,7 @@ export const ConsultationSection = ({
       <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
       <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 blur-[160px]" />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-7 px-6 text-center">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-5 px-6 text-center">
         <h2 className="font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
           {heading}
         </h2>

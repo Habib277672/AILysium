@@ -4,6 +4,7 @@ import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
 import { categories, aiTools } from "../data/aiTools";
+import gptLogo from "../assets/images/AITool_logos/gpt_logo.jpg";
 
 const PAGE_SIZE = 9;
 
