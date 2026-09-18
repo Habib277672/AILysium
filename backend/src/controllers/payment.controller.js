@@ -23,7 +23,6 @@ export const createPayment = async (req, res, next) => {
             throw err;
         }
 
-        // Ownership check — a user can only pay for their own enrollment.
         if (enrollment.userId !== req.user.sub) {
             const err = new Error("You cannot pay for another user's enrollment");
             err.status = 403;
@@ -36,20 +35,34 @@ export const createPayment = async (req, res, next) => {
             throw err;
         }
 
-        if (enrollment.payment) {
+        // A FAILED payment is not a real block — it means nothing was
+        // actually charged, so the user must be able to try again. Since
+        // Payment.enrollmentId is @unique, a retry requires clearing out
+        // the old failed row first; only a CONFIRMED payment should ever
+        // be treated as permanent.
+        if (enrollment.payment && enrollment.payment.paymentStatus !== "FAILED") {
             const err = new Error("A payment record already exists for this enrollment");
             err.status = 409;
             throw err;
         }
 
-        // Mock gateway logic: defaults to success unless the caller explicitly
-        // requests a failure simulation (useful for testing the Failed/Pending
-        // path from the frontend without needing a real gateway).
         const isSuccess = simulateOutcome !== "fail";
         const resultingPaymentStatus = isSuccess ? "CONFIRMED" : "FAILED";
         const transactionId = `mock_${crypto.randomBytes(8).toString("hex")}`;
 
-        const [payment] = await prisma.$transaction([
+        const operations = [];
+
+        // Clear the previous failed attempt before recording the new one
+        // — must happen inside the same transaction as the new payment,
+        // so there's never a moment where the unique constraint on
+        // enrollmentId would reject the new insert.
+        if (enrollment.payment) {
+            operations.push(
+                prisma.payment.delete({ where: { id: enrollment.payment.id } })
+            );
+        }
+
+        operations.push(
             prisma.payment.create({
                 data: {
                     userId: req.user.sub,
@@ -60,12 +73,18 @@ export const createPayment = async (req, res, next) => {
                     transactionId,
                     paymentStatus: resultingPaymentStatus,
                 },
-            }),
+            })
+        );
+
+        operations.push(
             prisma.enrollment.update({
                 where: { id: enrollment.id },
                 data: { paymentStatus: resultingPaymentStatus },
-            }),
-        ]);
+            })
+        );
+
+        const results = await prisma.$transaction(operations);
+        const payment = results[results.length - 2]; // the create() result, second-to-last
 
         res.status(201).json({ payment, status: resultingPaymentStatus });
     } catch (err) {
