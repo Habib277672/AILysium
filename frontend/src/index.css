@@ -38,10 +38,10 @@ body {
   background-color: var(--color-cloud);
 }
 
-section {
+/* section {
   content-visibility: auto;
   contain-intrinsic-size: 500px;
-}
+} */
 
 h1,
 h2,

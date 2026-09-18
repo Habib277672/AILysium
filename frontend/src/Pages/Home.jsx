@@ -11,6 +11,7 @@ import { FaLaptopCode, FaPalette, FaBriefcase, FaBullhorn, FaChartLine, FaShield
 import { FaSearch, FaUserPlus, FaLock, FaChalkboardTeacher } from "react-icons/fa";
 
 import heroImg from "../assets/Images/hero_img.png";
+import aboutImg from "../assets/Images/home_abt.png";
 
 const skillCategories = [
   { name: "Development", icon: <FaLaptopCode /> },
@@ -393,7 +394,7 @@ export const Home = () => {
               <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
               <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-xl shadow-ink/5">
                 <img
-                  src={heroImg}
+                  src={aboutImg}
                   alt="AiLysium training"
                   className="h-72 w-full object-cover sm:h-80 md:h-96"
                 />

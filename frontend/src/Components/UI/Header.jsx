@@ -20,7 +20,7 @@ export const Header = () => {
   const isAdmin = user?.role === "ADMIN";
   const accountLink = isAdmin
     ? { to: "/admin", label: "Admin Dashboard" }
-    : { to: "/profile", label: user?.fullName?.split(" ")[0] };
+    : { to: "/profile", label: "Profile" };
 
   const handleLogout = async () => {
     await logout();
@@ -29,7 +29,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate/8 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-50 border-b border-slate/8 bg-white/80 backdrop-blur-xl will-change-transform">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <Link to="/" className="group flex items-center">
@@ -59,10 +59,10 @@ export const Header = () => {
         <div className="hidden items-center gap-2 md:flex">
           {user ? (
             <>
-              <Button as={Link} to={accountLink.to} variant="ghost" size="sm" className="rounded-xl px-4">
+              <Button as={Link} to={accountLink.to} variant="primary" size="sm" className="rounded-full px-4 cursor-pointer">
                 {accountLink.label}
               </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-xl px-4">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full px-4 cursor-pointer">
                 Log out
               </Button>
             </>
@@ -141,7 +141,7 @@ export const Header = () => {
                   >
                     {accountLink.label}
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1 rounded-xl" onClick={handleLogout}>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-full cursor-pointer" onClick={handleLogout}>
                     Log out
                   </Button>
                 </>

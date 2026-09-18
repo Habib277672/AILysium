@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../Components/UI/Button";
-import { Badge } from "../Components/UI/Badge";
-import { Card } from "../Components/UI/Card";
 import { categories, aiTools } from "../data/aiTools";
-import gptLogo from "../assets/images/AITool_logos/gpt_logo.jpg";
+import { HiOutlineSearch } from "react-icons/hi";
 
 const PAGE_SIZE = 9;
 
@@ -35,24 +33,22 @@ export const AITools = () => {
     return (
         <div>
             {/* Top section */}
-            <section className="relative overflow-hidden bg-ink text-white">
-                <div
-                    className="pointer-events-none absolute inset-0 opacity-40"
-                    style={{
-                        backgroundImage: "radial-gradient(rgba(96,165,250,0.18) 1px, transparent 1px)",
-                        backgroundSize: "22px 22px",
-                    }}
-                />
-                <div className="pointer-events-none absolute -top-32 left-[-10%] h-96 w-96 rounded-full bg-sky/25 blur-[120px]" />
+            <section className="relative overflow-hidden bg-cloud py-28 md:py-36">
+                <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
+                <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
-                <div className="relative mx-auto max-w-3xl px-6 py-24 text-center">
-                    <Badge variant="sky" className="bg-white/10 text-sky-light">
+                <div className="relative mx-auto max-w-3xl px-6 text-center">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
+                        <span className="h-1 w-1 rounded-full bg-sky" />
                         AI Tools
-                    </Badge>
-                    <h1 className="mt-6 font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl">
-                        The tools you'll actually build with
+                    </span>
+                    <h1 className="mt-5 font-heading text-4xl font-extrabold leading-tight text-ink md:text-5xl">
+                        The tools you'll{" "}
+                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                            actually build with
+                        </span>
                     </h1>
-                    <p className="mt-6 text-white/70">
+                    <p className="mt-5 max-w-xl mx-auto text-base leading-relaxed text-muted">
                         A directory of the AI tools shaping how people build, write,
                         design, and automate today — browse by category to find what
                         fits your project.
@@ -63,17 +59,23 @@ export const AITools = () => {
             {/* Search + category tabs + tool grid */}
             <section className="mx-auto max-w-6xl px-6 py-20">
                 <h2 className="text-center font-heading text-3xl font-bold text-ink">
-                    Explore AI tools by category
+                    Explore AI tools{" "}
+                    <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                        by category
+                    </span>
                 </h2>
 
                 <div className="mx-auto mt-8 max-w-md">
-                    <input
-                        type="text"
-                        placeholder="Search tools…"
-                        value={search}
-                        onChange={handleSearchChange}
-                        className="w-full rounded-full border border-slate/20 px-5 py-3 text-sm focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/20"
-                    />
+                    <div className="relative">
+                        <HiOutlineSearch className="absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-muted" />
+                        <input
+                            type="text"
+                            placeholder="Search tools…"
+                            value={search}
+                            onChange={handleSearchChange}
+                            className="w-full rounded-full border border-slate/15 bg-white py-3 pl-11 pr-5 text-sm shadow-sm shadow-ink/3 transition-all duration-300 placeholder:text-muted/50 focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/15 focus:shadow-md focus:shadow-sky/8"
+                        />
+                    </div>
                 </div>
 
                 <div className="mt-8 flex flex-wrap justify-center gap-2">
@@ -82,9 +84,9 @@ export const AITools = () => {
                             key={category}
                             type="button"
                             onClick={() => handleCategoryChange(category)}
-                            className={`rounded-full border px-4 py-2 text-xs font-medium transition-colors ${activeCategory === category
-                                ? "border-sky bg-sky/10 text-sky"
-                                : "border-slate/20 text-slate hover:border-sky/50 hover:text-sky"
+                            className={`rounded-full border px-4 py-2 text-xs font-medium transition-all duration-200 cursor-pointer ${activeCategory === category
+                                ? "border-sky bg-sky text-white shadow-md shadow-sky/25"
+                                : "border-slate/15 bg-white text-muted hover:border-sky/40 hover:text-sky shadow-sm shadow-ink/3"
                                 }`}
                         >
                             {category}
@@ -92,15 +94,16 @@ export const AITools = () => {
                     ))}
                 </div>
 
-                <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {visibleTools.map((tool, index) => (
-                        <Card
+                        <div
                             key={`${tool.name}-${index}`}
-                            className="flex flex-col border-t-4 border-t-sky"
+                            className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate/10 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky/15 hover:shadow-xl hover:shadow-sky/8"
                         >
-                            <div className="flex items-center gap-3">
-                                {/* Small icon */}
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-cloud">
+                            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                            <div className="flex items-center gap-3.5">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-slate/5 to-slate/10 transition-all duration-300 group-hover:from-sky/10 group-hover:to-sky/5 group-hover:shadow-md group-hover:shadow-sky/10">
                                     {tool.image ? (
                                         <img
                                             src={tool.image}
@@ -114,7 +117,7 @@ export const AITools = () => {
                                         />
                                     ) : null}
                                     <span
-                                        className="flex h-full w-full items-center justify-center font-heading text-sm font-semibold text-slate/40"
+                                        className="flex h-full w-full items-center justify-center font-heading text-base font-bold text-slate/25"
                                         style={{ display: tool.image ? "none" : "flex" }}
                                     >
                                         {tool.name.charAt(0)}
@@ -122,16 +125,18 @@ export const AITools = () => {
                                 </div>
 
                                 <div>
-                                    <p className="font-heading font-semibold text-ink">{tool.name}</p>
-                                    <p className="text-xs text-sky">{tool.category}</p>
+                                    <p className="font-heading text-[15px] font-semibold text-ink transition-colors group-hover:text-sky">{tool.name}</p>
+                                    <p className="mt-0.5 text-xs font-medium text-sky/70">{tool.category}</p>
                                 </div>
                             </div>
-                            <p className="mt-3 flex-1 text-sm text-slate">{tool.description}</p>
+
+                            <p className="mt-4 flex-1 text-[13px] leading-relaxed text-muted">{tool.description}</p>
+
                             <div className="mt-4 flex flex-wrap gap-1.5">
                                 {tool.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="rounded-full bg-cloud px-2.5 py-1 text-[10px] font-medium tracking-wide text-slate"
+                                        className="rounded-full bg-slate/4 px-2.5 py-1 text-[10px] font-medium tracking-wide text-muted/80 transition-colors group-hover:bg-sky/5 group-hover:text-sky/70"
                                     >
                                         {tag}
                                     </span>
@@ -143,13 +148,13 @@ export const AITools = () => {
                                     href={tool.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-sky hover:text-sky-light"
+                                    className="mt-5 inline-flex items-center gap-1.5 self-end text-sm font-medium text-sky transition-all duration-200 hover:text-sky-light hover:gap-2.5"
                                 >
                                     Visit tool
-                                    <span aria-hidden="true">↗</span>
+                                    <span aria-hidden="true">→</span>
                                 </a>
                             )}
-                        </Card>
+                        </div>
                     ))}
 
                     {visibleTools.length === 0 && (
@@ -164,6 +169,7 @@ export const AITools = () => {
                         <Button
                             variant="outline"
                             size="lg"
+                            className="rounded-full cursor-pointer"
                             onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
                         >
                             Load more
@@ -173,17 +179,26 @@ export const AITools = () => {
             </section>
 
             {/* CTA */}
-            <section className="bg-ink-soft py-20 text-white">
-                <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 text-center">
-                    <h2 className="font-heading text-3xl font-bold">
-                        Want to work with AI tools hands-on?
+            <section className="relative overflow-hidden bg-cloud py-16 md:py-20">
+                <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-full bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/10 blur-[160px]" />
+
+                <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky/10 text-sky">
+                        <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </div>
+                    <h2 className="font-heading text-3xl font-bold text-ink">
+                        Want to work with AI tools{" "}
+                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                            hands-on?
+                        </span>
                     </h2>
-                    <p className="max-w-md text-white/70">
+                    <p className="max-w-md text-base text-muted">
                         Every AiLysium program is built around real, weekly practice with
                         AI tools — not just watching demos.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <Button as={Link} to="/courses" variant="primary" size="lg">
+                        <Button as={Link} to="/courses" variant="primary" size="lg" className="rounded-full cursor-pointer px-8 shadow-lg shadow-sky/25 hover:shadow-xl hover:shadow-sky/35">
                             Explore programs
                         </Button>
                         <Button
@@ -191,7 +206,7 @@ export const AITools = () => {
                             to="/contact"
                             variant="outline"
                             size="lg"
-                            className="border-white/25 text-white hover:border-sky hover:text-sky-light"
+                            className="rounded-full cursor-pointer"
                         >
                             Talk to us
                         </Button>

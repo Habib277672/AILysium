@@ -32,7 +32,7 @@ export const Courses = () => {
     return (
         <div>
             {/* Hero */}
-            <section className="relative overflow-hidden bg-cloud py-24 md:py-32">
+            <section className="relative overflow-hidden bg-cloud py-28 md:py-36">
                 <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
                 <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
