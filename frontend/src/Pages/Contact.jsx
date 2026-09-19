@@ -10,7 +10,6 @@ const PLACEHOLDER_EMAIL = "email@mybusiness.com";
 const PLACEHOLDER_PHONE = "+12345678900";
 const WHATSAPP_LINK = `https://wa.me/${PLACEHOLDER_PHONE.replace("+", "")}`;
 
-const programOptions = ["Kids AI", "VIP One-on-One Mentorship", "Freelancer AI"];
 
 const contactFaqs = [
     { question: "Kids AI installment payments", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
@@ -197,23 +196,7 @@ export const Contact = () => {
                                         required
                                     />
                                 </div>
-                                <Input
-                                    id="program"
-                                    label="Which program are you interested in?"
-                                    as="select"
-                                    value={form.program}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="" disabled>
-                                        Select a program
-                                    </option>
-                                    {programOptions.map((program) => (
-                                        <option key={program} value={program}>
-                                            {program}
-                                        </option>
-                                    ))}
-                                </Input>
+
                                 <Input
                                     id="message"
                                     label="Message"

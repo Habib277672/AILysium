@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { countries } from "../../data/countries";
+import { HiOutlineChevronDown } from "react-icons/hi";
 
 const DEFAULT_COUNTRY = countries.find((c) => c.iso2 === "PK");
 
@@ -58,7 +59,7 @@ export const PhoneInput = ({ label, value, onChange, required }) => {
                 <button
                     type="button"
                     onClick={() => setOpen((prev) => !prev)}
-                    className="flex shrink-0 items-center gap-2 rounded-l-xl border-r border-slate/20 px-3 py-3 text-sm hover:bg-cloud"
+                    className="flex shrink-0 items-center gap-2 cursor-pointer rounded-l-xl border-r border-slate/20 px-3 py-3 text-sm transition-colors hover:bg-cloud"
                 >
                     <img
                         src={flagUrl(country.iso2)}
@@ -66,6 +67,7 @@ export const PhoneInput = ({ label, value, onChange, required }) => {
                         className="h-4 w-6 object-cover"
                     />
                     <span className="text-slate">+{country.dialCode}</span>
+                    <HiOutlineChevronDown className={`h-3.5 w-3.5 text-slate/50 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
                 </button>
 
                 <input
@@ -74,52 +76,50 @@ export const PhoneInput = ({ label, value, onChange, required }) => {
                     onChange={handleLocalNumberChange}
                     placeholder="3001234567"
                     required={required}
-                    className="w-full rounded-r-xl px-4 py-3 text-sm text-ink placeholder:text-slate/40 focus:outline-none"
+                    className="w-full rounded-r-xl px-4 py-3 text-sm text-ink placeholder:text-slate/40 transition-all focus:outline-none focus:shadow-[0_0_0_4px_rgba(0,133,254,0.1)]"
                 />
             </div>
 
-            {open && (
-                <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-slate/10 bg-white shadow-lg">
-                    <div className="border-b border-slate/10 p-2">
-                        <input
-                            type="text"
-                            autoFocus
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Search country or code…"
-                            className="w-full rounded-lg border border-slate/20 px-3 py-2 text-sm focus:border-sky focus:outline-none"
-                        />
-                    </div>
-                    <div className="max-h-56 overflow-y-auto">
-                        {filteredCountries.map((c) => (
-                            <button
-                                key={c.iso2}
-                                type="button"
-                                onClick={() => {
-                                    setCountry(c);
-                                    setOpen(false);
-                                    setSearch("");
-                                }}
-                                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-cloud"
-                            >
-                                <img
-                                    src={flagUrl(c.iso2)}
-                                    alt={c.name}
-                                    className="h-4 w-6 object-cover"
-                                />
-                                <span className="flex-1 text-ink">{c.name}</span>
-                                <span className="text-slate/60">+{c.dialCode}</span>
-                            </button>
-                        ))}
-
-                        {filteredCountries.length === 0 && (
-                            <p className="px-4 py-6 text-center text-sm text-slate">
-                                No countries match "{search}".
-                            </p>
-                        )}
-                    </div>
+            <div className={`absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-slate/10 bg-white shadow-lg transition-all duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}>
+                <div className="border-b border-slate/10 p-2">
+                    <input
+                        type="text"
+                        autoFocus={open}
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        placeholder="Search country or code…"
+                        className="w-full rounded-lg border border-slate/20 px-3 py-2 text-sm focus:border-sky focus:outline-none"
+                    />
                 </div>
-            )}
+                <div className="max-h-56 overflow-y-auto scrollbar-hide">
+                    {filteredCountries.map((c) => (
+                        <button
+                            key={c.iso2}
+                            type="button"
+                            onClick={() => {
+                                setCountry(c);
+                                setOpen(false);
+                                setSearch("");
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-cloud"
+                        >
+                            <img
+                                src={flagUrl(c.iso2)}
+                                alt={c.name}
+                                className="h-4 w-6 object-cover"
+                            />
+                            <span className="flex-1 text-ink">{c.name}</span>
+                            <span className="text-slate/60">+{c.dialCode}</span>
+                        </button>
+                    ))}
+
+                    {filteredCountries.length === 0 && (
+                        <p className="px-4 py-6 text-center text-sm text-slate">
+                            No countries match "{search}".
+                        </p>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

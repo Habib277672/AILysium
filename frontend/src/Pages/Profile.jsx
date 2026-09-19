@@ -217,7 +217,7 @@ export const Profile = () => {
                     {!loading && !error && enrollments.length > 0 && (
                         <div className="mt-5 space-y-2.5">
                             {enrollments.map((enrollment) => (
-                                <Link
+                                <div
                                     key={enrollment.id}
                                     to={enrollment.paymentStatus === "PENDING" ? `/payment?enrollmentId=${enrollment.id}` : "#"}
                                     className={`group flex flex-col gap-3 rounded-2xl border border-slate/10 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:border-sky/15 hover:shadow-md hover:shadow-sky/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${enrollment.paymentStatus === "PENDING" ? "cursor-pointer border-l-2 border-l-amber-400" : "border-l-2 border-l-emerald-400"}`}
@@ -247,7 +247,7 @@ export const Profile = () => {
                                             </span>
                                         )}
                                     </div>
-                                </Link>
+                                </div>
                             ))}
                         </div>
                     )}
