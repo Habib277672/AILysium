@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 
-const programLinks = [
-  { to: "/courses/kids-ai", label: "Kids AI" },
-  { to: "/courses/vip-mentorship", label: "VIP Mentorship" },
-  { to: "/courses/freelancer-ai", label: "Freelancer AI" },
+const socialLinks = [
+  { href: "#", label: "Instagram" },
+  { href: "#", label: "Facebook" },
+  { href: "#", label: "X" },
+  { href: "#", label: "YouTube" },
+  { href: "#", label: "LinkedIn" },
+  { href: "#", label: "TikTok" },
 ];
 
 const companyLinks = [
@@ -33,7 +36,7 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="inline-block">
-              <div className="inline-flex items-center gap-2.5 rounded-2xl bg-white/20 px-4 py-3 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2.5 rounded-2xl bg-white/40 px-4 py-3 backdrop-blur-sm">
                 <img src={logo} alt="AiLysium" className="h-16 w-auto md:h-20" />
               </div>
             </Link>
@@ -74,17 +77,19 @@ export const Footer = () => {
           {/* Links */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/30">
-              Programs
+              Social Media
             </h3>
             <ul className="mt-5 space-y-3.5">
-              {programLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
+              {socialLinks.map(({ href, label }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
                     className="text-sm text-white/50 transition-all duration-200 hover:pl-1 hover:text-white"
                   >
-                    {link.label}
-                  </Link>
+                    {label}
+                  </a>
                 </li>
               ))}
             </ul>

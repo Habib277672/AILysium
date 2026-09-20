@@ -24,6 +24,7 @@ import { AdminEnrollments } from "./Pages/Admin/Enrollments";
 import { AdminCourses } from "./Pages/Admin/Courses";
 import { AdminUsers } from "./Pages/Admin/Users";
 import { AdminUserDetail } from "./Pages/Admin/UserDetail";
+import { NotFound } from "./Pages/NotFound";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -53,6 +54,7 @@ const App = () => {
             { path: "/payment/failed", element: <PaymentResult outcome="failed" /> },
           ],
         },
+        { path: "*", element: <NotFound /> },
       ],
     },
     {
