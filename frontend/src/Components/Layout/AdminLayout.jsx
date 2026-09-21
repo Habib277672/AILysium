@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { ScrollToTop } from "../UI/ScrollToTop";
 
 const adminLinks = [
     { to: "/admin", label: "Dashboard", end: true },
@@ -17,6 +18,7 @@ export const AdminLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-cloud">
+            <ScrollToTop />
             <aside className="hidden w-64 shrink-0 border-r border-slate/10 bg-white md:block">
                 <div className="flex h-full flex-col p-6">
                     <div className="flex items-center gap-2">

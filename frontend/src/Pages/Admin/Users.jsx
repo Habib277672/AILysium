@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Card } from "../../Components/UI/Card";
+import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
 const roleBadgeVariant = {
     ADMIN: "sky",
@@ -58,7 +59,7 @@ export const AdminUsers = () => {
             />
 
             <div className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
-                {loading && <p className="p-6 text-center text-sm text-slate">Loading…</p>}
+                {loading && <AdminTableSkeleton columns={6} />}
                 {!loading && error && (
                     <p className="p-6 text-center text-sm text-red-600">{error}</p>
                 )}

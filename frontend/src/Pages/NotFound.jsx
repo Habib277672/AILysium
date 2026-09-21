@@ -1,15 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../Components/UI/Button";
-import { Badge } from "../Components/UI/Badge";
+import { useEffect, useState } from "react";
 
 export const NotFound = () => {
     const navigate = useNavigate();
+    const [visible, setVisible] = useState(false);
 
-    // Goes back to wherever the user actually came from (a wrong link, a
-    // typo'd URL, a stale bookmark) rather than always dumping them on the
-    // homepage. If there's no real history to go back to — e.g. they landed
-    // here directly by typing the URL — history.state.idx will be 0/undefined,
-    // and we send them home instead of leaving them stuck.
+    useEffect(() => {
+        requestAnimationFrame(() => setVisible(true));
+    }, []);
+
     const handleGoBack = () => {
         const hasHistory = window.history.state && window.history.state.idx > 0;
         if (hasHistory) {
@@ -20,52 +20,65 @@ export const NotFound = () => {
     };
 
     return (
-        <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden bg-ink px-6 text-white">
-            <div
-                className="pointer-events-none absolute inset-0 opacity-40"
-                style={{
-                    backgroundImage: "radial-gradient(rgba(59,159,251,0.18) 1px, transparent 1px)",
-                    backgroundSize: "22px 22px",
-                }}
-            />
-            <div className="pointer-events-none absolute -top-32 left-[-10%] h-96 w-96 rounded-full bg-sky/25 blur-[120px]" />
-            <div className="pointer-events-none absolute -bottom-32 right-[-10%] h-96 w-96 rounded-full bg-sky-light/10 blur-[120px]" />
+        <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-cloud px-6 py-20">
+            {/* Gradient blends */}
+            <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
+            <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
+
+            {/* Glow blobs */}
+            <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/10 blur-[160px]" />
+
+            {/* Floating dots */}
+            <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0085fe 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
             <div className="relative mx-auto max-w-lg text-center">
-                <Badge variant="sky" className="bg-white/10 text-sky-light">
-                    404
-                </Badge>
-                <h1 className="mt-6 font-heading text-5xl font-extrabold leading-tight text-white md:text-6xl">
-                    Page not found
-                </h1>
-                <p className="mt-4 text-white/70">
-                    The page you're looking for doesn't exist, may have been moved, or
-                    the link you followed might be broken.
-                </p>
-
-                <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-                    <Button variant="primary" size="lg" onClick={handleGoBack}>
-                        ← Go back
-                    </Button>
-                    <Button
-                        as={Link}
-                        to="/"
-                        variant="outline"
-                        size="lg"
-                        className="border-white/25 text-white hover:border-sky hover:text-sky-light"
-                    >
-                        Back to home
-                    </Button>
+                {/* Large 404 number */}
+                <div className={`transition-all duration-700 ease-out ${visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
+                    <span className="font-heading text-[8rem] font-extrabold leading-none text-sky/10 md:text-[10rem]">
+                        404
+                    </span>
                 </div>
 
-                <p className="mt-8 text-sm text-white/50">
-                    Or explore our{" "}
-                    <Link to="/courses" className="font-medium text-sky-light hover:underline">
-                        programs
-                    </Link>{" "}
-                    instead.
-                </p>
+                {/* Content overlapping the number */}
+                <div className={`relative -mt-28 transition-all delay-200 duration-700 ease-out md:-mt-36 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
+                    {/* Icon */}
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-sky/10 text-sky">
+                        <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                        </svg>
+                    </div>
+
+                    <h1 className="font-heading text-3xl font-extrabold leading-tight text-ink sm:text-4xl md:text-5xl">
+                        Page not{" "}
+                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                            found
+                        </span>
+                    </h1>
+
+                    <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-muted sm:text-base">
+                        The page you're looking for doesn't exist, may have been moved, or the link you followed might be broken.
+                    </p>
+
+                    {/* Action buttons */}
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                        <Button variant="primary" size="md" onClick={handleGoBack} className="rounded-full px-6 shadow-lg shadow-sky/20">
+                            ← Go back
+                        </Button>
+                        <Button as={Link} to="/" variant="outline" size="md" className="rounded-full px-6">
+                            Back to home
+                        </Button>
+                    </div>
+
+                    {/* Explore link */}
+                    <p className="mt-5 text-sm text-muted">
+                        Or explore our{" "}
+                        <Link to="/courses" className="font-medium text-sky transition-colors hover:text-sky-light">
+                            programs
+                        </Link>{" "}
+                        instead.
+                    </p>
+                </div>
             </div>
-        </div>
+        </section>
     );
 };

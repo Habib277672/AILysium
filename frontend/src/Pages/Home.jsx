@@ -4,14 +4,15 @@ import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { Button } from "../Components/UI/Button";
 import { CourseCard } from "../Components/UI/CourseCard";
+import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
 import { FAQItem } from "../Components/UI/FAQItem";
 import { TestimonialSection } from "../Components/UI/TestimonialSection";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
 import { FaLaptopCode, FaPalette, FaBriefcase, FaBullhorn, FaChartLine, FaShieldAlt } from "react-icons/fa";
 import { FaSearch, FaUserPlus, FaLock, FaChalkboardTeacher } from "react-icons/fa";
 
-import heroImg from "../assets/Images/hero_img.png";
-import aboutImg from "../assets/Images/home_abt.png";
+import heroImg from "../assets/Images/hero_img.webp";
+import aboutImg from "../assets/Images/home_abt.webp";
 
 const skillCategories = [
   { name: "Development", icon: <FaLaptopCode /> },
@@ -260,7 +261,13 @@ export const Home = () => {
             </p>
           </div>
 
-          {coursesLoading && <p className="mt-14 text-center text-sm text-muted">Loading programs…</p>}
+          {coursesLoading && (
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <CourseCardSkeleton key={i} />
+              ))}
+            </div>
+          )}
           {!coursesLoading && coursesError && (
             <p className="mt-14 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600">{coursesError}</p>
           )}

@@ -4,6 +4,7 @@ import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Button } from "../../Components/UI/Button";
 import { Card } from "../../Components/UI/Card";
+import { Skeleton } from "../../Components/UI/Skeleton";
 import { CourseForm } from "../../Components/Admin/CourseForm";
 
 const statusBadgeVariant = {
@@ -119,7 +120,25 @@ export const AdminCourses = () => {
             )}
 
             <div className="mt-8">
-                {loading && <p className="text-sm text-slate">Loading…</p>}
+                {loading && (
+                    <div className="grid gap-4">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate/10 bg-white p-5 shadow-sm">
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-5 w-40 rounded-lg" />
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </div>
+                                    <Skeleton className="h-3 w-56 rounded-lg" />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-8 w-16 rounded-lg" />
+                                    <Skeleton className="h-8 w-16 rounded-lg" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 {!loading && error && <p className="text-sm text-red-600">{error}</p>}
 
                 {!loading && !error && (

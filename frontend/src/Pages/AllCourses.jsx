@@ -4,6 +4,8 @@ import { api } from "../lib/api";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
 import { Button } from "../Components/UI/Button";
+import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
+import { Skeleton } from "../Components/UI/Skeleton";
 
 const statusBadgeVariant = {
     AVAILABLE: "success",
@@ -65,8 +67,15 @@ export const AllCourses = () => {
 
     if (loading) {
         return (
-            <div className="mx-auto max-w-6xl px-6 py-24 text-center text-sm text-slate">
-                Loading courses…
+            <div className="mx-auto max-w-6xl px-6 py-16">
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <Skeleton className="mt-4 h-8 w-72 rounded-lg" />
+                <Skeleton className="mt-2 h-4 w-80 rounded-lg" />
+                <div className="mt-10 grid gap-6 md:grid-cols-3">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <CourseCardSkeleton key={i} />
+                    ))}
+                </div>
             </div>
         );
     }

@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
+import { CourseDetailsSkeleton } from "../Components/UI/CourseDetailsSkeleton";
 import { HiOutlineChevronLeft, HiOutlineClock, HiOutlineUser, HiOutlineCheckCircle, HiOutlineCollection, HiOutlineDocumentText, HiOutlineStatusOffline } from "react-icons/hi";
 
 const statusLabel = {
@@ -54,11 +55,7 @@ export const CourseDetails = () => {
     }, [slug, user, isAdmin]);
 
     if (loading) {
-        return (
-            <div className="mx-auto max-w-3xl px-6 py-24 text-center text-sm text-slate">
-                Loading…
-            </div>
-        );
+        return <CourseDetailsSkeleton />;
     }
 
     if (notFound || !course) {

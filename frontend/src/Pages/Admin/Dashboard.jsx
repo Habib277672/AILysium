@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Card } from "../../Components/UI/Card";
 import { Badge } from "../../Components/UI/Badge";
+import { AdminDashboardSkeleton } from "../../Components/UI/AdminDashboardSkeleton";
 
 export const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
@@ -47,7 +48,7 @@ export const AdminDashboard = () => {
     }, []);
 
     if (loading) {
-        return <p className="text-sm text-slate">Loading dashboard…</p>;
+        return <AdminDashboardSkeleton />;
     }
 
     if (error) {

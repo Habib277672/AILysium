@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
+import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineCalendar, HiOutlineExclamationCircle, HiOutlineAcademicCap, HiOutlineArrowRight, HiOutlineLogout } from "react-icons/hi";
 
 const paymentBadgeStyles = {
@@ -189,7 +190,14 @@ export const Profile = () => {
                     {loading && (
                         <div className="mt-6 space-y-3">
                             {[1, 2].map((i) => (
-                                <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate/5" />
+                                <div key={i} className="flex items-center gap-3.5 rounded-2xl border border-slate/10 bg-white px-5 py-4 shadow-sm">
+                                    <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                                    <div className="min-w-0 flex-1">
+                                        <Skeleton className="h-4 w-40 rounded-lg" />
+                                        <Skeleton className="mt-1.5 h-3 w-28 rounded-lg" />
+                                    </div>
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
                             ))}
                         </div>
                     )}

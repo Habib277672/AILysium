@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Skeleton } from "../UI/Skeleton";
 
 export const ProtectedRoute = ({ adminOnly = false, studentOnly = false }) => {
     const { user, loading } = useAuth();
@@ -8,7 +9,7 @@ export const ProtectedRoute = ({ adminOnly = false, studentOnly = false }) => {
     if (loading) {
         return (
             <div className="flex min-h-[50vh] items-center justify-center">
-                <p className="text-sm text-slate">Loading…</p>
+                <Skeleton className="h-5 w-24 rounded-lg" />
             </div>
         );
     }

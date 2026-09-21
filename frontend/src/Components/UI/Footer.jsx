@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../../assets/Images/logo.png";
+import logo from "../../assets/Images/logo.webp";
 
 const socialLinks = [
   { href: "#", label: "Instagram" },

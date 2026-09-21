@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { api } from "../lib/api";
 import { Button } from "../Components/UI/Button";
+import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineCreditCard } from "react-icons/hi";
 
 export const Payment = () => {
@@ -68,8 +69,13 @@ export const Payment = () => {
 
     if (loading) {
         return (
-            <div className="mx-auto max-w-2xl px-6 py-24 text-center text-sm text-slate">
-                Loading…
+            <div className="mx-auto max-w-2xl px-6 py-24">
+                <div className="space-y-4">
+                    <Skeleton className="h-8 w-48 rounded-lg" />
+                    <Skeleton className="h-4 w-full rounded-lg" />
+                    <Skeleton className="h-4 w-3/4 rounded-lg" />
+                    <Skeleton className="mt-6 h-12 w-full rounded-2xl" />
+                </div>
             </div>
         );
     }

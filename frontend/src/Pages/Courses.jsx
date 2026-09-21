@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { CourseCard } from "../Components/UI/CourseCard";
+import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
 
 const statusFilters = ["All", "AVAILABLE", "COMING_SOON"];
 
@@ -75,9 +76,11 @@ export const Courses = () => {
                 </div>
 
                 {loading && (
-                    <p className="mt-10 text-center text-sm text-slate">
-                        Loading programs…
-                    </p>
+                    <div className="mt-8 grid gap-6 md:grid-cols-3">
+                        {[1, 2, 3].map((i) => (
+                            <CourseCardSkeleton key={i} />
+                        ))}
+                    </div>
                 )}
 
                 {!loading && error && (

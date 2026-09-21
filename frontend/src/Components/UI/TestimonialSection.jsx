@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import woman1 from "../../assets/Images/Testimonials_imgs/woman_1.jpg";
-import woman2 from "../../assets/Images/Testimonials_imgs/woman_2.jpg";
-import woman3 from "../../assets/Images/Testimonials_imgs/woman_3.jpg";
-import woman4 from "../../assets/Images/Testimonials_imgs/woman_4.jpg";
-import man1 from "../../assets/Images/Testimonials_imgs/man_1.jpg";
-import man2 from "../../assets/Images/Testimonials_imgs/man_2.jpg";
+import woman1 from "../../assets/Images/Testimonials_imgs/woman_1.webp";
+import woman2 from "../../assets/Images/Testimonials_imgs/woman_2.webp";
+import woman3 from "../../assets/Images/Testimonials_imgs/woman_3.webp";
+import woman4 from "../../assets/Images/Testimonials_imgs/woman_4.webp";
+import man1 from "../../assets/Images/Testimonials_imgs/man_1.webp";
+import man2 from "../../assets/Images/Testimonials_imgs/man_2.webp";
 
 const testimonials = [
   {

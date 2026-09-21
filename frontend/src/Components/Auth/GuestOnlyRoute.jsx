@@ -1,5 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { ScrollToTop } from "../UI/ScrollToTop";
+import { Skeleton } from "../UI/Skeleton";
 
 export const GuestOnlyRoute = () => {
     const { user, loading } = useAuth();
@@ -7,7 +9,7 @@ export const GuestOnlyRoute = () => {
     if (loading) {
         return (
             <div className="flex min-h-[50vh] items-center justify-center">
-                <p className="text-sm text-slate">Loading…</p>
+                <Skeleton className="h-5 w-24 rounded-lg" />
             </div>
         );
     }
@@ -19,5 +21,10 @@ export const GuestOnlyRoute = () => {
         return <Navigate to={user.role === "ADMIN" ? "/admin" : "/profile"} replace />;
     }
 
-    return <Outlet />;
+    return (
+        <>
+            <ScrollToTop />
+            <Outlet />
+        </>
+    );
 };

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import { useAuth } from "../../context/AuthContext";
-import logo from "../../assets/Images/logo.png";
+import logo from "../../assets/Images/logo.webp";
 
 const navLinks = [
   { to: "/", label: "Home" },

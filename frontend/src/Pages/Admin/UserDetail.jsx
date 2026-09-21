@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Card } from "../../Components/UI/Card";
+import { Skeleton } from "../../Components/UI/Skeleton";
 
 const paymentBadgeVariant = {
     PENDING: "warning",
@@ -35,7 +36,20 @@ export const AdminUserDetail = () => {
     }, [id]);
 
     if (loading) {
-        return <p className="text-sm text-slate">Loading…</p>;
+        return (
+            <div className="space-y-4">
+                <Skeleton className="h-6 w-32 rounded-lg" />
+                <Skeleton className="h-8 w-48 rounded-lg" />
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="rounded-2xl border border-slate/10 bg-white p-5 shadow-sm">
+                            <Skeleton className="h-3 w-20 rounded-lg" />
+                            <Skeleton className="mt-2 h-5 w-36 rounded-lg" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
 
     if (error || !user) {

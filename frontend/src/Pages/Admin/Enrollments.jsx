@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
+import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
 const paymentBadgeVariant = {
     PENDING: "warning",
@@ -85,9 +86,7 @@ export const AdminEnrollments = () => {
             </div>
 
             <div className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
-                {loading && (
-                    <p className="p-6 text-center text-sm text-slate">Loading…</p>
-                )}
+                {loading && <AdminTableSkeleton columns={6} />}
 
                 {!loading && error && (
                     <p className="p-6 text-center text-sm text-red-600">{error}</p>
