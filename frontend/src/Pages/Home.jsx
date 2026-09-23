@@ -104,31 +104,31 @@ export const Home = () => {
         <div className="pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 rounded-full bg-sky/20 blur-[120px]" />
         <div className="pointer-events-none absolute -bottom-40 left-[-10%] h-96 w-96 rounded-full bg-sky-light/20 blur-[120px]" />
 
-        <div className="relative mx-auto grid max-w-6xl items-end gap-8 px-6 pt-8 pb-0 sm:gap-16 md:grid-cols-2 md:pt-10 md:pb-0">
+        <div className="relative mx-auto grid max-w-6xl items-end gap-8 px-6 pt-8 pb-0 sm:gap-16 md:grid-cols-2 md:items-center md:pt-10 md:pb-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="pb-12 sm:pb-20 md:pb-30"
+            className="order-1 pb-4 text-center sm:pb-20 sm:text-left md:pb-30"
           >
             <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-sm font-medium text-sky sm:mt-0">
               <span className="h-1.5 w-1.5 rounded-full bg-sky" />
               Forget the hype
             </span>
 
-            <h1 className="mt-3 font-heading text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:mt-6 md:text-[3.5rem] md:leading-[1.1]">
+            <h1 className="mt-3 font-heading text-3xl font-extrabold leading-[1.08] tracking-tight text-ink sm:mt-6 sm:text-4xl md:text-[3.5rem] md:leading-[1.1]">
               Learn AI from{" "}
               <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
                 zero to building
               </span>
             </h1>
 
-            <p className="mt-4 max-w-md text-lg leading-relaxed text-slate">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-slate sm:text-lg">
               Hands-on training for every stage — from teen beginners to
               freelancers — with real skills and tools you apply each week.
             </p>
 
-            <div className="mt-7 flex flex-nowrap items-center gap-3 sm:flex-wrap sm:gap-4">
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:justify-start sm:gap-4">
               <Button
                 as={Link}
                 to="/courses"
@@ -151,7 +151,7 @@ export const Home = () => {
           </motion.div>
 
           <motion.div
-            className="relative flex items-center justify-center"
+            className="order-2 flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -159,7 +159,7 @@ export const Home = () => {
             <img
               src={heroImg}
               alt="AiLysium hero"
-              className="block w-full max-w-sm rounded-3xl object-cover md:max-w-md"
+              className="block w-full max-w-[16rem] rounded-3xl object-cover sm:max-w-sm md:max-w-md"
             />
           </motion.div>
         </div>
@@ -225,7 +225,7 @@ export const Home = () => {
             pick one that interests you.
           </p>
 
-          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
             {skillCategories.map((category, index) => (
               <motion.div
                 key={category.name}
@@ -233,12 +233,13 @@ export const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                className="group relative flex cursor-pointer flex-col items-center gap-3.5 rounded-[1.25rem] border border-slate/10 bg-white px-3 py-4 shadow-sm shadow-ink/5 transition-all duration-300 hover:-translate-y-1.5 hover:border-sky/25 hover:shadow-lg hover:shadow-sky/10"
+                className="group relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border border-slate/10 bg-white px-3 py-6 shadow-sm shadow-ink/5 transition-all duration-300 hover:-translate-y-2 hover:border-sky/25 hover:shadow-xl hover:shadow-sky/10"
               >
-                <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-sky/10 to-sky-light/10 text-sky transition-all duration-300 group-hover:scale-110 group-hover:from-sky group-hover:to-sky-light group-hover:text-white group-hover:shadow-md group-hover:shadow-sky/30">
+                <span className="pointer-events-none absolute -top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-sky/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky/10 to-sky-light/15 text-xl text-sky transition-all duration-300 group-hover:scale-110 group-hover:from-sky group-hover:to-sky-light group-hover:text-white group-hover:shadow-lg group-hover:shadow-sky/40">
                   {category.icon}
                 </span>
-                <span className="text-[13px] font-semibold text-ink transition-colors duration-200 group-hover:text-sky">{category.name}</span>
+                <span className="relative text-[13px] font-semibold text-ink transition-colors duration-200 group-hover:text-sky">{category.name}</span>
               </motion.div>
             ))}
           </div>
@@ -296,7 +297,7 @@ export const Home = () => {
 
               {courses.length > 0 && (
                 <div className="mt-14 text-center">
-                  <Button as={Link} to="/courses" variant="outline" size="lg" className="rounded-full border-sky/30 text-ink hover:border-sky hover:bg-sky/5">
+                  <Button as={Link} to="/courses" variant="primary" size="lg" className="rounded-full px-8 py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35">
                     View all programs
                   </Button>
                 </div>
@@ -375,18 +376,18 @@ export const Home = () => {
       <TestimonialSection />
 
       {/* Short About — data left, graphic right */}
-      <section className="relative overflow-hidden bg-white py-24 md:py-32">
+      <section className="relative overflow-hidden bg-white py-16 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
-            <div>
+          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+            <div className="text-center md:text-left">
               <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
                 <span className="h-1 w-1 rounded-full bg-sky" />
                 About AiLysium
               </span>
-              <h2 className="mt-5 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
+              <h2 className="mt-5 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
                 Hands-on AI training, built for <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">real skills</span>
               </h2>
-              <p className="mt-5 text-base leading-relaxed text-muted">
+              <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
                 AiLysium is based in Pakistan, training teen beginners and
                 freelancers to actually build with AI — not just talk about
                 it. Every program pairs real mentors with weekly, hands-on
@@ -397,13 +398,13 @@ export const Home = () => {
               </Button>
             </div>
 
-            <div className="relative">
+            <div className="relative mx-auto w-full max-w-md md:mx-0 md:max-w-none">
               <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
               <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-xl shadow-ink/5">
                 <img
                   src={aboutImg}
                   alt="AiLysium training"
-                  className="h-72 w-full object-cover sm:h-80 md:h-96"
+                  className="h-56 w-full object-cover sm:h-72 md:h-96"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
               </div>
@@ -413,27 +414,27 @@ export const Home = () => {
       </section>
 
       {/* FAQ */}
-      <section className="relative overflow-hidden bg-cloud py-24 md:py-28">
+      <section className="relative overflow-hidden bg-cloud py-16 md:py-28">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
 
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-[1fr_1.4fr] md:items-start">
-          <div className="md:sticky md:top-8">
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-[1fr_1.4fr] md:items-start md:gap-12">
+          <div className="text-center md:text-left md:sticky md:top-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
               <span className="h-1 w-1 rounded-full bg-sky" />
               FAQ
             </span>
-            <h2 className="mt-3 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
+            <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
               Got <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">questions?</span>
             </h2>
-            <p className="mt-2 max-w-xs text-base leading-relaxed text-muted">
+            <p className="mt-2 mx-auto max-w-xs text-sm leading-relaxed text-muted sm:text-base md:mx-0">
               Can't find what you're looking for? Reach out and we'll get back to you.
             </p>
             <Button as={Link} to="/contact" variant="primary" size="md" className="mt-5 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35">
               Contact us
             </Button>
           </div>
-          <div className="divide-y divide-slate/10 rounded-3xl border border-slate/10 bg-white/70 p-6 shadow-sm shadow-ink/4 backdrop-blur-md transition-shadow duration-300 hover:shadow-lg hover:shadow-ink/5 sm:p-8">
+          <div className="divide-y divide-slate/10 rounded-3xl border border-slate/10 bg-white/70 p-5 shadow-sm shadow-ink/4 backdrop-blur-md transition-shadow duration-300 hover:shadow-lg hover:shadow-ink/5 sm:p-8">
             {faqs.map((faq, index) => (
               <FAQItem
                 key={faq.question}

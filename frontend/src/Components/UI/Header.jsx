@@ -71,7 +71,7 @@ export const Header = () => {
               <Button as={Link} to="/login" variant="ghost" size="sm" className="rounded-xl px-4">
                 Log in
               </Button>
-              <Button as={Link} to="/signup" variant="primary" size="sm" className="rounded-xl px-5 shadow-sm shadow-sky/25 hover:shadow-md hover:shadow-sky/35">
+              <Button as={Link} to="/signup" variant="primary" size="sm" className="rounded-full px-5 shadow-sm shadow-sky/25 hover:shadow-md hover:shadow-sky/35">
                 Sign up
               </Button>
             </>

@@ -31,16 +31,16 @@ export const Footer = () => {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky/50 to-transparent" />
       <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-[600px] -translate-x-1/2 rounded-full bg-sky/10 blur-[140px]" />
 
-      <div className="relative mx-auto max-w-6xl px-6 pt-16 pb-10">
-        <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
-          {/* Brand */}
-          <div>
+      <div className="relative mx-auto max-w-6xl px-6 pt-12 pb-8 md:pt-16 md:pb-10">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-[1.5fr_1fr_1fr_1fr] md:gap-12">
+          {/* Brand — full width on mobile */}
+          <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block">
-              <div className="inline-flex items-center gap-2.5 rounded-2xl bg-white/40 px-4 py-3 backdrop-blur-sm">
-                <img src={logo} alt="AiLysium" className="h-16 w-auto md:h-20" />
+              <div className="inline-flex items-center gap-2.5 rounded-2xl bg-white/40 px-3 py-2.5 backdrop-blur-sm sm:px-4 sm:py-3">
+                <img src={logo} alt="AiLysium" className="h-12 w-auto sm:h-16 md:h-20" />
               </div>
             </Link>
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/60">
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/60">
               Hands-on AI training for teen beginners and freelancers. Based in
               Pakistan, providing accessible AI education to students across the
               country.
@@ -74,12 +74,12 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
-          <div>
+          {/* Social Media */}
+          <div className="col-span-1">
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/30">
               Social Media
             </h3>
-            <ul className="mt-5 space-y-3.5">
+            <ul className="mt-4 space-y-3 sm:mt-5 sm:space-y-3.5">
               {socialLinks.map(({ href, label }) => (
                 <li key={label}>
                   <a
@@ -95,11 +95,12 @@ export const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          {/* Company */}
+          <div className="col-span-1">
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/30">
               Company
             </h3>
-            <ul className="mt-5 space-y-3.5">
+            <ul className="mt-4 space-y-3 sm:mt-5 sm:space-y-3.5">
               {companyLinks.map((link) => (
                 <li key={link.to}>
                   <Link
@@ -113,11 +114,12 @@ export const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          {/* Account */}
+          <div className="col-span-1">
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/30">
               Account
             </h3>
-            <ul className="mt-5 space-y-3.5">
+            <ul className="mt-4 space-y-3 sm:mt-5 sm:space-y-3.5">
               {accountLinks.map((link) => (
                 <li key={link.to}>
                   <Link
@@ -133,7 +135,7 @@ export const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-14 flex flex-col items-center gap-4 border-t border-white/10 pt-8 text-xs text-white/30 sm:flex-row sm:justify-between">
+        <div className="mt-10 flex flex-col items-center gap-4 border-t border-white/10 pt-8 text-xs text-white/30 sm:flex-row sm:justify-between md:mt-14">
           <p>&copy; {year} AiLysium. All rights reserved.</p>
           <p>Course discovery, enrollment & payment platform.</p>
         </div>

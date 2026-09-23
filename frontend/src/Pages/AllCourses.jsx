@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import { Badge } from "../Components/UI/Badge";
 import { Card } from "../Components/UI/Card";
 import { Button } from "../Components/UI/Button";
@@ -67,11 +69,11 @@ export const AllCourses = () => {
 
     if (loading) {
         return (
-            <div className="mx-auto max-w-6xl px-6 py-16">
+            <div className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-16">
                 <Skeleton className="h-6 w-24 rounded-full" />
                 <Skeleton className="mt-4 h-8 w-72 rounded-lg" />
                 <Skeleton className="mt-2 h-4 w-80 rounded-lg" />
-                <div className="mt-10 grid gap-6 md:grid-cols-3">
+                <div className="mt-8 grid gap-5 sm:mt-10 sm:gap-6 md:grid-cols-3">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
                         <CourseCardSkeleton key={i} />
                     ))}
@@ -89,9 +91,9 @@ export const AllCourses = () => {
     }
 
     return (
-        <div className="mx-auto max-w-6xl px-6 py-16">
+        <div className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-16">
             <Badge variant="sky">All programs</Badge>
-            <h1 className="mt-4 font-heading text-3xl font-bold text-ink">
+            <h1 className="mt-4 font-heading text-2xl font-bold text-ink sm:text-3xl">
                 Browse and manage your courses
             </h1>
             <p className="mt-2 text-sm text-slate">
@@ -99,11 +101,11 @@ export const AllCourses = () => {
             </p>
 
             {displayedCourses.length === 0 ? (
-                <Card padding="lg" className="mt-10 text-center text-sm text-slate">
+                <Card padding="lg" className="mt-8 text-center text-sm text-slate sm:mt-10">
                     No programs are available right now. Check back soon.
                 </Card>
             ) : (
-                <div className="mt-10 grid gap-6 md:grid-cols-3">
+                <div className="mt-8 grid gap-5 sm:mt-10 sm:gap-6 md:grid-cols-3">
                     {displayedCourses.map((course) => {
                         const enrollment = enrollmentByCourseId[course.id];
                         const isAvailable = course.status === "AVAILABLE";
@@ -115,9 +117,10 @@ export const AllCourses = () => {
                                 className="flex flex-col overflow-hidden border-t-4 border-t-sky"
                             >
                                 {course.imageUrl && (
-                                    <img
+                                    <LazyLoadImage
                                         src={course.imageUrl}
                                         alt={course.title}
+                                        effect="blur"
                                         className="-mx-6 -mt-6 mb-4 h-40 w-[calc(100%+3rem)] object-cover"
                                     />
                                 )}
@@ -141,7 +144,7 @@ export const AllCourses = () => {
                                     )}
                                 </div>
 
-                                <h2 className="mt-4 font-heading text-xl font-semibold text-ink">
+                                <h2 className="mt-3 font-heading text-lg font-semibold text-ink sm:mt-4 sm:text-xl">
                                     {course.title}
                                 </h2>
                                 {course.description && (
@@ -150,12 +153,12 @@ export const AllCourses = () => {
                                     </p>
                                 )}
                                 {course.price != null && (
-                                    <p className="mt-4 font-heading text-lg font-bold text-ink">
+                                    <p className="mt-3 font-heading text-lg font-bold text-ink sm:mt-4">
                                         PKR {course.price.toLocaleString()}
                                     </p>
                                 )}
 
-                                <div className="mt-6 flex flex-col gap-2">
+                                <div className="mt-5 flex flex-col gap-2 sm:mt-6">
                                     {/* Unpublished courses have no live details page anymore
                       (the public GET /courses/:slug excludes them) — no
                       point linking to a page that'll 404. */}

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import { Button } from "./Button";
 import { Badge } from "./Badge";
 import { Card } from "./Card";
@@ -18,10 +20,12 @@ export const CourseCard = ({ course }) => {
     <Card className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-sm shadow-ink/4 transition-all duration-300 hover:-translate-y-1.5 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8">
       {course.imageUrl && (
         <div className="relative -mx-6 -mt-13.5  overflow-hidden rounded-t-3xl">
-          <img
+          <LazyLoadImage
             src={course.imageUrl}
             alt={course.title}
-            className="h-52 w-[calc(100%+3rem)] object-contain -mt-1 transition-transform duration-500 group-hover:scale-105"
+            effect="blur"
+            wrapperProps={{ className: "block transition-transform duration-500 group-hover:scale-105" }}
+            className="h-52 w-[calc(100%+3rem)] object-contain -mt-1"
           />
         </div>
       )}
