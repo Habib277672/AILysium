@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
@@ -58,7 +59,12 @@ export const Profile = () => {
 
     return (
         <div>
-            <div className="mx-auto max-w-4xl px-5 py-8 sm:px-6 sm:py-10">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto max-w-4xl px-5 py-8 sm:px-6 sm:py-10"
+            >
                 {/* Email verification alert */}
                 {!user.emailVerifiedAt && (
                     <div className="mb-6 rounded-2xl border border-amber-200/50 bg-amber-50 px-5 py-3.5 sm:mb-8 sm:px-6 sm:py-4">
@@ -260,7 +266,7 @@ export const Profile = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { motion } from "motion/react";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Card } from "../../Components/UI/Card";
@@ -66,7 +67,11 @@ export const AdminUserDetail = () => {
     }
 
     return (
-        <div>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
             <Link to="/admin/users" className="text-sm text-slate hover:text-sky">
                 ← All users
             </Link>
@@ -138,6 +143,6 @@ export const AdminUserDetail = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };

@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { useEffect, useState } from "react";
 
@@ -31,7 +32,12 @@ export const NotFound = () => {
             {/* Floating dots */}
             <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0085fe 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
-            <div className="relative mx-auto max-w-lg text-center">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mx-auto max-w-lg text-center"
+            >
                 {/* Large 404 number */}
                 <div className={`transition-all duration-700 ease-out ${visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
                     <span className="font-heading text-[6rem] font-extrabold leading-none text-sky/10 sm:text-[8rem] md:text-[10rem]">
@@ -78,7 +84,7 @@ export const NotFound = () => {
                         instead.
                     </p>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 };

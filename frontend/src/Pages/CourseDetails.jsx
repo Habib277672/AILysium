@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
@@ -145,7 +146,12 @@ export const CourseDetails = () => {
                         All programs
                     </Link>
 
-                    <div className="mt-5 max-w-xl">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                        className="mt-5 max-w-xl"
+                    >
                         <div className="flex flex-wrap items-center gap-2">
                             <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm ${isAvailable ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
                                 <span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? "bg-emerald-500" : "bg-amber-500"}`} />
@@ -161,11 +167,11 @@ export const CourseDetails = () => {
                                     Ages {course.ageRange}
                                 </span>
                             )}
-                            {isEnrolled && (
+                            {/* {isEnrolled && (
                                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm ${enrollment.paymentStatus === "CONFIRMED" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
                                     {enrollment.paymentStatus === "CONFIRMED" ? "Enrolled" : "Pending"}
                                 </span>
-                            )}
+                            )} */}
                         </div>
 
                         <h1 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink drop-shadow-sm sm:text-3xl md:text-[2.75rem] md:leading-tight">
@@ -191,7 +197,7 @@ export const CourseDetails = () => {
                                 Ask on WhatsApp
                             </Button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -201,7 +207,11 @@ export const CourseDetails = () => {
                     <div className="grid items-start gap-10 md:grid-cols-[1.4fr_1fr] md:gap-14">
                         <div className="space-y-6 sm:space-y-8">
                             {course.benefits.length > 0 && (
-                                <div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
                                             <HiOutlineCheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -220,11 +230,15 @@ export const CourseDetails = () => {
                                             </li>
                                         ))}
                                     </ul>
-                                </div>
+                                </motion.div>
                             )}
 
                             {course.toolsCovered.length > 0 && (
-                                <div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
                                             <HiOutlineCollection className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -240,10 +254,14 @@ export const CourseDetails = () => {
                                             </span>
                                         ))}
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
-                            <div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                            >
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
                                         <HiOutlineDocumentText className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -253,11 +271,15 @@ export const CourseDetails = () => {
                                     </h2>
                                 </div>
                                 <p className="mt-3 text-sm leading-relaxed text-muted">{course.format}</p>
-                            </div>
+                            </motion.div>
                         </div>
 
                         {/* Sidebar */}
-                        <div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        >
                             <div className="rounded-3xl border border-slate/15 bg-white p-5 shadow-sm sm:p-7">
                                 <p className="text-sm text-muted">Starting from</p>
                                 <p className="mt-1 font-heading text-2xl font-bold text-ink sm:text-3xl">
@@ -301,7 +323,7 @@ export const CourseDetails = () => {
                                     {enrollLabel}
                                 </Button>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </section>

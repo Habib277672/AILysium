@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Reveal } from "./Reveal";
 import woman1 from "../../assets/Images/Testimonials_imgs/woman_1.webp";
 import woman2 from "../../assets/Images/Testimonials_imgs/woman_2.webp";
 import woman3 from "../../assets/Images/Testimonials_imgs/woman_3.webp";
@@ -60,7 +61,7 @@ const StarIcon = () => (
   </svg>
 );
 
-export const TestimonialSection = () => {
+export const TestimonialSection = ({ revealPrefix = "testimonials" }) => {
   const [current, setCurrent] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const timerRef = useRef(null);
@@ -108,7 +109,7 @@ export const TestimonialSection = () => {
 
       <div className="relative mx-auto max-w-6xl px-6">
         {/* Header */}
-        <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
+        <Reveal id={`${revealPrefix}-header`} className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
               <span className="h-1 w-1 rounded-full bg-sky" />
@@ -124,7 +125,7 @@ export const TestimonialSection = () => {
             <button
               type="button"
               onClick={prev}
-              className="group flex h-11 w-11 items-center justify-center rounded-full border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
+              className="group flex h-11 w-11 items-center justify-center rounded-full cursor-pointer border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
               aria-label="Previous"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform duration-200 group-hover:-translate-x-0.5">
@@ -144,7 +145,7 @@ export const TestimonialSection = () => {
             <button
               type="button"
               onClick={next}
-              className="group flex h-11 w-11 items-center justify-center rounded-full border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
+              className="group flex h-11 w-11 items-center justify-center rounded-full cursor-pointer border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
               aria-label="Next"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform duration-200 group-hover:translate-x-0.5">
@@ -152,31 +153,39 @@ export const TestimonialSection = () => {
               </svg>
             </button>
           </div>
-        </div>
+        </Reveal>
 
         {/* Cards */}
-        <div
+        <Reveal
+          id={`${revealPrefix}-cards`}
+          delay={0.1}
           className="mt-10"
-          onMouseEnter={() => clearInterval(timerRef.current)}
-          onMouseLeave={startTimer}
         >
+          <div
+            onMouseEnter={() => clearInterval(timerRef.current)}
+            onMouseLeave={startTimer}
+          >
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {visible.map((t, i) => (
                 <motion.div
                   key={t.name}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95, y: 24 }}
+                  layout={!isMobile}
+                  initial={{ opacity: 0, scale: isMobile ? 1 : 0.95, y: isMobile ? 8 : 24 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -24 }}
-                  transition={{
-                    layout: { duration: 0.35, ease: "easeInOut" },
-                    opacity: { duration: 0.25 },
-                    scale: { duration: 0.35, ease: "easeOut" },
-                    y: { duration: 0.35, ease: "easeOut" },
-                    delay: i * 0.08,
-                  }}
-                  className="group relative overflow-hidden rounded-3xl border border-slate/15 bg-white/70 p-7 shadow-sm shadow-ink/4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8"
+                  exit={{ opacity: 0, scale: isMobile ? 1 : 0.95, y: isMobile ? -8 : -24 }}
+                  transition={
+                    isMobile
+                      ? { duration: 0.2, ease: "easeOut", delay: i * 0.04 }
+                      : {
+                          layout: { duration: 0.35, ease: "easeInOut" },
+                          opacity: { duration: 0.25 },
+                          scale: { duration: 0.35, ease: "easeOut" },
+                          y: { duration: 0.35, ease: "easeOut" },
+                          delay: i * 0.08,
+                        }
+                  }
+                  className="group relative overflow-hidden rounded-3xl border border-slate/15 bg-white p-7 shadow-sm shadow-ink/4 transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8 sm:bg-white/70 sm:backdrop-blur-md"
                 >
                   {/* Decorative gradient corner */}
                   <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-sky/8 to-transparent transition-transform duration-500 group-hover:scale-150" />
@@ -217,6 +226,7 @@ export const TestimonialSection = () => {
             </AnimatePresence>
           </div>
         </div>
+        </Reveal>
       </div>
     </section>
   );

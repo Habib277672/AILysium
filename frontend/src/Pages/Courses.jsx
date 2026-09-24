@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { CourseCard } from "../Components/UI/CourseCard";
 import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
+import { Reveal } from "../Components/UI/Reveal";
 
 const statusFilters = ["All", "AVAILABLE", "COMING_SOON"];
 
@@ -44,7 +45,12 @@ export const Courses = () => {
                 <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
                 <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
-                <div className="relative mx-auto max-w-3xl px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative mx-auto max-w-3xl px-6 text-center"
+                >
                     <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
                         <span className="h-1 w-1 rounded-full bg-sky" />
                         Programs
@@ -61,27 +67,28 @@ export const Courses = () => {
                         mentorship, and a freelancer-ready track — no account needed to
                         browse.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             {/* Catalog */}
             <section className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-20">
-                <div className="flex flex-wrap gap-2.5">
-                    {statusFilters.map((status) => (
-                        <button
-                            key={status}
-                            type="button"
-                            onClick={() => setFilter(status)}
-                            className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 ease-in-out ${filter === status
-                                ? "border-sky bg-sky text-white shadow-lg shadow-sky/25"
-                                : "border-slate/20 bg-white text-slate hover:border-sky/40 hover:text-sky hover:shadow-md hover:shadow-sky/10"
-                                }`}
-                        >
-                            {filterLabel[status]}
-                        </button>
-                    ))}
-                </div>
-
+                <Reveal id="courses-tabs" y={12}>
+                    <div className="flex flex-wrap gap-2.5">
+                        {statusFilters.map((status) => (
+                            <button
+                                key={status}
+                                type="button"
+                                onClick={() => setFilter(status)}
+                                className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 ease-in-out ${filter === status
+                                    ? "border-sky bg-sky text-white shadow-lg shadow-sky/25"
+                                    : "border-slate/20 bg-white text-slate hover:border-sky/40 hover:text-sky hover:shadow-md hover:shadow-sky/10"
+                                    }`}
+                            >
+                                {filterLabel[status]}
+                            </button>
+                        ))}
+                    </div>
+                </Reveal>
                 {loading && (
                     <div className="mt-8 grid gap-5 sm:gap-6 md:grid-cols-3">
                         {[1, 2, 3].map((i) => (
@@ -97,26 +104,24 @@ export const Courses = () => {
                 )}
 
                 {!loading && !error && (
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={filter}
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -12 }}
-                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                            className="mt-8 grid gap-5 sm:gap-6 md:grid-cols-3"
-                        >
-                            {visibleCourses.map((course) => (
-                                <CourseCard key={course.slug} course={course} />
-                            ))}
+                    <div className="mt-8 grid gap-5 sm:gap-6 md:grid-cols-3">
+                        {visibleCourses.map((course, index) => (
+                            <Reveal
+                                key={`${filter}-${course.slug}`}
+                                id={`courses-card-${course.slug}`}
+                                y={16}
+                                delay={index * 0.08}
+                            >
+                                <CourseCard course={course} />
+                            </Reveal>
+                        ))}
 
-                            {visibleCourses.length === 0 && (
-                                <p className="col-span-full py-10 text-center text-sm text-slate">
-                                    No programs match this filter yet.
-                                </p>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
+                        {visibleCourses.length === 0 && (
+                            <p className="col-span-full py-10 text-center text-sm text-slate">
+                                No programs match this filter yet.
+                            </p>
+                        )}
+                    </div>
                 )}
             </section>
         </div>

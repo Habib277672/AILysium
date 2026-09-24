@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { useAuth } from "../context/AuthContext";
 import { HiOutlineKey, HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
@@ -47,7 +48,12 @@ export const ResetPassword = () => {
 
     if (!token) {
         return (
-            <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 text-center sm:px-6 sm:py-16">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 text-center sm:px-6 sm:py-16"
+            >
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-500 mx-auto">
                     <HiOutlineExclamationCircle className="h-7 w-7" />
                 </div>
@@ -60,13 +66,18 @@ export const ResetPassword = () => {
                 <Button as={Link} to="/forgot-password" variant="primary" size="lg" className="mt-8 mx-auto rounded-full cursor-pointer">
                     Request new link
                 </Button>
-            </div>
+            </motion.div>
         );
     }
 
     if (success) {
         return (
-            <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 text-center sm:px-6 sm:py-16">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 text-center sm:px-6 sm:py-16"
+            >
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 mx-auto">
                     <HiOutlineCheckCircle className="h-7 w-7" />
                 </div>
@@ -85,12 +96,17 @@ export const ResetPassword = () => {
                 >
                     Go to log in
                 </Button>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16"
+        >
             <div className="text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-sky/10 text-sky sm:h-14 sm:w-14">
                     <HiOutlineKey className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -169,6 +185,6 @@ export const ResetPassword = () => {
                     </Button>
                 </form>
             </div>
-        </div>
+        </motion.div>
     );
 };

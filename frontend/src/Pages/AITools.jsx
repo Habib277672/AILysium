@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
+import { Reveal } from "../Components/UI/Reveal";
 import { categories, aiTools } from "../data/aiTools";
 import {
     HiOutlineSearch,
@@ -89,7 +91,12 @@ export const AITools = () => {
                 <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
                 <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
-                <div className="relative mx-auto max-w-3xl px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative mx-auto max-w-3xl px-6 text-center"
+                >
                     <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
                         <span className="h-1 w-1 rounded-full bg-sky" />
                         AI Tools
@@ -105,12 +112,12 @@ export const AITools = () => {
                         design, and automate today — browse by category to find what
                         fits your project.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             {/* Search + category tabs + tool grid */}
             <section className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
-                <div className="text-center">
+                <Reveal id="aitools-header" className="text-center">
                     <h2 className="font-heading text-2xl font-extrabold text-ink sm:text-3xl md:text-4xl">
                         Explore AI tools{" "}
                         <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
@@ -120,9 +127,9 @@ export const AITools = () => {
                     <p className="mx-auto mt-3 max-w-md text-sm text-muted">
                         Browse through our curated collection of AI tools organized by what they do best.
                     </p>
-                </div>
+                </Reveal>
 
-                <div className="mx-auto mt-6 max-w-md sm:mt-8">
+                <Reveal id="aitools-search" y={12} delay={0.1} className="mx-auto mt-6 max-w-md sm:mt-8">
                     <div className="relative">
                         <HiOutlineSearch className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted/50" />
                         <input
@@ -133,17 +140,17 @@ export const AITools = () => {
                             className="w-full rounded-full border border-slate/15 bg-white py-3 pl-12 pr-5 text-sm shadow-sm shadow-ink/3 transition-all duration-300 placeholder:text-muted/40 focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/15 focus:shadow-md focus:shadow-sky/8 sm:py-3.5"
                         />
                     </div>
-                </div>
+                </Reveal>
 
-                <div className="mx-auto mt-6 flex max-w-md items-center gap-4 sm:mt-8">
+                <Reveal id="aitools-divider" y={8} delay={0.15} className="mx-auto mt-6 flex max-w-md items-center gap-4 sm:mt-8">
                     <div className="h-px flex-1 bg-slate/15" />
                     <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-muted/60">
                         Explore categories
                     </p>
                     <div className="h-px flex-1 bg-slate/15" />
-                </div>
+                </Reveal>
 
-                <div className="mx-auto mt-4 flex max-w-4xl flex-wrap justify-center gap-1.5 sm:gap-2">
+                <Reveal id="aitools-categories" y={12} delay={0.2} className="mx-auto mt-4 flex max-w-4xl flex-wrap justify-center gap-1.5 sm:gap-2">
                     {categories.map((category) => {
                         const Icon = categoryIcons[category] || HiOutlineGlobeAlt;
                         return (
@@ -161,14 +168,16 @@ export const AITools = () => {
                             </button>
                         );
                     })}
-                </div>
+                </Reveal>
 
                 <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {visibleTools.map((tool, index) => (
-                        <div
+                        <Reveal
                             key={`${tool.name}-${index}`}
-                            className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate/10 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky/15 hover:shadow-xl hover:shadow-sky/8 animate-[fadeInUp_0.4s_ease-out_both] sm:p-6"
-                            style={{ animationDelay: `${(index % PAGE_SIZE) * 50}ms` }}
+                            id={`tool-${tool.name}`}
+                            y={16}
+                            delay={(index % PAGE_SIZE) * 0.06}
+                            className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate/10 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky/15 hover:shadow-xl hover:shadow-sky/8 sm:p-6"
                         >
                             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
@@ -233,7 +242,7 @@ export const AITools = () => {
                                     {tool.category}
                                 </span>
                             </div>
-                        </div>
+                        </Reveal>
                     ))}
 
                     {visibleTools.length === 0 && (
@@ -244,7 +253,7 @@ export const AITools = () => {
                 </div>
 
                 {hasMore && (
-                    <div className="mt-8 text-center sm:mt-10">
+                    <Reveal id="aitools-loadmore" y={12} className="mt-8 text-center sm:mt-10">
                         <button
                             type="button"
                             onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
@@ -255,17 +264,19 @@ export const AITools = () => {
                                 {filteredTools.length - visibleCount}
                             </span>
                         </button>
-                    </div>
+                    </Reveal>
                 )}
             </section>
 
             {/* CTA */}
-            <ConsultationSection
-                heading={<>Want to work with AI tools{" "}<span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">hands-on?</span></>}
-                description="Every AiLysium program is built around real, weekly practice with AI tools — not just watching demos."
-                primaryCta={{ text: "Explore programs", to: "/courses" }}
-                secondaryCta={{ text: "Talk to us", to: "/contact" }}
-            />
+            <Reveal id="aitools-consultation">
+                <ConsultationSection
+                    heading={<>Want to work with AI tools{" "}<span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">hands-on?</span></>}
+                    description="Every AiLysium program is built around real, weekly practice with AI tools — not just watching demos."
+                    primaryCta={{ text: "Explore programs", to: "/courses" }}
+                    secondaryCta={{ text: "Talk to us", to: "/contact" }}
+                />
+            </Reveal>
         </div>
     );
 };

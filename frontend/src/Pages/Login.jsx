@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { Input } from "../Components/UI/Input";
 import { useAuth } from "../context/AuthContext";
@@ -47,7 +48,12 @@ export const Login = () => {
     };
 
     return (
-        <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16"
+        >
             <div className="text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-sky/10 text-sky sm:h-14 sm:w-14">
                     <HiOutlineLogin className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -130,6 +136,6 @@ export const Login = () => {
                     Back to home
                 </Link>
             </div>
-        </div>
+        </motion.div>
     );
 };

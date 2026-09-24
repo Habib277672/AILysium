@@ -38,6 +38,29 @@ body {
   background-color: var(--color-cloud);
 }
 
+/* Match page-transition container so empty frames don't flash white */
+html {
+  background-color: var(--color-cloud);
+  overscroll-behavior-y: none;
+}
+
+/* Route swaps should paint the next page without a blank frame */
+#root {
+  min-height: 100vh;
+  background-color: var(--color-cloud);
+}
+
+/* backdrop-filter is expensive on mobile GPUs and causes scroll jank */
+@media (max-width: 767px) {
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
 /* section {
   content-visibility: auto;
   contain-intrinsic-size: 500px;

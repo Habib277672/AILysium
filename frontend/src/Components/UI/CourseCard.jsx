@@ -29,8 +29,8 @@ export const CourseCard = ({ course }) => {
           />
         </div>
       )}
-      <div className="flex flex-1 flex-col px-1">
-        <h3 className="font-heading text-lg sm:text-xl font-bold leading-snug text-ink transition-colors group-hover:text-sky">{course.title}</h3>
+      <div className="flex flex-1 flex-col px-1 -mt-4">
+        <h3 className="font-heading text-lg sm:text-xl font-bold leading-snug text-ink/75 transition-colors group-hover:text-sky">{course.title}</h3>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{course.description}</p>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-x-4 gap-y-2 text-xs sm:text-sm text-muted">
@@ -50,7 +50,7 @@ export const CourseCard = ({ course }) => {
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate/10 pt-5">
           <div className="min-w-0">
             <span className="text-xs text-muted">Starting from</span>
-            <p className="font-heading text-base sm:text-lg font-bold text-ink truncate">PKR {course.price.toLocaleString()}</p>
+            <p className="font-heading text-base sm:text-lg font-bold text-ink/75 truncate">PKR {course.price.toLocaleString()}</p>
           </div>
           <Button as={Link} to={`/courses/${course.slug}`} variant="primary" size="sm" className="shrink-0 rounded-full px-4 sm:px-5 text-xs sm:text-sm">
             View programme

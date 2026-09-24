@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Card } from "../../Components/UI/Card";
@@ -42,7 +43,11 @@ export const AdminUsers = () => {
     }, [users, search]);
 
     return (
-        <div>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
             <Badge variant="sky">Registered</Badge>
             <h1 className="mt-3 font-heading text-3xl font-bold text-ink">Users</h1>
             <p className="mt-2 text-sm text-slate">
@@ -58,7 +63,7 @@ export const AdminUsers = () => {
                 className="mt-6 w-full max-w-xs rounded-full border border-slate/20 px-4 py-2 text-sm focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/20"
             />
 
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
+            <div data-lenis-prevent className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
                 {loading && <AdminTableSkeleton columns={6} />}
                 {!loading && error && (
                     <p className="p-6 text-center text-sm text-red-600">{error}</p>
@@ -118,6 +123,6 @@ export const AdminUsers = () => {
                     </table>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };

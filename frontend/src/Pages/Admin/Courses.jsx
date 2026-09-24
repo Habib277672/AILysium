@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Button } from "../../Components/UI/Button";
@@ -82,7 +83,11 @@ export const AdminCourses = () => {
     };
 
     return (
-        <div>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <Badge variant="sky">Manage</Badge>
@@ -185,6 +190,6 @@ export const AdminCourses = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };

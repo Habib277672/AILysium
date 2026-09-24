@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { TestimonialSection } from "../Components/UI/TestimonialSection";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
+import { Reveal } from "../Components/UI/Reveal";
 import founderImg from "../assets/Images/founder_img.webp";
 
 const whatWeDoCards = [
@@ -53,7 +55,12 @@ export const About = () => {
                 <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
                 <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/15 blur-[160px]" />
 
-                <div className="relative mx-auto max-w-3xl px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative mx-auto max-w-3xl px-6 text-center"
+                >
                     <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
                         <span className="h-1 w-1 rounded-full bg-sky" />
                         About AiLysium
@@ -70,14 +77,14 @@ export const About = () => {
                         We built a place where teen beginners and freelancers learn by
                         actually shipping things.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             {/* Who We Are */}
             <section className="relative overflow-hidden bg-white py-16 md:py-28">
                 <div className="mx-auto max-w-6xl px-6">
                     <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-                        <div className="text-center md:text-left">
+                        <Reveal id="who-text" x={-20} className="text-center md:text-left">
                             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
                                 <span className="h-1 w-1 rounded-full bg-sky" />
                                 Who We Are
@@ -111,9 +118,9 @@ export const About = () => {
                                     <p className="text-xs text-muted">Hands-on</p>
                                 </div>
                             </div>
-                        </div>
+                        </Reveal>
 
-                        <div className="relative mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
+                        <Reveal id="who-image" x={20} delay={0.1} className="relative mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
                             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
                             <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
                                 <div className="space-y-3 sm:space-y-4">
@@ -149,7 +156,7 @@ export const About = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </Reveal>
                     </div>
                 </div>
             </section>
@@ -162,7 +169,7 @@ export const About = () => {
                 <div className="relative mx-auto max-w-6xl px-6">
                     <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
                         {/* Left — Founder image */}
-                        <div className="relative mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
+                        <Reveal id="founder-image" x={-20} className="relative mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
                             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
                             <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-xl shadow-ink/5">
                                 <img
@@ -176,10 +183,10 @@ export const About = () => {
                                 <p className="font-heading text-sm font-bold text-ink">Founder</p>
                                 <p className="text-xs text-muted">AiLysium</p>
                             </div>
-                        </div>
+                        </Reveal>
 
                         {/* Right — Data */}
-                        <div className="text-center md:text-left">
+                        <Reveal id="founder-text" x={20} delay={0.1} className="text-center md:text-left">
                             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
                                 <span className="h-1 w-1 rounded-full bg-sky" />
                                 Meet the Founder
@@ -214,11 +221,11 @@ export const About = () => {
                             <Button as={Link} to="/contact" variant="primary" size="md" className="mt-6 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35 md:mt-7">
                                 Connect with founder
                             </Button>
-                        </div>
+                        </Reveal>
                     </div>
 
                     {/* Team */}
-                    <div className="mt-12 md:mt-16">
+                    <Reveal id="team" className="mt-12 md:mt-16">
                         <h3 className="font-heading text-lg font-bold text-ink sm:text-xl">
                             Mentors leading our courses
                         </h3>
@@ -235,32 +242,36 @@ export const About = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </Reveal>
                 </div>
             </section>
 
             {/* What We Do */}
             <section className="relative overflow-hidden bg-white py-16 md:py-28">
                 <div className="mx-auto max-w-6xl px-6 text-center">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
-                        <span className="h-1 w-1 rounded-full bg-sky" />
-                        Online Learning, Done Right
-                    </span>
-                    <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
-                        What{" "}
-                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
-                            we do
+                    <Reveal id="what-header">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
+                            <span className="h-1 w-1 rounded-full bg-sky" />
+                            Online Learning, Done Right
                         </span>
-                    </h2>
-                    <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
-                        Live sessions with a real mentor, built around one goal: you
-                        finish with something you built yourself.
-                    </p>
+                        <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
+                            What{" "}
+                            <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                                we do
+                            </span>
+                        </h2>
+                        <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
+                            Live sessions with a real mentor, built around one goal: you
+                            finish with something you built yourself.
+                        </p>
+                    </Reveal>
 
                     <div className="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-3">
                         {whatWeDoCards.map((card, index) => (
-                            <div
+                            <Reveal
                                 key={card.title}
+                                id={`what-${index}`}
+                                delay={index * 0.1}
                                 className="group relative overflow-hidden rounded-3xl border border-slate/10 bg-white p-5 text-left shadow-sm shadow-ink/4 transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8 sm:p-7"
                             >
                                 <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-sky/8 to-transparent transition-transform duration-500 group-hover:scale-150" />
@@ -283,7 +294,7 @@ export const About = () => {
                                 <p className="mt-2 text-sm leading-relaxed text-muted">
                                     {card.description}
                                 </p>
-                            </div>
+                            </Reveal>
                         ))}
                     </div>
                 </div>
@@ -295,26 +306,30 @@ export const About = () => {
                 <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
 
                 <div className="relative mx-auto max-w-6xl px-6 text-center">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-                        <span className="h-1 w-1 rounded-full bg-sky" />
-                        Built on Trust
-                    </span>
-                    <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
-                        Why choose{" "}
-                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
-                            AiLysium
+                    <Reveal id="why-header">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
+                            <span className="h-1 w-1 rounded-full bg-sky" />
+                            Built on Trust
                         </span>
-                    </h2>
-                    <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
-                        We'd rather teach fewer students well than a lot of students
-                        poorly — that shows up in how every program is run.
-                    </p>
+                        <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
+                            Why choose{" "}
+                            <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                                AiLysium
+                            </span>
+                        </h2>
+                        <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
+                            We'd rather teach fewer students well than a lot of students
+                            poorly — that shows up in how every program is run.
+                        </p>
+                    </Reveal>
 
                     <div className="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-3">
                         {whyChooseUsCards.map((card, index) => (
-                            <div
+                            <Reveal
                                 key={card.title}
-                                className="group relative overflow-hidden rounded-3xl border border-slate/10 bg-white/70 p-5 text-left shadow-sm shadow-ink/4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8 sm:p-7"
+                                id={`why-${index}`}
+                                delay={index * 0.1}
+                                className="group relative overflow-hidden rounded-3xl border border-slate/10 bg-white p-5 text-left shadow-sm shadow-ink/4 transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8 sm:bg-white/70 sm:backdrop-blur-md sm:p-7"
                             >
                                 <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-sky/8 to-transparent transition-transform duration-500 group-hover:scale-150" />
                                 <div className="flex items-center gap-3 sm:block sm:gap-0">
@@ -336,22 +351,24 @@ export const About = () => {
                                 <p className="mt-2 text-sm leading-relaxed text-muted">
                                     {card.description}
                                 </p>
-                            </div>
+                            </Reveal>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* Testimonials */}
-            <TestimonialSection />
+            <TestimonialSection revealPrefix="about-testimonials" />
 
             {/* Consultation CTA */}
-            <ConsultationSection
-                heading={<>Get ready to <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">build with AI</span></>}
-                description="Browse our programs or talk to us first — either way, the next step is a real conversation, not a signup form."
-                primaryCta={{ text: "Explore programs", to: "/courses" }}
-                secondaryCta={{ text: "Contact us", to: "/contact" }}
-            />
+            <Reveal id="about-consultation">
+                <ConsultationSection
+                    heading={<>Get ready to <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">build with AI</span></>}
+                    description="Browse our programs or talk to us first — either way, the next step is a real conversation, not a signup form."
+                    primaryCta={{ text: "Explore programs", to: "/courses" }}
+                    secondaryCta={{ text: "Contact us", to: "/contact" }}
+                />
+            </Reveal>
         </div>
     );
 };

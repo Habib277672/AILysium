@@ -8,6 +8,7 @@ import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
 import { FAQItem } from "../Components/UI/FAQItem";
 import { TestimonialSection } from "../Components/UI/TestimonialSection";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
+import { Reveal } from "../Components/UI/Reveal";
 import { FaLaptopCode, FaPalette, FaBriefcase, FaBullhorn, FaChartLine, FaShieldAlt } from "react-icons/fa";
 import { FaSearch, FaUserPlus, FaLock, FaChalkboardTeacher } from "react-icons/fa";
 
@@ -168,7 +169,7 @@ export const Home = () => {
       {/* Impact stats */}
       <section className="relative border-t border-slate/10 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
-          <div className="max-w-xl">
+          <Reveal id="impact-header" className="max-w-xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-3.5 py-1 text-xs font-medium uppercase tracking-wide text-sky">
               Why AiLysium
             </span>
@@ -179,16 +180,15 @@ export const Home = () => {
               Your child doesn't just watch AI — they build with it. Twelve
               weeks, twelve skills, and a project they actually ship.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {impactStats.map((stat, index) => (
-              <motion.div
+              <Reveal
                 key={stat.label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                id={`impact-${index}`}
+                y={12}
+                delay={index * 0.08}
                 className="group relative overflow-hidden rounded-2xl border border-slate/10 bg-white p-6 shadow-sm shadow-ink/5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-ink/8"
               >
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-sky/8 transition-transform duration-300 group-hover:scale-125" />
@@ -199,7 +199,7 @@ export const Home = () => {
                   <div className="mt-3 h-px w-8 bg-sky/30" />
                   <p className="mt-3 text-sm leading-snug text-slate">{stat.label}</p>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -212,27 +212,28 @@ export const Home = () => {
         <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-            <span className="h-1 w-1 rounded-full bg-sky" />
-            Explore Skills
-          </span>
-          <h2 className="mt-4 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
-            Find the right course{" "}
-            <span className="text-sky">for you</span>
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-muted">
-            Every program is built around the tools and skills below —
-            pick one that interests you.
-          </p>
+          <Reveal id="skills-header">
+            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
+              <span className="h-1 w-1 rounded-full bg-sky" />
+              Explore Skills
+            </span>
+            <h2 className="mt-4 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
+              Find the right course{" "}
+              <span className="text-sky">for you</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-muted">
+              Every program is built around the tools and skills below —
+              pick one that interests you.
+            </p>
+          </Reveal>
 
           <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
             {skillCategories.map((category, index) => (
-              <motion.div
+              <Reveal
                 key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.45, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                id={`skill-${index}`}
+                y={14}
+                delay={index * 0.07}
                 className="group relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border border-slate/10 bg-white px-3 py-6 shadow-sm shadow-ink/5 transition-all duration-300 hover:-translate-y-2 hover:border-sky/25 hover:shadow-xl hover:shadow-sky/10"
               >
                 <span className="pointer-events-none absolute -top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-sky/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -240,7 +241,7 @@ export const Home = () => {
                   {category.icon}
                 </span>
                 <span className="relative text-[13px] font-semibold text-ink transition-colors duration-200 group-hover:text-sky">{category.name}</span>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -249,7 +250,7 @@ export const Home = () => {
       {/* Programs — top 3 featured, admin-controlled */}
       <section className="relative overflow-hidden bg-white py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="flex flex-col items-center text-center">
+          <Reveal id="programs-header" className="flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
               <span className="h-1 w-1 rounded-full bg-sky" />
               Our Programs
@@ -260,7 +261,7 @@ export const Home = () => {
             <p className="mt-3 max-w-lg text-base leading-relaxed text-muted">
               Beginner to freelancer — pick the path that matches your goals.
             </p>
-          </div>
+          </Reveal>
 
           {coursesLoading && (
             <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -277,15 +278,14 @@ export const Home = () => {
             <>
               <div className="mt-14 grid gap-6 md:grid-cols-3">
                 {courses.map((course, index) => (
-                  <motion.div
+                  <Reveal
                     key={course.slug}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    id={`course-${course.slug}`}
+                    y={16}
+                    delay={index * 0.1}
                   >
                     <CourseCard course={course} />
-                  </motion.div>
+                  </Reveal>
                 ))}
 
                 {courses.length === 0 && (
@@ -296,11 +296,11 @@ export const Home = () => {
               </div>
 
               {courses.length > 0 && (
-                <div className="mt-14 text-center">
+                <Reveal id="view-all-cta" y={12} className="mt-14 text-center">
                   <Button as={Link} to="/courses" variant="primary" size="lg" className="rounded-full px-8 py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35">
                     View all programs
                   </Button>
-                </div>
+                </Reveal>
               )}
             </>
           )}
@@ -314,7 +314,7 @@ export const Home = () => {
         <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6">
-          <div className="text-center">
+          <Reveal id="how-header" className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
               <span className="h-1 w-1 rounded-full bg-sky" />
               Simple Process
@@ -325,7 +325,7 @@ export const Home = () => {
             <p className="mx-auto mt-2 max-w-md text-base leading-relaxed text-muted">
               Four simple steps — no friction, just results.
             </p>
-          </div>
+          </Reveal>
 
           <div className="relative mt-12">
             {/* Connector line — desktop only */}
@@ -335,12 +335,11 @@ export const Home = () => {
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {howItWorks.map((item, index) => (
-                <motion.div
+                <Reveal
                   key={item.step}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  id={`step-${item.step}`}
+                  y={16}
+                  delay={index * 0.1}
                   className="group relative flex flex-col items-center text-center"
                 >
                   {/* Icon circle with glow */}
@@ -365,7 +364,7 @@ export const Home = () => {
                   <p className="mt-2.5 max-w-[260px] text-sm leading-relaxed text-muted">
                     {item.description}
                   </p>
-                </motion.div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -373,13 +372,13 @@ export const Home = () => {
       </section>
 
       {/* Testimonials */}
-      <TestimonialSection />
+      <TestimonialSection revealPrefix="home-testimonials" />
 
       {/* Short About — data left, graphic right */}
       <section className="relative overflow-hidden bg-white py-16 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-            <div className="text-center md:text-left">
+            <Reveal id="about-text" x={-20} className="text-center md:text-left">
               <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
                 <span className="h-1 w-1 rounded-full bg-sky" />
                 About AiLysium
@@ -396,9 +395,9 @@ export const Home = () => {
               <Button as={Link} to="/about" variant="primary" size="md" className="mt-7 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35">
                 Learn more about us
               </Button>
-            </div>
+            </Reveal>
 
-            <div className="relative mx-auto w-full max-w-md md:mx-0 md:max-w-none">
+            <Reveal id="about-image" x={20} delay={0.1} className="relative mx-auto w-full max-w-md md:mx-0 md:max-w-none">
               <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
               <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-xl shadow-ink/5">
                 <img
@@ -408,7 +407,7 @@ export const Home = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -419,7 +418,7 @@ export const Home = () => {
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-[1fr_1.4fr] md:items-start md:gap-12">
-          <div className="text-center md:text-left md:sticky md:top-8">
+          <Reveal id="faq-text" className="text-center md:text-left md:sticky md:top-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
               <span className="h-1 w-1 rounded-full bg-sky" />
               FAQ
@@ -433,8 +432,8 @@ export const Home = () => {
             <Button as={Link} to="/contact" variant="primary" size="md" className="mt-5 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35">
               Contact us
             </Button>
-          </div>
-          <div className="divide-y divide-slate/10 rounded-3xl border border-slate/10 bg-white/70 p-5 shadow-sm shadow-ink/4 backdrop-blur-md transition-shadow duration-300 hover:shadow-lg hover:shadow-ink/5 sm:p-8">
+          </Reveal>
+          <Reveal id="faq-list" delay={0.1} className="divide-y divide-slate/10 rounded-3xl border border-slate/10 bg-white p-5 shadow-sm shadow-ink/4 transition-shadow duration-300 hover:shadow-lg hover:shadow-ink/5 sm:bg-white/70 sm:backdrop-blur-md sm:p-8">
             {faqs.map((faq, index) => (
               <FAQItem
                 key={faq.question}
@@ -444,14 +443,16 @@ export const Home = () => {
                 onToggle={() => setOpenFaq(openFaq === index ? null : index)}
               />
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Consultation CTA */}
-      <ConsultationSection
-        heading={<>Still deciding? Let's <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">talk</span> it through.</>}
-      />
+      <Reveal id="consultation">
+        <ConsultationSection
+          heading={<>Still deciding? Let's <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">talk</span> it through.</>}
+        />
+      </Reveal>
     </div>
   );
 };

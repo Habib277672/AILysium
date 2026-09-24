@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import { useAuth } from "../../context/AuthContext";
@@ -16,6 +16,21 @@ export const Header = () => {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (event) => {
+      const inMenu = menuRef.current?.contains(event.target);
+      const inButton = buttonRef.current?.contains(event.target);
+      if (!inMenu && !inButton) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", handleClick);
+    return () => document.removeEventListener("pointerdown", handleClick);
+  }, [open]);
 
   const isAdmin = user?.role === "ADMIN";
   const accountLink = isAdmin
@@ -29,7 +44,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate/8 bg-white/80 backdrop-blur-xl will-change-transform">
+    <header className="sticky top-0 z-50 border-b border-slate/8 bg-white will-change-transform md:bg-white/80 md:backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <Link to="/" className="group flex items-center">
@@ -80,6 +95,7 @@ export const Header = () => {
 
         {/* Mobile hamburger */}
         <button
+          ref={buttonRef}
           type="button"
           className="relative flex h-10 w-10 items-center justify-center rounded-xl text-ink transition-colors hover:bg-slate/5 md:hidden"
           onClick={() => setOpen((prev) => !prev)}
@@ -88,16 +104,13 @@ export const Header = () => {
         >
           <div className="relative h-5 w-5">
             <span
-              className={`absolute left-0 h-0.5 w-5 bg-ink transition-all duration-300 ${open ? "top-2 rotate-45" : "top-0 rotate-0"
-                }`}
+              className={`absolute left-0 top-0 h-0.5 w-5 bg-ink transition-transform duration-200 ease-out ${open ? "translate-y-[8px] rotate-45" : "translate-y-0 rotate-0"}`}
             />
             <span
-              className={`absolute left-0 top-2 h-0.5 w-5 bg-ink transition-all duration-300 ${open ? "opacity-0" : "opacity-100"
-                }`}
+              className={`absolute left-0 top-2 h-0.5 w-5 bg-ink transition-opacity duration-150 ${open ? "opacity-0" : "opacity-100"}`}
             />
             <span
-              className={`absolute left-0 h-0.5 w-5 bg-ink transition-all duration-300 ${open ? "top-2 -rotate-45" : "top-4 rotate-0"
-                }`}
+              className={`absolute left-0 top-4 h-0.5 w-5 bg-ink transition-transform duration-200 ease-out ${open ? "-translate-y-[8px] -rotate-45" : "translate-y-0 rotate-0"}`}
             />
           </div>
         </button>
@@ -105,10 +118,10 @@ export const Header = () => {
 
       {/* Mobile menu */}
       <div
-        className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${open ? "max-h-96" : "max-h-0"
-          }`}
+        ref={menuRef}
+        className={`overflow-hidden transition-[max-height] duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${open ? "max-h-96" : "max-h-0"}`}
       >
-        <div className="border-t border-slate/8 bg-white/95 backdrop-blur-xl">
+        <div className="border-t border-slate/8 bg-white">
           <div className="mx-auto max-w-6xl px-6 py-5">
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (

@@ -57,7 +57,7 @@ export const AdminLayout = () => {
                 {/* Mobile nav — simplified to a horizontal scroll strip rather
             than a hamburger drawer, since admin usage is primarily
             desktop-first, unlike the public site. */}
-                <div className="flex gap-2 overflow-x-auto border-b border-slate/10 bg-white px-4 py-3 md:hidden">
+                <div data-lenis-prevent className="flex gap-2 overflow-x-auto border-b border-slate/10 bg-white px-4 py-3 md:hidden">
                     {adminLinks.map((link) => (
                         <NavLink
                             key={link.to}

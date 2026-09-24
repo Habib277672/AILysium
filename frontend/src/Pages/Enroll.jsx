@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
@@ -94,6 +95,11 @@ export const Enroll = () => {
                 <div className="pointer-events-none absolute top-1/2 right-0 h-150 w-150 -translate-y-1/2 translate-x-1/3 rounded-full bg-sky-light/15 blur-[160px]" />
 
                 <div className="relative mx-auto max-w-2xl px-6 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    >
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky to-sky-light text-white shadow-lg shadow-sky/25 sm:h-16 sm:w-16">
                         <HiOutlineCheckCircle className="h-7 w-7 sm:h-8 sm:w-8" />
                     </div>
@@ -106,10 +112,16 @@ export const Enroll = () => {
                     <p className="mt-2 max-w-md mx-auto text-sm leading-relaxed text-muted sm:text-base">
                         Review the details below before continuing to payment.
                     </p>
+                    </motion.div>
                 </div>
             </section>
 
-            <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12"
+            >
                 {/* Course card */}
                 <div className="rounded-3xl border border-slate/10 bg-white p-5 shadow-xl shadow-ink/5 sm:p-8">
                     {/* Header */}
@@ -202,7 +214,7 @@ export const Enroll = () => {
                         Back to courses
                     </Link>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

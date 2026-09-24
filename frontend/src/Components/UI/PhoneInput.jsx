@@ -91,7 +91,7 @@ export const PhoneInput = ({ label, value, onChange, required }) => {
                         className="w-full rounded-lg border border-slate/20 px-3 py-2 text-sm focus:border-sky focus:outline-none"
                     />
                 </div>
-                <div className="max-h-56 overflow-y-auto scrollbar-hide">
+                <div data-lenis-prevent className="max-h-56 overflow-y-auto scrollbar-hide">
                     {filteredCountries.map((c) => (
                         <button
                             key={c.iso2}

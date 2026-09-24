@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
@@ -50,7 +51,11 @@ export const AdminEnrollments = () => {
     }, [enrollments, statusFilter, search]);
 
     return (
-        <div>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
             <Badge variant="sky">Report</Badge>
             <h1 className="mt-3 font-heading text-3xl font-bold text-ink">
                 Enrollments
@@ -85,7 +90,7 @@ export const AdminEnrollments = () => {
                 </div>
             </div>
 
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
+            <div data-lenis-prevent className="mt-6 overflow-x-auto rounded-2xl border border-slate/10 bg-white">
                 {loading && <AdminTableSkeleton columns={6} />}
 
                 {!loading && error && (
@@ -146,6 +151,6 @@ export const AdminEnrollments = () => {
                     </table>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };

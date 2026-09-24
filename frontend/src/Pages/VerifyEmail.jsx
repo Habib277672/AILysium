@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
@@ -58,7 +59,12 @@ export const VerifyEmail = () => {
     };
 
     return (
-        <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-16 text-center">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-16 text-center"
+        >
             <Card padding="lg">
                 {status === "verifying" && (
                     <p className="text-sm text-slate">Verifying your email…</p>
@@ -138,6 +144,6 @@ export const VerifyEmail = () => {
                     </>
                 )}
             </Card>
-        </div>
+        </motion.div>
     );
 };
