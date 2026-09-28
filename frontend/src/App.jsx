@@ -73,9 +73,10 @@ const App = () => {
         { path: "/login", element: <Login /> },
         { path: "/forgot-password", element: <ForgotPassword /> },
         { path: "/reset-password", element: <ResetPassword /> },
-        { path: "/verify-email", element: <VerifyEmail /> },
+
       ],
     },
+    { path: "/verify-email", element: <VerifyEmail /> },
     {
       element: <ProtectedRoute adminOnly />,
       children: [
