@@ -12,8 +12,7 @@ export const NotFound = () => {
     }, []);
 
     const handleGoBack = () => {
-        const hasHistory = window.history.state && window.history.state.idx > 0;
-        if (hasHistory) {
+        if (window.history.length > 1) {
             navigate(-1);
         } else {
             navigate("/");
