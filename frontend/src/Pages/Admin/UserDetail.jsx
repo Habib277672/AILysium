@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAdminUserDetail } from "../../hooks/useAdmin";
 import { motion } from "motion/react";
-import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Card } from "../../Components/UI/Card";
 import { Skeleton } from "../../Components/UI/Skeleton";
@@ -13,28 +12,9 @@ const paymentBadgeVariant = {
 };
 
 export const AdminUserDetail = () => {
-    const { id } = useParams();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                const { data } = await api.get(`/admin/users/${id}`);
-                setUser(data);
-            } catch (err) {
-                setError(
-                    err.response?.status === 404
-                        ? "This user could not be found."
-                        : "Couldn't load this user."
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadUser();
-    }, [id]);
+    const { id } = useParams();
+    const { data: user, isLoading: loading, isError: error } = useAdminUserDetail(id);
 
     if (loading) {
         return (
@@ -72,7 +52,7 @@ export const AdminUserDetail = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-            <Link to="/admin/users" className="text-sm text-slate hover:text-sky">
+            <Link to="/admin/enrollments" className="text-sm text-slate hover:text-sky">
                 ← All users
             </Link>
 

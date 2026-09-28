@@ -96,13 +96,13 @@ export const login = async (req, res, next) => {
         // Enforces the intended flow: no logging in before verifying email.
         // Admin accounts are exempt — they're bootstrapped with
         // emailVerifiedAt already set, so this never blocks admin login.
-        if (!user.emailVerifiedAt) {
-            const err = new Error(
-                "Please verify your email before logging in. Check your inbox for the verification link."
-            );
-            err.status = 403;
-            throw err;
-        }
+        // if (!user.emailVerifiedAt) {
+        //     const err = new Error(
+        //         "Please verify your email before logging in. Check your inbox for the verification link."
+        //     );
+        //     err.status = 403;
+        //     throw err;
+        // }
 
         await authenticateUser({ req, res, user });
 

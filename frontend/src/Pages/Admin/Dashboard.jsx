@@ -1,52 +1,19 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAdminUsers, useAdminEnrollments, useAdminCourses } from "../../hooks/useAdmin";
 import { motion } from "motion/react";
-import { api } from "../../lib/api";
 import { Card } from "../../Components/UI/Card";
 import { Badge } from "../../Components/UI/Badge";
 import { AdminDashboardSkeleton } from "../../Components/UI/AdminDashboardSkeleton";
 
 export const AdminDashboard = () => {
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
-    useEffect(() => {
-        // No dedicated /api/admin/stats endpoint exists — this derives simple
-        // counts client-side from the existing users/enrollments/courses
-        // endpoints rather than adding a new backend route just for a
-        // dashboard summary. Fine at current data volume; worth revisiting
-        // with a real aggregation endpoint if these lists grow large.
-        const loadStats = async () => {
-            try {
-                const [usersRes, enrollmentsRes, coursesRes] = await Promise.all([
-                    api.get("/admin/users"),
-                    api.get("/admin/enrollments"),
-                    api.get("/admin/courses"),
-                ]);
+    const { data: users = [], isLoading: usersLoading, isError: usersError } = useAdminUsers();
+    const { data: enrollments = [], isLoading: enrollmentsLoading, isError: enrollmentsError } =
+        useAdminEnrollments();
+    const { data: courses = [], isLoading: coursesLoading, isError: coursesError } = useAdminCourses();
 
-                const confirmedEnrollments = enrollmentsRes.data.filter(
-                    (e) => e.paymentStatus === "CONFIRMED"
-                ).length;
-                const pendingEnrollments = enrollmentsRes.data.filter(
-                    (e) => e.paymentStatus === "PENDING"
-                ).length;
-
-                setStats({
-                    totalUsers: usersRes.data.length,
-                    totalCourses: coursesRes.data.length,
-                    totalEnrollments: enrollmentsRes.data.length,
-                    confirmedEnrollments,
-                    pendingEnrollments,
-                });
-            } catch (err) {
-                setError("Couldn't load dashboard stats.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadStats();
-    }, []);
+    const loading = usersLoading || enrollmentsLoading || coursesLoading;
+    const error = usersError || enrollmentsError || coursesError;
 
     if (loading) {
         return <AdminDashboardSkeleton />;
@@ -60,12 +27,15 @@ export const AdminDashboard = () => {
         );
     }
 
+    const confirmedEnrollments = enrollments.filter((e) => e.paymentStatus === "CONFIRMED").length;
+    const pendingEnrollments = enrollments.filter((e) => e.paymentStatus === "PENDING").length;
+
     const cards = [
-        { label: "Total users", value: stats.totalUsers },
-        { label: "Total courses", value: stats.totalCourses },
-        { label: "Total enrollments", value: stats.totalEnrollments },
-        { label: "Confirmed payments", value: stats.confirmedEnrollments },
-        { label: "Pending payments", value: stats.pendingEnrollments },
+        { label: "Total users", value: users.length },
+        { label: "Total courses", value: courses.length },
+        { label: "Total enrollments", value: enrollments.length },
+        { label: "Confirmed payments", value: confirmedEnrollments },
+        { label: "Pending payments", value: pendingEnrollments },
     ];
 
     return (

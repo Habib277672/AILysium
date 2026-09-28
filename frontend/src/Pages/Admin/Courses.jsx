@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { useAdminCourses } from "../../hooks/useAdmin";
+import { useCreateCourse, useUpdateCourse, useDeleteCourse } from "../../hooks/useAdminCourseMutations";
 import { motion } from "motion/react";
-import { api } from "../../lib/api";
+// import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { Button } from "../../Components/UI/Button";
 import { Card } from "../../Components/UI/Card";
@@ -15,71 +17,72 @@ const statusBadgeVariant = {
 };
 
 export const AdminCourses = () => {
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    const [formTarget, setFormTarget] = useState(null);
-    const [submitting, setSubmitting] = useState(false);
+    const { data: courses = [], isLoading: loading, isError: error } = useAdminCourses();
+    const [formTarget, setFormTarget] = useState(null); // null | "new" | course object
     const [deleteError, setDeleteError] = useState("");
 
-    const loadCourses = async () => {
-        setLoading(true);
-        try {
-            const { data } = await api.get("/admin/courses");
-            setCourses(data);
-        } catch (err) {
-            setError("Couldn't load courses.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const createCourse = useCreateCourse();
+    const updateCourse = useUpdateCourse();
+    const deleteCourse = useDeleteCourse();
 
-    useEffect(() => {
-        loadCourses();
-    }, []);
+    const submitting = createCourse.isPending || updateCourse.isPending;
 
     const handleCreate = async (payload) => {
-        setSubmitting(true);
-        try {
-            await api.post("/admin/courses", payload);
-            toast.success("Course created.");
-            setFormTarget(null);
-            await loadCourses();
-        } finally {
-            setSubmitting(false);
-        }
+        await createCourse.mutateAsync(payload);
+        toast.success("Course created.");
+        setFormTarget(null);
     };
+
+    // const handleCreate = (payload) => {
+    //     createCourse.mutate(payload, {
+    //         onSuccess: () => {
+    //             toast.success("Course created.");
+    //             setFormTarget(null);
+    //         },
+    //         onError: (err) => {
+    //             const message = err.response?.data?.error || "Something went wrong. Please try again.";
+    //             toast.error(message);
+    //             throw err; // re-throw so CourseForm's own inline error box also shows it
+    //         },
+    //     });
+    // };
 
     const handleUpdate = async (payload) => {
-        setSubmitting(true);
-        try {
-            await api.patch(`/admin/courses/${formTarget.id}`, payload);
-            toast.success("Course updated.");
-            setFormTarget(null);
-            await loadCourses();
-        } finally {
-            setSubmitting(false);
-        }
+        await updateCourse.mutateAsync({ id: formTarget.id, payload });
+        toast.success("Course updated.");
+        setFormTarget(null);
     };
 
-    const handleDelete = async (course) => {
+    // const handleUpdate = (payload) => {
+    //     updateCourse.mutate(
+    //         { id: formTarget.id, payload },
+    //         {
+    //             onSuccess: () => {
+    //                 toast.success("Course updated.");
+    //                 setFormTarget(null);
+    //             },
+    //             onError: (err) => {
+    //                 const message = err.response?.data?.error || "Something went wrong. Please try again.";
+    //                 toast.error(message);
+    //                 throw err;
+    //             },
+    //         }
+    //     );
+    // };
+
+    const handleDelete = (course) => {
         setDeleteError("");
-        const confirmed = window.confirm(
-            `Delete "${course.title}"? This cannot be undone.`
-        );
+        const confirmed = window.confirm(`Delete "${course.title}"? This cannot be undone.`);
         if (!confirmed) return;
 
-        try {
-            await api.delete(`/admin/courses/${course.id}`);
-            toast.success("Course deleted.");
-            await loadCourses();
-        } catch (err) {
-            const message =
-                err.response?.data?.error || "Couldn't delete this course.";
-            setDeleteError(message);
-            toast.error(message);
-        }
+        deleteCourse.mutate(course.id, {
+            onSuccess: () => toast.success("Course deleted."),
+            onError: (err) => {
+                const message = err.response?.data?.error || "Couldn't delete this course.";
+                setDeleteError(message);
+                toast.error(message);
+            },
+        });
     };
 
     return (

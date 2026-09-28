@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { useAdminUsers } from "../../hooks/useAdmin";
+import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import { motion } from "motion/react";
-import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
-import { Card } from "../../Components/UI/Card";
 import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
 const roleBadgeVariant = {
@@ -12,24 +11,14 @@ const roleBadgeVariant = {
 };
 
 export const AdminUsers = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [search, setSearch] = useState("");
 
-    useEffect(() => {
-        const loadUsers = async () => {
-            try {
-                const { data } = await api.get("/admin/users");
-                setUsers(data);
-            } catch (err) {
-                setError("Couldn't load users.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadUsers();
-    }, []);
+    const { data: users = [], isLoading: loading, isError: error } = useAdminUsers();
+
+    // Persisted in the Zustand store, not local useState — so the search
+    // term survives clicking into a user's detail page and back, rather
+    // than resetting every time this component unmounts.
+    const search = useAdminFiltersStore((state) => state.usersSearch);
+    const setSearch = useAdminFiltersStore((state) => state.setUsersSearch);
 
     const filteredUsers = useMemo(() => {
         const query = search.trim().toLowerCase();
@@ -84,13 +73,10 @@ export const AdminUsers = () => {
                         <tbody className="divide-y divide-slate/10">
                             {filteredUsers.map((user) => (
                                 <tr key={user.id} className="hover:bg-cloud/50">
-                                    <td className="whitespace-nowrap px-5 py-3">
-                                        <Link
-                                            to={`/admin/users/${user.id}`}
-                                            className="font-medium text-ink hover:text-sky hover:underline"
-                                        >
-                                            {user.fullName}
-                                        </Link>
+                                    <td className="font-medium text-ink whitespace-nowrap px-5 py-3">
+
+                                        {user.fullName}
+
                                     </td>
                                     <td className="whitespace-nowrap px-5 py-3 text-slate">{user.email}</td>
                                     <td className="whitespace-nowrap px-5 py-3 text-slate">

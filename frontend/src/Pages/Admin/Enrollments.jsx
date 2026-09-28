@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useAdminEnrollments } from "../../hooks/useAdmin";
+import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import { motion } from "motion/react";
-import { api } from "../../lib/api";
+// import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
 import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
@@ -14,30 +16,19 @@ const paymentBadgeVariant = {
 const statusFilters = ["All", "PENDING", "CONFIRMED", "FAILED"];
 
 export const AdminEnrollments = () => {
-    const [enrollments, setEnrollments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All");
-    const [search, setSearch] = useState("");
+    const { data: enrollments = [], isLoading: loading, isError: error } = useAdminEnrollments();
 
-    useEffect(() => {
-        const loadEnrollments = async () => {
-            try {
-                const { data } = await api.get("/admin/enrollments");
-                setEnrollments(data);
-            } catch (err) {
-                setError("Couldn't load the enrollment report.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadEnrollments();
-    }, []);
+    // Both persisted in Zustand — leaving this page to check a user's
+    // profile (via the userName link) and coming back keeps your filter
+    // and search exactly where you left them.
+    const statusFilter = useAdminFiltersStore((state) => state.enrollmentsStatusFilter);
+    const setStatusFilter = useAdminFiltersStore((state) => state.setEnrollmentsStatusFilter);
+    const search = useAdminFiltersStore((state) => state.enrollmentsSearch);
+    const setSearch = useAdminFiltersStore((state) => state.setEnrollmentsSearch);
 
     const filteredEnrollments = useMemo(() => {
         return enrollments.filter((enrollment) => {
-            const matchesStatus =
-                statusFilter === "All" || enrollment.paymentStatus === statusFilter;
+            const matchesStatus = statusFilter === "All" || enrollment.paymentStatus === statusFilter;
 
             const query = search.trim().toLowerCase();
             const matchesSearch =

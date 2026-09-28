@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../lib/api";
+import { useCourses } from "../hooks/useCourses";
+import { useMyEnrollments } from "../hooks/useEnrollments";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { Badge } from "../Components/UI/Badge";
@@ -22,28 +22,12 @@ const statusLabel = {
 };
 
 export const AllCourses = () => {
-    const [courses, setCourses] = useState([]);
-    const [enrollments, setEnrollments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const { data: courses = [], isLoading: coursesLoading, isError: coursesError } = useCourses();
+    const { data: enrollments = [], isLoading: enrollmentsLoading, isError: enrollmentsError } =
+        useMyEnrollments();
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const [coursesRes, enrollmentsRes] = await Promise.all([
-                    api.get("/courses"),
-                    api.get("/me/enrollments"),
-                ]);
-                setCourses(coursesRes.data);
-                setEnrollments(enrollmentsRes.data);
-            } catch (err) {
-                setError("Couldn't load courses. Please try refreshing.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadData();
-    }, []);
+    const loading = coursesLoading || enrollmentsLoading;
+    const error = coursesError || enrollmentsError;
 
     const enrollmentByCourseId = enrollments.reduce((map, enrollment) => {
         map[enrollment.course.id] = enrollment;

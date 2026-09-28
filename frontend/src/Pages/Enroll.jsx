@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "motion/react";
-import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useCourses } from "../hooks/useCourses";
+import { useCreateEnrollment } from "../hooks/useEnrollmentMutations";
 import { Button } from "../Components/UI/Button";
 import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineExclamationCircle, HiOutlineClock, HiOutlineUser, HiOutlineCheckCircle, HiOutlineArrowLeft } from "react-icons/hi";
@@ -13,45 +13,26 @@ export const Enroll = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
 
-    const [course, setCourse] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [submitting, setSubmitting] = useState(false);
+    // Reuses the same cached course list Courses.jsx/AllCourses.jsx already
+    // populate — if either was visited recently, this resolves instantly
+    // from cache instead of firing a fresh request.
+    const { data: courses = [], isLoading: loading, error } = useCourses();
+    const course = courses.find((c) => c.id === courseId);
 
-    useEffect(() => {
-        const loadCourse = async () => {
-            try {
-                const { data } = await api.get("/courses");
-                const match = data.find((c) => c.id === courseId);
-                if (!match) {
-                    setError("This course could not be found or is no longer available.");
-                } else {
-                    setCourse(match);
-                }
-            } catch (err) {
-                setError("Something went wrong loading this course.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadCourse();
-    }, [courseId]);
+    const createEnrollment = useCreateEnrollment();
 
-    const handleConfirm = async () => {
-        setSubmitting(true);
-        setError("");
-
-        try {
-            const { data: enrollment } = await api.post("/enrollments", { courseId });
-            toast.success("Enrollment started — continue to payment.");
-            navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
-        } catch (err) {
-            const message =
-                err.response?.data?.error || "Couldn't start enrollment. Please try again.";
-            setError(message);
-            toast.error(message);
-            setSubmitting(false);
-        }
+    const handleConfirm = () => {
+        createEnrollment.mutate(courseId, {
+            onSuccess: (enrollment) => {
+                toast.success("Enrollment started — continue to payment.");
+                navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
+            },
+            onError: (err) => {
+                const message =
+                    err.response?.data?.error || "Couldn't start enrollment. Please try again.";
+                toast.error(message);
+            },
+        });
     };
 
     if (loading) {
@@ -100,18 +81,18 @@ export const Enroll = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     >
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky to-sky-light text-white shadow-lg shadow-sky/25 sm:h-16 sm:w-16">
-                        <HiOutlineCheckCircle className="h-7 w-7 sm:h-8 sm:w-8" />
-                    </div>
-                    <h1 className="mt-4 font-heading text-2xl font-extrabold leading-tight text-ink sm:text-3xl md:text-4xl">
-                        Confirm your{" "}
-                        <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
-                            enrollment
-                        </span>
-                    </h1>
-                    <p className="mt-2 max-w-md mx-auto text-sm leading-relaxed text-muted sm:text-base">
-                        Review the details below before continuing to payment.
-                    </p>
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky to-sky-light text-white shadow-lg shadow-sky/25 sm:h-16 sm:w-16">
+                            <HiOutlineCheckCircle className="h-7 w-7 sm:h-8 sm:w-8" />
+                        </div>
+                        <h1 className="mt-4 font-heading text-2xl font-extrabold leading-tight text-ink sm:text-3xl md:text-4xl">
+                            Confirm your{" "}
+                            <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                                enrollment
+                            </span>
+                        </h1>
+                        <p className="mt-2 max-w-md mx-auto text-sm leading-relaxed text-muted sm:text-base">
+                            Review the details below before continuing to payment.
+                        </p>
                     </motion.div>
                 </div>
             </section>
@@ -201,9 +182,9 @@ export const Enroll = () => {
                         size="lg"
                         className="mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35"
                         onClick={handleConfirm}
-                        disabled={!isAvailable || submitting || !isVerified}
+                        disabled={!isAvailable || createEnrollment.isPending || !isVerified}
                     >
-                        {submitting ? "Enrolling..." : "Continue to payment →"}
+                        {createEnrollment.isPending ? "Enrolling..." : "Continue to payment →"}
                     </Button>
 
                     <Link

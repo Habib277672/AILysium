@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "motion/react";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useCourseDetails } from "../hooks/useCourses";
 import { Button } from "../Components/UI/Button";
 import { Badge } from "../Components/UI/Badge";
 import { CourseDetailsSkeleton } from "../Components/UI/CourseDetailsSkeleton";
@@ -20,48 +21,70 @@ export const CourseDetails = () => {
     const { user, loading: authLoading } = useAuth();
     const isAdmin = user?.role === "ADMIN";
 
-    const [course, setCourse] = useState(null);
-    const [enrollment, setEnrollment] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [notFound, setNotFound] = useState(false);
+    const {
+        data: course,
+        isLoading: courseLoading,
+        isError: courseNotFound,
+    } = useCourseDetails(slug);
 
-    useEffect(() => {
-        setLoading(true);
-        setNotFound(false);
+    // Only fetches for a logged-in, non-admin user, and only once the
+    // course itself has resolved (needs course.id to find a match) — same
+    // conditions the original useEffect version checked.
+    const { data: enrollments = [] } = useQuery({
+        queryKey: ["me", "enrollments"],
+        queryFn: async () => {
+            const { data } = await api.get("/me/enrollments");
+            return data;
+        },
+        enabled: Boolean(user) && !isAdmin && Boolean(course),
+    });
 
-        const loadCourse = async () => {
-            try {
-                const { data: courseData } = await api.get(`/courses/${slug}`);
-                setCourse(courseData);
+    const enrollment = course
+        ? enrollments.find((e) => e.course.id === course.id) ?? null
+        : null;
 
-                // Only check enrollment status for a logged-in, non-admin user
-                // — an anonymous visitor can't be enrolled in anything, and
-                // admins can never enroll at all.
-                if (user && !isAdmin) {
-                    try {
-                        const { data: enrollments } = await api.get("/me/enrollments");
-                        const match = enrollments.find((e) => e.course.id === courseData.id);
-                        setEnrollment(match ?? null);
-                    } catch {
-                        // Non-fatal — the course details still render fine
-                        // even if this secondary call fails.
-                        setEnrollment(null);
-                    }
-                }
-            } catch (err) {
-                setNotFound(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadCourse();
-    }, [slug, user, isAdmin]);
+    // const [course, setCourse] = useState(null);
+    // const [enrollment, setEnrollment] = useState(null);
+    // const [loading, setLoading] = useState(true);
+    // const [notFound, setNotFound] = useState(false);
 
-    if (loading) {
+    // useEffect(() => {
+    //     setLoading(true);
+    //     setNotFound(false);
+
+    //     const loadCourse = async () => {
+    //         try {
+    //             const { data: courseData } = await api.get(`/courses/${slug}`);
+    //             setCourse(courseData);
+
+    //             // Only check enrollment status for a logged-in, non-admin user
+    //             // — an anonymous visitor can't be enrolled in anything, and
+    //             // admins can never enroll at all.
+    //             if (user && !isAdmin) {
+    //                 try {
+    //                     const { data: enrollments } = await api.get("/me/enrollments");
+    //                     const match = enrollments.find((e) => e.course.id === courseData.id);
+    //                     setEnrollment(match ?? null);
+    //                 } catch {
+    //                     // Non-fatal — the course details still render fine
+    //                     // even if this secondary call fails.
+    //                     setEnrollment(null);
+    //                 }
+    //             }
+    //         } catch (err) {
+    //             setNotFound(true);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //     loadCourse();
+    // }, [slug, user, isAdmin]);
+
+    if (courseLoading) {
         return <CourseDetailsSkeleton />;
     }
 
-    if (notFound || !course) {
+    if (courseNotFound || !course) {
         return (
             <div className="mx-auto max-w-3xl px-6 py-24 text-center">
                 <Badge variant="warning">Not found</Badge>

@@ -32,39 +32,18 @@
   --radius-pill: 999px;
 }
 
+/* Match page-transition container so empty frames don't flash white */
+html {
+  background-color: var(--color-cloud);
+  overscroll-behavior-y: none;
+  color-scheme: light;
+}
+
 body {
   font-family: var(--font-body);
   color: var(--color-slate);
   background-color: var(--color-cloud);
 }
-
-/* Match page-transition container so empty frames don't flash white */
-html {
-  background-color: var(--color-cloud);
-  overscroll-behavior-y: none;
-}
-
-/* Route swaps should paint the next page without a blank frame */
-#root {
-  min-height: 100vh;
-  background-color: var(--color-cloud);
-}
-
-/* backdrop-filter is expensive on mobile GPUs and causes scroll jank */
-@media (max-width: 767px) {
-  .backdrop-blur-sm,
-  .backdrop-blur-md,
-  .backdrop-blur-lg,
-  .backdrop-blur-xl {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-  }
-}
-
-/* section {
-  content-visibility: auto;
-  contain-intrinsic-size: 500px;
-} */
 
 h1,
 h2,
@@ -73,21 +52,64 @@ h4 {
   font-family: var(--font-heading);
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+/* ---- Simple themed scrollbar ---- */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+::-webkit-scrollbar-track {
+  background: var(--color-cloud);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sky);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sky-hover);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Show and style the up/down arrow buttons */
+::-webkit-scrollbar-button:single-button {
+  display: block;
+  background-color: var(--color-cloud);
+  background-size: 10px;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 12px;
+  width: 12px;
+}
+
+/* Up arrow */
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230085fe'%3E%3Cpath d='M12 6l-8 10h16z'/%3E%3C/svg%3E");
+}
+::-webkit-scrollbar-button:single-button:vertical:decrement:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006fd6'%3E%3Cpath d='M12 6l-8 10h16z'/%3E%3C/svg%3E");
+}
+
+/* Down arrow */
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230085fe'%3E%3Cpath d='M12 18l8-10H4z'/%3E%3C/svg%3E");
+}
+::-webkit-scrollbar-button:single-button:vertical:increment:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006fd6'%3E%3Cpath d='M12 18l8-10H4z'/%3E%3C/svg%3E");
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox only — setting scrollbar-width on html breaks webkit styling */
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-sky) var(--color-cloud);
   }
 }

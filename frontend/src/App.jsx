@@ -9,6 +9,8 @@ import { Courses } from "./Pages/Courses";
 import { CourseDetails } from "./Pages/CourseDetails";
 import { AITools } from "./Pages/AITools";
 import { Contact } from "./Pages/Contact";
+import { PrivacyPolicy } from "./Pages/PrivacyPolicy";
+import { TermsConditions } from "./Pages/TermsConditions";
 import { SignUp } from "./Pages/SignUp";
 import { Login } from "./Pages/Login";
 import { ForgotPassword } from "./Pages/ForgotPassword";
@@ -38,11 +40,12 @@ const App = () => {
         { path: "/courses/:slug", element: <CourseDetails /> },
         { path: "/ai-tools", element: <AITools /> },
         { path: "/contact", element: <Contact /> },
+        { path: "/privacy-policy", element: <PrivacyPolicy /> },
+        { path: "/terms-and-conditions", element: <TermsConditions /> },
         // Standalone — must work for BOTH logged-out (fresh signup) and
         // logged-in (resend from Profile) users. Neither ProtectedRoute
         // nor GuestOnlyRoute is correct here; both would redirect away
         // before the verify API call ever fires.
-        { path: "/verify-email", element: <VerifyEmail /> },
         {
           element: <ProtectedRoute studentOnly />,
           children: [
@@ -50,8 +53,14 @@ const App = () => {
             { path: "/all-courses", element: <AllCourses /> },
             { path: "/enroll/:courseId", element: <Enroll /> },
             { path: "/payment", element: <Payment /> },
-            { path: "/payment/success", element: <PaymentResult outcome="success" /> },
-            { path: "/payment/failed", element: <PaymentResult outcome="failed" /> },
+            {
+              path: "/payment/success",
+              element: <PaymentResult outcome="success" />,
+            },
+            {
+              path: "/payment/failed",
+              element: <PaymentResult outcome="failed" />,
+            },
           ],
         },
         { path: "*", element: <NotFound /> },
@@ -64,6 +73,7 @@ const App = () => {
         { path: "/login", element: <Login /> },
         { path: "/forgot-password", element: <ForgotPassword /> },
         { path: "/reset-password", element: <ResetPassword /> },
+        { path: "/verify-email", element: <VerifyEmail /> },
       ],
     },
     {

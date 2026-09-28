@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useMyEnrollments } from "../hooks/useEnrollments";
+import { useCreatePayment } from "../hooks/useEnrollmentMutations";
 import toast from "react-hot-toast";
-import { api } from "../lib/api";
 import { Button } from "../Components/UI/Button";
 import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineCreditCard } from "react-icons/hi";
@@ -11,60 +11,38 @@ export const Payment = () => {
     const navigate = useNavigate();
     const enrollmentId = searchParams.get("enrollmentId");
 
-    const [enrollment, setEnrollment] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [processing, setProcessing] = useState(false);
+    const { data: enrollments = [], isLoading: loading, error } = useMyEnrollments();
+    const enrollment = enrollments.find((e) => e.id === enrollmentId);
 
-    useEffect(() => {
-        if (!enrollmentId) {
-            setError("Missing enrollment reference.");
-            setLoading(false);
-            return;
-        }
+    const createPayment = useCreatePayment();
 
-        const loadEnrollment = async () => {
-            try {
-                const { data } = await api.get("/me/enrollments");
-                const match = data.find((e) => e.id === enrollmentId);
-                if (!match) {
-                    setError("This enrollment could not be found.");
-                } else {
-                    setEnrollment(match);
-                }
-            } catch (err) {
-                setError("Something went wrong loading this enrollment.");
-            } finally {
-                setLoading(false);
+    const handleSimulatePayment = (outcome) => {
+        createPayment.mutate(
+            { enrollmentId, simulateOutcome: outcome },
+            {
+                onSuccess: (data) => {
+                    if (data.status === "CONFIRMED") {
+                        navigate(
+                            `/payment/success?enrollmentId=${enrollmentId}`,
+                            { replace: true }
+                        );
+                    } else {
+                        navigate(
+                            `/payment/failed?enrollmentId=${enrollmentId}`,
+                            { replace: true }
+                        );
+                    }
+                },
+
+                onError: (err) => {
+                    const message =
+                        err.response?.data?.error ||
+                        "Payment could not be processed. Please try again.";
+
+                    toast.error(message);
+                },
             }
-        };
-        loadEnrollment();
-    }, [enrollmentId]);
-
-    const handleSimulatePayment = async (outcome) => {
-        setProcessing(true);
-        setError("");
-
-        try {
-            const { data } = await api.post("/payments", {
-                enrollmentId,
-                simulateOutcome: outcome,
-            });
-
-            if (data.status === "CONFIRMED") {
-                toast.success("Payment confirmed — you're enrolled!");
-                navigate(`/payment/success?enrollmentId=${enrollmentId}`, { replace: true });
-            } else {
-                toast.error("Payment failed. You can try again.");
-                navigate(`/payment/failed?enrollmentId=${enrollmentId}`, { replace: true });
-            }
-        } catch (err) {
-            const message =
-                err.response?.data?.error || "Payment could not be processed. Please try again.";
-            setError(message);
-            toast.error(message);
-            setProcessing(false);
-        }
+        );
     };
 
     if (loading) {
@@ -170,15 +148,15 @@ export const Payment = () => {
                     size="lg"
                     className="w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35"
                     onClick={() => handleSimulatePayment("succeed")}
-                    disabled={processing}
+                    disabled={createPayment.isPending}
                 >
-                    {processing ? "Processing..." : "Simulate Payment"}
+                    {createPayment.isPending ? "Processing..." : "Simulate Payment"}
                 </Button>
 
                 <button
                     type="button"
                     onClick={() => handleSimulatePayment("fail")}
-                    disabled={processing}
+                    disabled={createPayment.isPending}
                     className="mt-3 w-full cursor-pointer text-center text-xs text-slate/50 underline underline-offset-2 transition-colors hover:text-slate"
                 >
                     (dev only) simulate a failed payment

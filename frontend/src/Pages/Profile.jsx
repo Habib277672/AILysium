@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useMyEnrollments } from "../hooks/useEnrollments";
 import { motion } from "motion/react";
-import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
 import { Skeleton } from "../Components/UI/Skeleton";
@@ -22,24 +22,8 @@ const paymentDotStyles = {
 
 export const Profile = () => {
     const { user, resendVerification, logout } = useAuth();
-    const [enrollments, setEnrollments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const { data: enrollments = [], isLoading: loading, isError: error } = useMyEnrollments();
     const [resendState, setResendState] = useState("idle");
-
-    useEffect(() => {
-        const loadEnrollments = async () => {
-            try {
-                const { data } = await api.get("/me/enrollments");
-                setEnrollments(data);
-            } catch (err) {
-                setError("Couldn't load your enrollments. Please try refreshing.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadEnrollments();
-    }, []);
 
     const handleResend = async () => {
         setResendState("sending");
@@ -210,7 +194,7 @@ export const Profile = () => {
 
                     {!loading && error && (
                         <div className="mt-4 rounded-2xl border border-red-200/50 bg-red-50 px-4 py-3 text-sm text-red-600 sm:mt-5 sm:px-5 sm:py-4">
-                            {error}
+                            Couldn't load your enrollments. Please try refreshing.
                         </div>
                     )}
 
@@ -230,39 +214,47 @@ export const Profile = () => {
 
                     {!loading && !error && enrollments.length > 0 && (
                         <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
-                            {enrollments.map((enrollment) => (
-                                <div
-                                    key={enrollment.id}
-                                    to={enrollment.paymentStatus === "PENDING" ? `/payment?enrollmentId=${enrollment.id}` : "#"}
-                                    className={`group flex flex-col gap-2.5 rounded-2xl border border-slate/10 bg-white px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-sky/15 hover:shadow-md hover:shadow-sky/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 sm:py-4 ${enrollment.paymentStatus === "PENDING" ? "cursor-pointer border-l-2 border-l-amber-400" : "border-l-2 border-l-emerald-400"}`}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
-                                            <HiOutlineAcademicCap className="h-4 w-4 sm:h-5 sm:w-5" />
+                            {enrollments.map((enrollment) => {
+                                const isPending = enrollment.paymentStatus === "PENDING";
+                                const CardTag = isPending ? Link : "div";
+                                const cardProps = isPending
+                                    ? { to: `/payment?enrollmentId=${enrollment.id}` }
+                                    : {};
+
+                                return (
+                                    <CardTag
+                                        key={enrollment.id}
+                                        {...cardProps}
+                                        className={`group flex flex-col gap-2.5 rounded-2xl border border-slate/10 bg-white px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-sky/15 hover:shadow-md hover:shadow-sky/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 sm:py-4 ${isPending ? "cursor-pointer border-l-2 border-l-amber-400" : "border-l-2 border-l-emerald-400"}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
+                                                <HiOutlineAcademicCap className="h-4 w-4 sm:h-5 sm:w-5" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="truncate font-heading text-sm font-semibold text-ink">
+                                                    {enrollment.course.title}
+                                                </p>
+                                                <p className="mt-0.5 text-xs text-muted">
+                                                    Enrolled {new Date(enrollment.enrolledAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="min-w-0">
-                                            <p className="truncate font-heading text-sm font-semibold text-ink">
-                                                {enrollment.course.title}
-                                            </p>
-                                            <p className="mt-0.5 text-xs text-muted">
-                                                Enrolled {new Date(enrollment.enrolledAt).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 pl-[2.75rem] sm:pl-0">
-                                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
-                                            <span className={`h-1.5 w-1.5 rounded-full ${paymentDotStyles[enrollment.paymentStatus]}`} />
-                                            {enrollment.paymentStatus}
-                                        </span>
-                                        {enrollment.paymentStatus === "PENDING" && (
-                                            <span className="inline-flex items-center gap-1 text-sm font-medium text-sky transition-colors group-hover:text-sky-light">
-                                                Pay now
-                                                <HiOutlineArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                        <div className="flex items-center gap-2 pl-[2.75rem] sm:pl-0">
+                                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
+                                                <span className={`h-1.5 w-1.5 rounded-full ${paymentDotStyles[enrollment.paymentStatus]}`} />
+                                                {enrollment.paymentStatus}
                                             </span>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                                            {isPending && (
+                                                <span className="inline-flex items-center gap-1 text-sm font-medium text-sky transition-colors group-hover:text-sky-light">
+                                                    Pay now
+                                                    <HiOutlineArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                                </span>
+                                            )}
+                                        </div>
+                                    </CardTag>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
