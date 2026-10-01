@@ -7,6 +7,7 @@ const adminLinks = [
     { to: "/admin/users", label: "Users" },
     { to: "/admin/enrollments", label: "Enrollments" },
     { to: "/admin/courses", label: "Courses" },
+    { to: "/admin/contact-messages", label: "Messages" },
 ];
 
 const linkClass = ({ isActive }) =>

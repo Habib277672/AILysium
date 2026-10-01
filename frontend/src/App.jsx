@@ -27,6 +27,8 @@ import { AdminCourses } from "./Pages/Admin/Courses";
 import { AdminUsers } from "./Pages/Admin/Users";
 import { AdminUserDetail } from "./Pages/Admin/UserDetail";
 import { NotFound } from "./Pages/NotFound";
+import { AdminContactMessages } from "./Pages/Admin/ContactMessages";
+import { AdminContactMessageDetail } from "./Pages/Admin/ContactMessageDetail";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -89,6 +91,8 @@ const App = () => {
             { path: "courses", element: <AdminCourses /> },
             { path: "users", element: <AdminUsers /> },
             { path: "users/:id", element: <AdminUserDetail /> },
+            { path: "contact-messages", element: <AdminContactMessages /> },
+            { path: "contact-messages/:id", element: <AdminContactMessageDetail /> },
           ],
         },
       ],

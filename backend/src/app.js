@@ -7,9 +7,11 @@ import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import enrollmentRouter from "./routes/enrollment.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
+import contactRouter from "./routes/contact.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import adminCoursesRouter from "./routes/admin.courses.routes.js";
 import adminUploadRouter from "./routes/admin.upload.routes.js";
+import adminContactRouter from "./routes/admin.contact.routes.js";
 import { verifyAuthentication } from "./middlewares/verify.middleware.js";
 
 const app = express();
@@ -33,9 +35,11 @@ app.use("/api/auth", authRouter);
 app.use("/api/me", userRouter);
 app.use("/api/enrollments", enrollmentRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/courses", adminCoursesRouter);
 app.use("/api/admin/uploads", adminUploadRouter);
+app.use("/api/admin/contact-messages", adminContactRouter);
 
 app.use((req, res) => {
     res.status(404).json({ error: "Not found" });
