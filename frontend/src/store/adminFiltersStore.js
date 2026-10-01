@@ -8,13 +8,22 @@ import { create } from "zustand";
 // local to one render (that's what makes it worth lifting to Zustand
 // rather than useState).
 export const useAdminFiltersStore = create((set) => ({
+    usersPage: 1,
+    usersSearch: "",
+    setUsersSearch: (value) => set({ usersSearch: value, usersPage: 1 }), // reset to page 1 on new search
+    setUsersPage: (page) => set({ usersPage: page }),
+
+    enrollmentsPage: 1,
     enrollmentsSearch: "",
     enrollmentsStatusFilter: "All",
-    setEnrollmentsSearch: (value) => set({ enrollmentsSearch: value }),
-    setEnrollmentsStatusFilter: (value) => set({ enrollmentsStatusFilter: value }),
+    setEnrollmentsSearch: (value) => set({ enrollmentsSearch: value, enrollmentsPage: 1 }),
+    setEnrollmentsStatusFilter: (value) => set({ enrollmentsStatusFilter: value, enrollmentsPage: 1 }),
+    setEnrollmentsPage: (page) => set({ enrollmentsPage: page }),
 
-    usersSearch: "",
-    setUsersSearch: (value) => set({ usersSearch: value }),
+    messagesPage: 1,
+    messagesSearch: "",
+    setMessagesSearch: (value) => set({ messagesSearch: value, messagesPage: 1 }),
+    setMessagesPage: (page) => set({ messagesPage: page }),
 
     coursesStatusFilter: "All",
     setCoursesStatusFilter: (value) => set({ coursesStatusFilter: value }),

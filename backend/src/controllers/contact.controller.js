@@ -20,12 +20,39 @@ export const submitContactMessage = async (req, res, next) => {
 };
 
 // GET /api/admin/contact-messages — list, newest first
+const PAGE_SIZE = 20;
+
 export const getContactMessages = async (req, res, next) => {
     try {
-        const messages = await prisma.contactMessage.findMany({
-            orderBy: { createdAt: "desc" },
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const search = (req.query.search || "").trim();
+
+        const where = search
+            ? {
+                OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    { email: { contains: search, mode: "insensitive" } },
+                    { program: { contains: search, mode: "insensitive" } },
+                ],
+            }
+            : {};
+
+        const [messages, total] = await Promise.all([
+            prisma.contactMessage.findMany({
+                where,
+                orderBy: { createdAt: "desc" },
+                skip: (page - 1) * PAGE_SIZE,
+                take: PAGE_SIZE,
+            }),
+            prisma.contactMessage.count({ where }),
+        ]);
+
+        res.json({
+            data: messages,
+            total,
+            page,
+            totalPages: Math.ceil(total / PAGE_SIZE) || 1,
         });
-        res.json(messages);
     } catch (err) {
         next(err);
     }

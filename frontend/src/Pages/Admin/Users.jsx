@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { useAdminUsers } from "../../hooks/useAdmin";
 import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import { motion } from "motion/react";
 import { Badge } from "../../Components/UI/Badge";
+import { Pagination } from "../../Components/UI/Pagination";
 import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
 const roleBadgeVariant = {
@@ -11,25 +12,14 @@ const roleBadgeVariant = {
 };
 
 export const AdminUsers = () => {
-
-    const { data: users = [], isLoading: loading, isError: error } = useAdminUsers();
-
-    // Persisted in the Zustand store, not local useState — so the search
-    // term survives clicking into a user's detail page and back, rather
-    // than resetting every time this component unmounts.
+    const page = useAdminFiltersStore((state) => state.usersPage);
+    const setPage = useAdminFiltersStore((state) => state.setUsersPage);
     const search = useAdminFiltersStore((state) => state.usersSearch);
     const setSearch = useAdminFiltersStore((state) => state.setUsersSearch);
 
-    const filteredUsers = useMemo(() => {
-        const query = search.trim().toLowerCase();
-        if (!query) return users;
-        return users.filter(
-            (user) =>
-                user.fullName.toLowerCase().includes(query) ||
-                user.email.toLowerCase().includes(query) ||
-                user.phoneNumber.includes(query)
-        );
-    }, [users, search]);
+    const { data, isLoading: loading, isError: error } = useAdminUsers(page, search);
+    const users = data?.data ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     return (
         <motion.div
@@ -71,7 +61,7 @@ export const AdminUsers = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate/10">
-                            {filteredUsers.map((user) => (
+                            {users.map((user) => (
                                 <tr key={user.id} className="hover:bg-cloud/50">
                                     <td className="font-medium text-ink whitespace-nowrap px-5 py-3">
 
@@ -98,7 +88,7 @@ export const AdminUsers = () => {
                                 </tr>
                             ))}
 
-                            {filteredUsers.length === 0 && (
+                            {users.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="px-5 py-10 text-center text-slate">
                                         No users match this search.
@@ -109,6 +99,7 @@ export const AdminUsers = () => {
                     </table>
                 )}
             </div>
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </motion.div>
     );
 };

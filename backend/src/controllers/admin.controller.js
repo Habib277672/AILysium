@@ -1,44 +1,89 @@
 import { prisma } from "../lib/prisma.js";
 
-// GET /api/admin/users — registered users list
+const PAGE_SIZE = 20;
+
+// GET /api/admin/users?page=1&search=...
 export const getUsers = async (req, res, next) => {
     try {
-        const users = await prisma.user.findMany({
-            orderBy: { createdAt: "desc" },
-            select: {
-                id: true,
-                fullName: true,
-                email: true,
-                phoneNumber: true,
-                role: true,
-                emailVerifiedAt: true,
-                createdAt: true,
-            },
-        });
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const search = (req.query.search || "").trim();
 
-        res.json(users);
+        const where = search
+            ? {
+                OR: [
+                    { fullName: { contains: search, mode: "insensitive" } },
+                    { email: { contains: search, mode: "insensitive" } },
+                    { phoneNumber: { contains: search, mode: "insensitive" } },
+                ],
+            }
+            : {};
+
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                orderBy: { createdAt: "desc" },
+                skip: (page - 1) * PAGE_SIZE,
+                take: PAGE_SIZE,
+                select: {
+                    id: true,
+                    fullName: true,
+                    email: true,
+                    phoneNumber: true,
+                    role: true,
+                    emailVerifiedAt: true,
+                    createdAt: true,
+                },
+            }),
+            prisma.user.count({ where }),
+        ]);
+
+        res.json({
+            data: users,
+            total,
+            page,
+            totalPages: Math.ceil(total / PAGE_SIZE) || 1,
+        });
     } catch (err) {
         next(err);
     }
 }
 
-// GET /api/admin/enrollments — all enrollments, for the admin "enrollments" view.
+// GET /api/admin/enrollments?page=1&search=...&status=PENDING
 export const getEnrollments = async (req, res, next) => {
     try {
-        const enrollments = await prisma.enrollment.findMany({
-            orderBy: { enrolledAt: "desc" },
-            include: {
-                user: {
-                    select: { id: true, fullName: true, email: true, phoneNumber: true },
-                },
-                course: {
-                    select: { id: true, title: true, slug: true },
-                },
-            },
-        });
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const search = (req.query.search || "").trim();
+        const status = req.query.status; // "All" or a PaymentStatus value
 
-        res.json(
-            enrollments.map((enrollment) => ({
+        const where = {
+            ...(status && status !== "All" ? { paymentStatus: status } : {}),
+            ...(search
+                ? {
+                    OR: [
+                        { user: { fullName: { contains: search, mode: "insensitive" } } },
+                        { user: { email: { contains: search, mode: "insensitive" } } },
+                        { course: { title: { contains: search, mode: "insensitive" } } },
+                    ],
+                }
+                : {}),
+        };
+
+        const [enrollments, total] = await Promise.all([
+            prisma.enrollment.findMany({
+                where,
+                orderBy: { enrolledAt: "desc" },
+                skip: (page - 1) * PAGE_SIZE,
+                take: PAGE_SIZE,
+                include: {
+                    user: { select: { id: true, fullName: true, email: true, phoneNumber: true } },
+                    course: { select: { id: true, title: true, slug: true } },
+                },
+            }),
+            prisma.enrollment.count({ where }),
+        ]);
+
+        res.json({
+            data: enrollments.map((enrollment) => ({
                 enrollmentId: enrollment.id,
                 userId: enrollment.user.id,
                 userName: enrollment.user.fullName,
@@ -47,8 +92,11 @@ export const getEnrollments = async (req, res, next) => {
                 course: enrollment.course.title,
                 enrollmentDate: enrollment.enrolledAt,
                 paymentStatus: enrollment.paymentStatus,
-            }))
-        );
+            })),
+            total,
+            page,
+            totalPages: Math.ceil(total / PAGE_SIZE) || 1,
+        });
     } catch (err) {
         next(err);
     }

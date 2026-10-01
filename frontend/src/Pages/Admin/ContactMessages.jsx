@@ -1,21 +1,19 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminContactMessages } from "../../hooks/useContact";
+import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import { Badge } from "../../Components/UI/Badge";
+import { Pagination } from "../../Components/UI/Pagination";
 
 export const AdminContactMessages = () => {
-    const { data: messages = [], isLoading: loading, isError: error } = useAdminContactMessages();
-    const [search, setSearch] = useState("");
+    const page = useAdminFiltersStore((state) => state.messagesPage);
+    const setPage = useAdminFiltersStore((state) => state.setMessagesPage);
+    const search = useAdminFiltersStore((state) => state.messagesSearch);
+    const setSearch = useAdminFiltersStore((state) => state.setMessagesSearch);
 
-    const filtered = messages.filter((m) => {
-        const query = search.trim().toLowerCase();
-        if (!query) return true;
-        return (
-            m.name.toLowerCase().includes(query) ||
-            m.email.toLowerCase().includes(query) ||
-            m.program.toLowerCase().includes(query)
-        );
-    });
+    const { data, isLoading: loading, isError: error } = useAdminContactMessages(page, search);
+    const messages = data?.data ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     return (
         <div>
@@ -50,7 +48,7 @@ export const AdminContactMessages = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate/10">
-                            {filtered.map((message) => (
+                            {messages.map((message) => (
                                 <tr key={message.id} className="hover:bg-cloud/50">
                                     <td className="whitespace-nowrap px-5 py-3 font-medium text-ink">
                                         <Link
@@ -68,7 +66,7 @@ export const AdminContactMessages = () => {
                                 </tr>
                             ))}
 
-                            {filtered.length === 0 && (
+                            {messages.length === 0 && (
                                 <tr>
                                     <td colSpan={4} className="px-5 py-10 text-center text-slate">
                                         No messages match this search.
@@ -79,6 +77,7 @@ export const AdminContactMessages = () => {
                     </table>
                 )}
             </div>
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
     );
 };

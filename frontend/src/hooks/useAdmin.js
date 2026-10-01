@@ -2,19 +2,20 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export const adminKeys = {
-    users: ["admin", "users"],
+    users: (page, search) => ["admin", "users", page, search],
     userDetail: (id) => ["admin", "users", id],
-    enrollments: ["admin", "enrollments"],
+    enrollments: (page, search, status) => ["admin", "enrollments", page, search, status],
     courses: ["admin", "courses"],
 };
 
-export const useAdminUsers = () => {
+export const useAdminUsers = (page, search) => {
     return useQuery({
-        queryKey: adminKeys.users,
+        queryKey: adminKeys.users(page, search),
         queryFn: async () => {
-            const { data } = await api.get("/admin/users");
-            return data;
+            const { data } = await api.get("/admin/users", { params: { page, search } });
+            return data; // { data, total, page, totalPages }
         },
+        keepPreviousData: true, // avoids a loading flash when clicking Next
     });
 };
 
@@ -30,13 +31,14 @@ export const useAdminUserDetail = (id) => {
     });
 };
 
-export const useAdminEnrollments = () => {
+export const useAdminEnrollments = (page, search, status) => {
     return useQuery({
-        queryKey: adminKeys.enrollments,
+        queryKey: adminKeys.enrollments(page, search, status),
         queryFn: async () => {
-            const { data } = await api.get("/admin/enrollments");
+            const { data } = await api.get("/admin/enrollments", { params: { page, search, status } });
             return data;
         },
+        keepPreviousData: true,
     });
 };
 

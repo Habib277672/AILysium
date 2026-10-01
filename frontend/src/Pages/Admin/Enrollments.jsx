@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAdminEnrollments } from "../../hooks/useAdmin";
 import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import { motion } from "motion/react";
-// import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
+import { Pagination } from "../../Components/UI/Pagination";
 import { AdminTableSkeleton } from "../../Components/UI/AdminTableSkeleton";
 
 const paymentBadgeVariant = {
@@ -16,30 +16,16 @@ const paymentBadgeVariant = {
 const statusFilters = ["All", "PENDING", "CONFIRMED", "FAILED"];
 
 export const AdminEnrollments = () => {
-    const { data: enrollments = [], isLoading: loading, isError: error } = useAdminEnrollments();
-
-    // Both persisted in Zustand — leaving this page to check a user's
-    // profile (via the userName link) and coming back keeps your filter
-    // and search exactly where you left them.
+    const page = useAdminFiltersStore((state) => state.enrollmentsPage);
+    const setPage = useAdminFiltersStore((state) => state.setEnrollmentsPage);
     const statusFilter = useAdminFiltersStore((state) => state.enrollmentsStatusFilter);
     const setStatusFilter = useAdminFiltersStore((state) => state.setEnrollmentsStatusFilter);
     const search = useAdminFiltersStore((state) => state.enrollmentsSearch);
     const setSearch = useAdminFiltersStore((state) => state.setEnrollmentsSearch);
 
-    const filteredEnrollments = useMemo(() => {
-        return enrollments.filter((enrollment) => {
-            const matchesStatus = statusFilter === "All" || enrollment.paymentStatus === statusFilter;
-
-            const query = search.trim().toLowerCase();
-            const matchesSearch =
-                query === "" ||
-                enrollment.userName.toLowerCase().includes(query) ||
-                enrollment.email.toLowerCase().includes(query) ||
-                enrollment.course.toLowerCase().includes(query);
-
-            return matchesStatus && matchesSearch;
-        });
-    }, [enrollments, statusFilter, search]);
+    const { data, isLoading: loading, isError: error } = useAdminEnrollments(page, search, statusFilter);
+    const enrollments = data?.data ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     return (
         <motion.div
@@ -101,7 +87,7 @@ export const AdminEnrollments = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate/10">
-                            {filteredEnrollments.map((enrollment) => (
+                            {enrollments.map((enrollment) => (
                                 <tr key={enrollment.enrollmentId} className="hover:bg-cloud/50">
                                     <td className="whitespace-nowrap px-5 py-3 font-medium text-ink">
                                         <Link
@@ -131,7 +117,7 @@ export const AdminEnrollments = () => {
                                 </tr>
                             ))}
 
-                            {filteredEnrollments.length === 0 && (
+                            {enrollments.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="px-5 py-10 text-center text-slate">
                                         No enrollments match this filter.
@@ -142,6 +128,7 @@ export const AdminEnrollments = () => {
                     </table>
                 )}
             </div>
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </motion.div>
     );
 };

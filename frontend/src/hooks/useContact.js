@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export const contactKeys = {
-    admin: ["admin", "contact-messages"],
+    admin: (page, search) => ["admin", "contact-messages", page, search],
     adminDetail: (id) => ["admin", "contact-messages", id],
 };
 
@@ -17,13 +17,14 @@ export const useSubmitContactMessage = () => {
     });
 };
 
-export const useAdminContactMessages = () => {
+export const useAdminContactMessages = (page, search) => {
     return useQuery({
-        queryKey: contactKeys.admin,
+        queryKey: contactKeys.admin(page, search),
         queryFn: async () => {
-            const { data } = await api.get("/admin/contact-messages");
+            const { data } = await api.get("/admin/contact-messages", { params: { page, search } });
             return data;
         },
+        keepPreviousData: true,
     });
 };
 
