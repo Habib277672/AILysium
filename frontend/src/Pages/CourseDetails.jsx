@@ -43,43 +43,6 @@ export const CourseDetails = () => {
         ? enrollments.find((e) => e.course.id === course.id) ?? null
         : null;
 
-    // const [course, setCourse] = useState(null);
-    // const [enrollment, setEnrollment] = useState(null);
-    // const [loading, setLoading] = useState(true);
-    // const [notFound, setNotFound] = useState(false);
-
-    // useEffect(() => {
-    //     setLoading(true);
-    //     setNotFound(false);
-
-    //     const loadCourse = async () => {
-    //         try {
-    //             const { data: courseData } = await api.get(`/courses/${slug}`);
-    //             setCourse(courseData);
-
-    //             // Only check enrollment status for a logged-in, non-admin user
-    //             // — an anonymous visitor can't be enrolled in anything, and
-    //             // admins can never enroll at all.
-    //             if (user && !isAdmin) {
-    //                 try {
-    //                     const { data: enrollments } = await api.get("/me/enrollments");
-    //                     const match = enrollments.find((e) => e.course.id === courseData.id);
-    //                     setEnrollment(match ?? null);
-    //                 } catch {
-    //                     // Non-fatal — the course details still render fine
-    //                     // even if this secondary call fails.
-    //                     setEnrollment(null);
-    //                 }
-    //             }
-    //         } catch (err) {
-    //             setNotFound(true);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-    //     loadCourse();
-    // }, [slug, user, isAdmin]);
-
     if (courseLoading) {
         return <CourseDetailsSkeleton />;
     }
@@ -104,7 +67,7 @@ export const CourseDetails = () => {
 
     const isAvailable = course.status === "AVAILABLE";
     const isEnrolled = Boolean(enrollment);
-    const isFullyEnrolled = isEnrolled && enrollment.paymentStatus === "CONFIRMED";
+    const isFullyEnrolled = isEnrolled && ["CONFIRMED", "FREE"].includes(enrollment.paymentStatus);
 
     // Pending enrollment -> straight to finishing payment, not back through
     // /enroll (they've already enrolled, no need to redo that step).
@@ -304,9 +267,9 @@ export const CourseDetails = () => {
                             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                         >
                             <div className="rounded-3xl border border-slate/15 bg-white p-5 shadow-sm sm:p-7">
-                                <p className="text-sm text-muted">Starting from</p>
+                                <p className="text-sm text-muted">Price</p>
                                 <p className="mt-1 font-heading text-2xl font-bold text-ink sm:text-3xl">
-                                    PKR {course.price.toLocaleString()}
+                                    {course.isFree ? "Free of Cost" : `PKR ${course.price.toLocaleString()}`}
                                 </p>
                                 <div className="mt-5 space-y-3 border-t border-slate/10 pt-5 text-sm sm:mt-6 sm:pt-6">
                                     <div className="flex items-center justify-between">

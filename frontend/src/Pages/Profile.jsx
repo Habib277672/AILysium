@@ -12,12 +12,14 @@ const paymentBadgeStyles = {
     PENDING: "bg-amber-50 text-amber-600",
     CONFIRMED: "bg-emerald-50 text-emerald-600",
     FAILED: "bg-red-50 text-red-600",
+    FREE: "bg-emerald-50 text-emerald-600",
 };
 
 const paymentDotStyles = {
     PENDING: "bg-amber-500",
     CONFIRMED: "bg-emerald-500",
     FAILED: "bg-red-500",
+    FREE: "bg-emerald-500",
 };
 
 export const Profile = () => {

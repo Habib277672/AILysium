@@ -16,6 +16,7 @@ enum PaymentStatus {
   PENDING
   CONFIRMED
   FAILED
+  FREE
 }
 
 enum CourseStatus {
@@ -52,6 +53,7 @@ model Course {
   price       Int
   status      CourseStatus @default(COMING_SOON)
   isFeatured  Boolean      @default(false)
+  isFree      Boolean      @default(false)
 
   duration      String
   mentor        String?

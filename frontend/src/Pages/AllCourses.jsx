@@ -13,12 +13,14 @@ const statusBadgeVariant = {
     AVAILABLE: "success",
     COMING_SOON: "warning",
     UNPUBLISHED: "ink",
+    FREE: "success",
 };
 
 const statusLabel = {
     AVAILABLE: "Available",
     COMING_SOON: "Coming Soon",
     UNPUBLISHED: "No longer listed",
+    FREE: "Free",
 };
 
 export const AllCourses = () => {
@@ -121,9 +123,7 @@ export const AllCourses = () => {
                                                     : "warning"
                                             }
                                         >
-                                            {enrollment.paymentStatus === "CONFIRMED"
-                                                ? "Enrolled"
-                                                : "Enrollment pending"}
+                                            {["CONFIRMED", "FREE"].includes(enrollment.paymentStatus) ? "Enrolled" : "Enrollment pending"}
                                         </Badge>
                                     )}
                                 </div>

@@ -13,6 +13,8 @@ const courseSchema = z.object({
     description: z.string().trim().min(1),
     price: z.number().int().nonnegative(),
     status: z.enum(["AVAILABLE", "COMING_SOON", "UNPUBLISHED"]).default("COMING_SOON"),
+    isFeatured: z.boolean().default(false),
+    isFree: z.boolean().default(false),
     // Optional — if omitted, generated from title.
     slug: z.string().trim().min(2).max(140).optional(),
 

@@ -11,6 +11,7 @@ const emptyForm = {
     price: "",
     status: "COMING_SOON",
     isFeatured: false,
+    isFree: false,
     duration: "",
     mentor: "",
     format: "",
@@ -28,6 +29,7 @@ const courseToFormState = (course) => ({
     price: course?.price?.toString() ?? "",
     status: course?.status ?? "COMING_SOON",
     isFeatured: course?.isFeatured ?? false,
+    isFree: course?.isFree ?? false,
     duration: course?.duration ?? "",
     mentor: course?.mentor ?? "",
     format: course?.format ?? "",
@@ -45,6 +47,7 @@ const formStateToPayload = (form) => ({
     price: Number(form.price),
     status: form.status,
     isFeatured: form.isFeatured,
+    isFree: form.isFree,
     duration: form.duration.trim(),
     format: form.format.trim(),
     mentor: form.mentor.trim() || null,
@@ -179,6 +182,18 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
                 />
                 <span className="text-sm text-ink">
                     Feature this course on the homepage
+                </span>
+            </label>
+
+            <label className="flex items-center gap-3 rounded-xl border border-slate/20 px-4 py-3">
+                <input
+                    type="checkbox"
+                    checked={form.isFree}
+                    onChange={(event) => setForm((prev) => ({ ...prev, isFree: event.target.checked }))}
+                    className="h-4 w-4 rounded border-slate/30 text-sky focus:ring-sky"
+                />
+                <span className="text-sm text-ink">
+                    This is a free course (skips payment on enrollment)
                 </span>
             </label>
 

@@ -29,6 +29,15 @@ export const createPayment = async (req, res, next) => {
             throw err;
         }
 
+        // Free enrollments never need a payment — this blocks a stray
+        // direct API call to /payments for one, even though the frontend
+        // should never link there for a free course in the first place.
+        if (enrollment.paymentStatus === "FREE") {
+            const err = new Error("This is a free enrollment and doesn't require payment");
+            err.status = 409;
+            throw err;
+        }
+
         if (enrollment.paymentStatus === "CONFIRMED") {
             const err = new Error("This enrollment is already paid and confirmed");
             err.status = 409;

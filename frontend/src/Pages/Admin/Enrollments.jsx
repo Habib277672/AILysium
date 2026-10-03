@@ -11,9 +11,10 @@ const paymentBadgeVariant = {
     PENDING: "warning",
     CONFIRMED: "success",
     FAILED: "warning",
+    FREE: "success",
 };
 
-const statusFilters = ["All", "PENDING", "CONFIRMED", "FAILED"];
+const statusFilters = ["All", "PENDING", "CONFIRMED", "FAILED", "FREE"];
 
 export const AdminEnrollments = () => {
     const page = useAdminFiltersStore((state) => state.enrollmentsPage);

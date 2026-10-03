@@ -24,8 +24,13 @@ export const Enroll = () => {
     const handleConfirm = () => {
         createEnrollment.mutate(courseId, {
             onSuccess: (enrollment) => {
-                toast.success("Enrollment started — continue to payment.");
-                navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
+                if (enrollment.course.isFree) {
+                    toast.success("You're enrolled! This course is free.");
+                    navigate("/profile", { replace: true });
+                } else {
+                    toast.success("Enrollment started — continue to payment.");
+                    navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
+                }
             },
             onError: (err) => {
                 const message =
@@ -66,6 +71,7 @@ export const Enroll = () => {
 
     const isAvailable = course.status === "AVAILABLE";
     const isVerified = Boolean(user?.emailVerifiedAt);
+    const confirmLabel = course.isFree ? "Enroll for free" : "Enroll";
 
     return (
         <div>
@@ -143,7 +149,7 @@ export const Enroll = () => {
                     <div className="text-center">
                         <p className="text-xs font-semibold uppercase tracking-wider text-muted/60">Price</p>
                         <p className="mt-1 font-heading text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-                            PKR {course.price.toLocaleString()}
+                            {course.isFree ? "Free of Cost" : `PKR ${course.price.toLocaleString()}`}
                         </p>
                     </div>
 
@@ -184,7 +190,7 @@ export const Enroll = () => {
                         onClick={handleConfirm}
                         disabled={!isAvailable || createEnrollment.isPending || !isVerified}
                     >
-                        {createEnrollment.isPending ? "Enrolling..." : "Continue to payment →"}
+                        {createEnrollment.isPending ? "Enrolling..." : confirmLabel}
                     </Button>
 
                     <Link

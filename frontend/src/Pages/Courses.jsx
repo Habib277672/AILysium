@@ -5,11 +5,12 @@ import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
 import { Reveal } from "../Components/UI/Reveal";
 import { useCourses } from "../hooks/useCourses";
 
-const statusFilters = ["All", "AVAILABLE", "COMING_SOON"];
+const statusFilters = ["All", "AVAILABLE", "FREE", "COMING_SOON"];
 
 const filterLabel = {
   All: "All",
   AVAILABLE: "Available",
+  FREE: "Free",
   COMING_SOON: "Coming Soon",
 };
 
@@ -20,7 +21,9 @@ export const Courses = () => {
   const visibleCourses =
     filter === "All"
       ? courses
-      : courses.filter((course) => course.status === filter);
+      : filter === "FREE"
+        ? courses.filter((course) => course.isFree)
+        : courses.filter((course) => course.status === filter);
 
   return (
     <div>

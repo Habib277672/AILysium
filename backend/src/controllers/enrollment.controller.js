@@ -2,11 +2,18 @@ import { prisma } from "../lib/prisma.js";
 
 export const createEnrollment = async (req, res, next) => {
     try {
-        // Admin accounts manage the catalog, not consume it — an admin
-        // enrolling in their own course would pollute real enrollment
-        // data and the admin report with a non-real, non-paying "student."
         if (req.user.role === "ADMIN") {
             const err = new Error("Admin accounts cannot enroll in courses");
+            err.status = 403;
+            throw err;
+        }
+
+        const user = await prisma.user.findUnique({ where: { id: req.user.sub } });
+
+        if (!user.emailVerifiedAt) {
+            const err = new Error(
+                "Please verify your email before enrolling in a course. Check your inbox, or resend the verification email from your profile."
+            );
             err.status = 403;
             throw err;
         }
@@ -27,12 +34,7 @@ export const createEnrollment = async (req, res, next) => {
         }
 
         const existingEnrollment = await prisma.enrollment.findUnique({
-            where: {
-                userId_courseId: {
-                    userId: req.user.sub,
-                    courseId,
-                },
-            },
+            where: { userId_courseId: { userId: req.user.sub, courseId } },
         });
 
         if (existingEnrollment) {
@@ -41,14 +43,17 @@ export const createEnrollment = async (req, res, next) => {
             throw err;
         }
 
+        // Free courses skip payment entirely — the enrollment is created
+        // already CONFIRMED-equivalent (FREE), so the frontend never sends
+        // the user to /payment for these at all.
         const enrollment = await prisma.enrollment.create({
             data: {
                 userId: req.user.sub,
                 courseId,
-                paymentStatus: "PENDING",
+                paymentStatus: course.isFree ? "FREE" : "PENDING",
             },
             include: {
-                course: { select: { id: true, title: true, slug: true, price: true } },
+                course: { select: { id: true, title: true, slug: true, price: true, isFree: true } },
             },
         });
 
