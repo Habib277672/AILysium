@@ -1,7 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAdminCourses } from "../../hooks/useAdmin";
-import { useCreateCourse, useUpdateCourse, useDeleteCourse } from "../../hooks/useAdminCourseMutations";
+import { useCreateCourse, useUpdateCourse, useDeleteCourse, useExportCourseEnrollments } from "../../hooks/useAdminCourseMutations";
 import { motion } from "motion/react";
 // import { api } from "../../lib/api";
 import { Badge } from "../../Components/UI/Badge";
@@ -83,6 +83,20 @@ export const AdminCourses = () => {
                 toast.error(message);
             },
         });
+    };
+
+
+    const exportEnrollments = useExportCourseEnrollments();
+
+    const handleExport = (course) => {
+        toast.promise(
+            exportEnrollments.mutateAsync({ courseId: course.id, courseTitle: course.title }),
+            {
+                loading: "Preparing download…",
+                success: "Download started.",
+                error: "Couldn't export enrollments for this course.",
+            }
+        );
     };
 
     return (
@@ -170,13 +184,22 @@ export const AdminCourses = () => {
                                     </p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => setFormTarget(course)}>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleExport(course)}
+                                        disabled={exportEnrollments.isPending}
+                                        className="cursor-pointer"
+                                    >
+                                        Download
+                                    </Button>
+                                    <Button variant="outline" size="sm" onClick={() => setFormTarget(course)} className="cursor-pointer">
                                         Edit
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-red-600 hover:bg-red-50"
+                                        className="text-red-600 hover:bg-red-50 cursor-pointer"
                                         onClick={() => handleDelete(course)}
                                     >
                                         Delete

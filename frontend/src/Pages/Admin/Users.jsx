@@ -53,6 +53,7 @@ export const AdminUsers = () => {
                         <thead className="bg-cloud text-left text-xs uppercase tracking-wide text-slate/60">
                             <tr>
                                 <th className="px-5 py-3">Name</th>
+                                <th className="px-5 py-3">Username</th>
                                 <th className="px-5 py-3">Email</th>
                                 <th className="px-5 py-3">Phone</th>
                                 <th className="px-5 py-3">Role</th>
@@ -63,11 +64,8 @@ export const AdminUsers = () => {
                         <tbody className="divide-y divide-slate/10">
                             {users.map((user) => (
                                 <tr key={user.id} className="hover:bg-cloud/50">
-                                    <td className="font-medium text-ink whitespace-nowrap px-5 py-3">
-
-                                        {user.fullName}
-
-                                    </td>
+                                    <td className="font-medium text-ink whitespace-nowrap px-5 py-3">{user.fullName}</td>
+                                    <td className="whitespace-nowrap px-5 py-3 text-slate">{user.username ? `@${user.username}` : "—"}</td>
                                     <td className="whitespace-nowrap px-5 py-3 text-slate">{user.email}</td>
                                     <td className="whitespace-nowrap px-5 py-3 text-slate">
                                         {user.phoneNumber}

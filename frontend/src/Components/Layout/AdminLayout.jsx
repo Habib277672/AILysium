@@ -4,6 +4,7 @@ import { ScrollToTop } from "../UI/ScrollToTop";
 
 const adminLinks = [
     { to: "/admin", label: "Dashboard", end: true },
+    { to: "/admin/secondary-dashboard", label: "Secondary Dashboard" },
     { to: "/admin/users", label: "Users" },
     { to: "/admin/enrollments", label: "Enrollments" },
     { to: "/admin/courses", label: "Courses" },

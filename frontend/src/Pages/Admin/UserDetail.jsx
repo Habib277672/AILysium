@@ -71,6 +71,10 @@ export const AdminUserDetail = () => {
             <Card padding="lg" className="mt-6">
                 <dl className="grid gap-4 sm:grid-cols-2">
                     <div>
+                        <dt className="text-xs uppercase tracking-wide text-slate/60">Username</dt>
+                        <dd className="mt-1 text-sm text-ink">{user.username ? `@${user.username}` : "—"}</dd>
+                    </div>
+                    <div>
                         <dt className="text-xs uppercase tracking-wide text-slate/60">Email</dt>
                         <dd className="mt-1 text-sm text-ink">{user.email}</dd>
                     </div>

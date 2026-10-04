@@ -11,6 +11,7 @@ import contactRouter from "./routes/contact.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import adminCoursesRouter from "./routes/admin.courses.routes.js";
 import adminUploadRouter from "./routes/admin.upload.routes.js";
+import adminEnrollmentRouter from "./routes/admin.enrollment.routes.js";
 import adminContactRouter from "./routes/admin.contact.routes.js";
 import { verifyAuthentication } from "./middlewares/verify.middleware.js";
 
@@ -39,6 +40,7 @@ app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/courses", adminCoursesRouter);
 app.use("/api/admin/uploads", adminUploadRouter);
+app.use("/api/admin/manual-enrollments", adminEnrollmentRouter);
 app.use("/api/admin/contact-messages", adminContactRouter);
 
 app.use((req, res) => {

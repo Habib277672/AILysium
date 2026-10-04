@@ -260,6 +260,99 @@ export const About = () => {
         </div>
       </section>
 
+      {/* Why Choose Us */}
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-28">
+        <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
+
+        <div className="relative mx-auto max-w-6xl px-6 text-center">
+          <Reveal id="why-header">
+            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+              <span className="bg-sky h-1 w-1 rounded-full" />
+              Built on Trust
+            </span>
+            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+              Why choose{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                AiLysium
+              </span>
+            </h2>
+            <p className="text-muted mx-auto mt-2 max-w-xl text-sm leading-relaxed sm:text-base">
+              We'd rather teach fewer students well than a lot of students
+              poorly — that shows up in how every program is run.
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-3">
+            {whyChooseUsCards.map((card, index) => (
+              <Reveal
+                key={card.title}
+                id={`why-${index}`}
+                delay={index * 0.1}
+                className="group border-slate/10 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 relative overflow-hidden rounded-3xl border bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:bg-white/70 sm:p-7 sm:backdrop-blur-md"
+              >
+                <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" />
+                <div className="flex items-center gap-3">
+                  <div className="from-sky to-sky-light shadow-sky/25 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md transition-transform duration-300 group-hover:scale-110 sm:h-12 sm:w-12">
+                    {index === 0 && (
+                      <svg
+                        className="h-5 w-5 sm:h-6 sm:w-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                    {index === 1 && (
+                      <svg
+                        className="h-5 w-5 sm:h-6 sm:w-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                    {index === 2 && (
+                      <svg
+                        className="h-5 w-5 sm:h-6 sm:w-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <h3 className="font-heading text-ink group-hover:text-sky text-base font-bold transition-colors sm:text-lg">
+                    {card.title}
+                  </h3>
+                </div>
+                <p className="text-muted mt-2 text-sm leading-relaxed">
+                  {card.description}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Who's behind AiLysium */}
       <section className="bg-cloud relative overflow-hidden py-16 md:py-28">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
@@ -446,99 +539,6 @@ export const About = () => {
                       >
                         <path
                           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <h3 className="font-heading text-ink group-hover:text-sky text-base font-bold transition-colors sm:text-lg">
-                    {card.title}
-                  </h3>
-                </div>
-                <p className="text-muted mt-2 text-sm leading-relaxed">
-                  {card.description}
-                </p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="bg-cloud relative overflow-hidden py-16 md:py-28">
-        <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
-        <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
-
-        <div className="relative mx-auto max-w-6xl px-6 text-center">
-          <Reveal id="why-header">
-            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Built on Trust
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
-              Why choose{" "}
-              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                AiLysium
-              </span>
-            </h2>
-            <p className="text-muted mx-auto mt-2 max-w-xl text-sm leading-relaxed sm:text-base">
-              We'd rather teach fewer students well than a lot of students
-              poorly — that shows up in how every program is run.
-            </p>
-          </Reveal>
-
-          <div className="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-3">
-            {whyChooseUsCards.map((card, index) => (
-              <Reveal
-                key={card.title}
-                id={`why-${index}`}
-                delay={index * 0.1}
-                className="group border-slate/10 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 relative overflow-hidden rounded-3xl border bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:bg-white/70 sm:p-7 sm:backdrop-blur-md"
-              >
-                <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" />
-                <div className="flex items-center gap-3">
-                  <div className="from-sky to-sky-light shadow-sky/25 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md transition-transform duration-300 group-hover:scale-110 sm:h-12 sm:w-12">
-                    {index === 0 && (
-                      <svg
-                        className="h-5 w-5 sm:h-6 sm:w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                    {index === 1 && (
-                      <svg
-                        className="h-5 w-5 sm:h-6 sm:w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                    {index === 2 && (
-                      <svg
-                        className="h-5 w-5 sm:h-6 sm:w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                           stroke="currentColor"
                           strokeWidth="1.8"
                           strokeLinecap="round"

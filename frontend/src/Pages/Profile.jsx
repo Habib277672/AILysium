@@ -127,8 +127,8 @@ export const Profile = () => {
                                 <HiOutlineUser className="h-4 w-4" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted/70">Full name</p>
-                                <p className="mt-0.5 truncate text-sm font-semibold text-ink">{user.fullName}</p>
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted/70">Username</p>
+                                <p className="mt-0.5 truncate text-sm font-semibold text-ink">@{user.username}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2.5 rounded-xl border border-slate/10 px-3 py-2.5 transition-colors hover:border-sky/15 hover:bg-sky/[0.02] sm:gap-3.5 sm:px-4 sm:py-3.5">

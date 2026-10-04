@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { hasRevealed, markRevealed } from "../../lib/revealStore";
 
@@ -13,11 +14,11 @@ export const Reveal = ({
   delay = 0,
   className = "",
 }) => {
-  const already = hasRevealed(id);
-
-  if (already) {
-    return <div className={className}>{children}</div>;
-  }
+  // Freeze the revealed flag at mount. Reading it on every render made this
+  // component switch element types (motion.div → div) once the section had
+  // been revealed, which remounted the whole subtree on the next state
+  // update — blowing away input focus and replaying layoutId animations.
+  const [already] = useState(() => hasRevealed(id));
 
   const mobile = isMobile();
   const safeY = mobile ? Math.min(y, 12) : y;
@@ -28,7 +29,7 @@ export const Reveal = ({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: safeY, x: safeX }}
+      initial={already ? false : { opacity: 0, y: safeY, x: safeX }}
       whileInView={{ opacity: 1, y: 0, x: 0 }}
       viewport={{
         once: true,
@@ -41,7 +42,7 @@ export const Reveal = ({
         ease: [0.22, 1, 0.36, 1],
       }}
       onViewportEnter={() => markRevealed(id)}
-      style={{ willChange: "transform, opacity" }}
+      style={already ? undefined : { willChange: "transform, opacity" }}
     >
       {children}
     </motion.div>

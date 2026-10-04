@@ -15,11 +15,13 @@ import {
     consumePasswordResetToken,
 } from "../services/auth.services.js";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../services/email.services.js";
+import { generateUniqueUsername } from "../lib/username.js";
 import { prisma as db } from "../lib/prisma.js";
 
 const publicUser = (user) => ({
     id: user.id,
     fullName: user.fullName,
+    username: user.username,
     email: user.email,
     phoneNumber: user.phoneNumber,
     role: user.role,
@@ -50,8 +52,10 @@ export const register = async (req, res, next) => {
         }
 
         const passwordHash = await argon2.hash(password);
+        const username = await generateUniqueUsername(fullName);
+
         const user = await prisma.user.create({
-            data: { fullName, email, phoneNumber, passwordHash },
+            data: { fullName, username, email, phoneNumber, passwordHash },
         });
 
         try {

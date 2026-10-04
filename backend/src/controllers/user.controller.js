@@ -16,6 +16,7 @@ export const getProfile = async (req, res, next) => {
         res.json({
             id: user.id,
             fullName: user.fullName,
+            username: user.username,
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role,

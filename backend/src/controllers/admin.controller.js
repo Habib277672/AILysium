@@ -12,6 +12,7 @@ export const getUsers = async (req, res, next) => {
             ? {
                 OR: [
                     { fullName: { contains: search, mode: "insensitive" } },
+                    { username: { contains: search, mode: "insensitive" } },
                     { email: { contains: search, mode: "insensitive" } },
                     { phoneNumber: { contains: search, mode: "insensitive" } },
                 ],
@@ -27,6 +28,7 @@ export const getUsers = async (req, res, next) => {
                 select: {
                     id: true,
                     fullName: true,
+                    username: true,
                     email: true,
                     phoneNumber: true,
                     role: true,
@@ -110,6 +112,7 @@ export const getUserById = async (req, res, next) => {
             select: {
                 id: true,
                 fullName: true,
+                username: true,
                 email: true,
                 phoneNumber: true,
                 role: true,

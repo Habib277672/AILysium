@@ -1,7 +1,5 @@
 // AI Tools directory data. Sourced from a reconstructed approximation of
-// the Aaghaz AI Tools directory (not a verified 1:1 scrape) — category
-// overlaps (e.g. ChatGPT under both "AI Writing" and "AI Chatbots") are
-// preserved from the source rather than silently deduplicated.
+// the Aaghaz AI Tools directory (not a verified 1:1 scrape).
 import openaiLogo from "../assets/images/AITool_logos/openai.webp";
 import canvaLogo from "../assets/images/AITool_logos/canva.webp";
 import cleanupPicturesLogo from "../assets/images/AITool_logos/cleanup_pictures.webp";
@@ -76,7 +74,6 @@ import removeBgLogo from "../assets/images/AITool_logos/remove_bg.webp";
 import upscaylLogo from "../assets/images/AITool_logos/upscayl.webp";
 import bigjpgLogo from "../assets/images/AITool_logos/bigjpg.webp";
 
-
 export const categories = [
     "All Tools",
     "Video Generation",
@@ -137,7 +134,6 @@ export const aiTools = [
     { name: "MutableAI", description: "AI-accelerated software development platform that can generate documentation and refactor code.", category: "AI Coding", tags: ["DOCUMENTATION", "REFACTORING", "ACCELERATION"], link: "https://mutable.ai", image: mutableAiLogo },
 
     // AI Chatbots
-    { name: "ChatGPT", description: "Industry-leading general-purpose conversational AI from OpenAI.", category: "AI Chatbots", tags: ["GENERAL PURPOSE", "GPT-4", "PLUGINS"], link: "https://chat.openai.com", image: openaiLogo },
     { name: "Google Gemini", description: "Google's multimodal AI assistant with deep integration across Google products and search.", category: "AI Chatbots", tags: ["MULTIMODAL", "GOOGLE", "REAL-TIME"], link: "https://gemini.google.com", image: googleGeminiLogo },
     { name: "Microsoft Copilot", description: "Everyday AI companion powered by GPT models and integrated into Windows, Edge, and Microsoft 365.", category: "AI Chatbots", tags: ["MICROSOFT", "ENTERPRISE", "WEB SEARCH"], link: "https://copilot.microsoft.com", image: microsoftCopilotLogo },
     { name: "Perplexity AI", description: "AI-powered conversational search engine that answers questions using natural language and web sources.", category: "AI Chatbots", tags: ["SEARCH", "CITATIONS", "RESEARCH"], link: "https://www.perplexity.ai", image: perplexityLogo },
@@ -163,7 +159,6 @@ export const aiTools = [
     // Analysis & Digital Humans
     { name: "D-ID", description: "Generative AI platform for creating customized talking-avatar videos from text and images.", category: "Analysis & Digital Humans", tags: ["TALKING HEADS", "AVATARS", "API"], link: "https://www.d-id.com", image: dIdLogo },
     { name: "Soul Machines", description: "Creates autonomous Digital People for real-time customer interactions and experiences.", category: "Analysis & Digital Humans", tags: ["DIGITAL PEOPLE", "CUSTOMER EXPERIENCE", "AUTONOMOUS"], link: "https://www.soulmachines.com", image: soulMachinesLogo },
-    { name: "Synthesia", description: "AI video platform using digital avatars for corporate training and communication.", category: "Analysis & Digital Humans", tags: ["CORPORATE TRAINING", "AVATARS"], link: "https://www.synthesia.io", image: synthesiaLogo },
 
     // Data & Analytics
     { name: "Tableau AI", description: "Generative AI capabilities across Tableau to help users discover and communicate data insights.", category: "Data & Analytics", tags: ["VISUALIZATION", "ENTERPRISE", "INSIGHTS"], link: "https://www.tableau.com/ai", image: tableauLogo },
@@ -186,7 +181,6 @@ export const aiTools = [
     // Music & Audio
     { name: "AIVA", description: "AI music composer for emotional soundtracks used in films, games, and commercials.", category: "Music & Audio", tags: ["COMPOSITION", "SOUNDTRACKS", "ROYALTY-FREE"], link: "https://www.aiva.ai", image: aivaLogo },
     { name: "Soundraw", description: "AI music generator that lets creators customize length, composition, and instruments.", category: "Music & Audio", tags: ["CUSTOMIZABLE", "CREATORS", "BACKGROUND MUSIC"], link: "https://soundraw.io", image: soundrawLogo },
-    { name: "Descript", description: "AI audio tools including Studio Sound for noise removal and voice enhancement.", category: "Music & Audio", tags: ["AUDIO ENHANCEMENT", "PODCASTING", "NOISE REDUCTION"], link: "https://www.descript.com", image: descriptLogo },
     { name: "Murf AI", description: "AI voice generator that creates studio-quality voiceovers from text.", category: "Music & Audio", tags: ["VOICEOVERS", "TEXT-TO-SPEECH", "PRESENTATIONS"], link: "https://murf.ai", image: murfAiLogo },
 
     // Business AI
@@ -202,7 +196,6 @@ export const aiTools = [
     { name: "Clari", description: "Revenue platform using AI to forecast accurately and manage the revenue pipeline.", category: "Sales AI", tags: ["FORECASTING", "REVENUE", "PIPELINE"], link: "https://www.clari.com", image: clariLogo },
 
     // Research & Search
-    { name: "Perplexity AI", description: "Conversational search engine that provides direct answers with inline citations.", category: "Research & Search", tags: ["SEARCH", "CITATIONS", "ACCURACY"], link: "https://www.perplexity.ai", image: perplexityLogo },
     { name: "Consensus", description: "AI search engine for scientific research that extracts findings from peer-reviewed papers.", category: "Research & Search", tags: ["ACADEMIC", "SCIENCE", "PEER-REVIEWED"], link: "https://consensus.app", image: consensusLogo },
     { name: "Elicit", description: "AI research assistant that automates literature reviews and extracts data from research papers.", category: "Research & Search", tags: ["LITERATURE REVIEW", "DATA EXTRACTION", "ACADEMIC"], link: "https://elicit.com", image: elicitLogo },
     { name: "Scite", description: "Research platform using Smart Citations to show whether studies support or contrast with claims.", category: "Research & Search", tags: ["SMART CITATIONS", "EVALUATION", "RESEARCH"], link: "https://scite.ai", image: sciteLogo },

@@ -58,7 +58,7 @@ export const CourseCard = ({ course }) => {
             </p>
           </div>
           <Button as={Link} to={`/courses/${course.slug}`} variant="primary" size="sm" className="shrink-0 rounded-full px-4 sm:px-5 text-xs sm:text-sm">
-            View programme
+            View program
           </Button>
         </div>
       </div>

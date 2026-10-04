@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { z } from "zod";
+import ExcelJS from "exceljs";
 
 const slugify = (title) =>
     title
@@ -142,3 +143,84 @@ export const deleteCourse = async (req, res, next) => {
         next(err);
     }
 }
+
+// GET /api/admin/courses/:id/export — downloads an .xlsx of every user
+// enrolled in this specific course, with their enrollment and payment
+// details.
+export const exportCourseEnrollments = async (req, res, next) => {
+    try {
+        const course = await prisma.course.findUnique({
+            where: { id: req.params.id },
+        });
+
+        if (!course) {
+            const err = new Error("Course not found");
+            err.status = 404;
+            throw err;
+        }
+
+        const enrollments = await prisma.enrollment.findMany({
+            where: { courseId: course.id },
+            orderBy: { enrolledAt: "desc" },
+            include: {
+                user: {
+                    select: {
+                        fullName: true,
+                        username: true,
+                        email: true,
+                        phoneNumber: true,
+                    },
+                },
+                payment: {
+                    select: { amount: true, transactionId: true, createdAt: true },
+                },
+            },
+        });
+
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet("Enrollments");
+
+        sheet.columns = [
+            { header: "Full Name", key: "fullName", width: 24 },
+            { header: "Username", key: "username", width: 20 },
+            { header: "Email", key: "email", width: 28 },
+            { header: "Phone Number", key: "phoneNumber", width: 18 },
+            { header: "Enrollment Date", key: "enrolledAt", width: 18 },
+            { header: "Payment Status", key: "paymentStatus", width: 16 },
+            { header: "Amount Paid (PKR)", key: "amount", width: 16 },
+            { header: "Transaction ID", key: "transactionId", width: 22 },
+        ];
+
+        sheet.getRow(1).font = { bold: true };
+
+        enrollments.forEach((enrollment) => {
+            sheet.addRow({
+                fullName: enrollment.user.fullName,
+                username: enrollment.user.username ? `@${enrollment.user.username}` : "",
+                email: enrollment.user.email,
+                phoneNumber: enrollment.user.phoneNumber,
+                enrolledAt: enrollment.enrolledAt.toLocaleDateString(),
+                paymentStatus: enrollment.paymentStatus,
+                amount: enrollment.payment?.amount ?? "",
+                transactionId: enrollment.payment?.transactionId ?? "",
+            });
+        });
+
+        // Safe filename: course title with spaces/special chars stripped.
+        const safeFileName = course.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${safeFileName}-enrollments.xlsx"`
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};

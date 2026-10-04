@@ -44,7 +44,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate/8 bg-white will-change-transform md:bg-white/80 md:backdrop-blur-xl">
+    <header className="border-slate/8 sticky top-0 z-50 border-b bg-white will-change-transform md:bg-white/80 md:backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <Link to="/" className="group flex items-center">
@@ -58,14 +58,23 @@ export const Header = () => {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `relative rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${isActive
-                  ? "bg-sky/8 text-sky"
-                  : "text-ink/55 hover:bg-slate/5 hover:text-ink"
+                `relative rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? " text-sky"
+                    : "text-ink/55 hover:bg-slate/5 hover:text-ink"
                 }`
               }
               end={link.to === "/"}
             >
-              {link.label}
+              {({ isActive }) => (
+                <>
+                  {link.label}
+                  <span
+                    aria-hidden="true"
+                    className={`bg-sky absolute bottom-1 left-1/2 h-0.5 w-1/2 -translate-x-1/2 rounded-full transition-transform duration-300 ease-out ${isActive ? "scale-x-100" : "scale-x-0"}`}
+                  />
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -74,19 +83,42 @@ export const Header = () => {
         <div className="hidden items-center gap-2 md:flex">
           {user ? (
             <>
-              <Button as={Link} to={accountLink.to} variant="primary" size="sm" className="rounded-full px-4 cursor-pointer">
+              <Button
+                as={Link}
+                to={accountLink.to}
+                variant="primary"
+                size="sm"
+                className="cursor-pointer rounded-full px-4"
+              >
                 {accountLink.label}
               </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full px-4 cursor-pointer">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="cursor-pointer rounded-full px-4"
+              >
                 Log out
               </Button>
             </>
           ) : (
             <>
-              <Button as={Link} to="/login" variant="ghost" size="sm" className="rounded-xl px-4">
+              <Button
+                as={Link}
+                to="/login"
+                variant="ghost"
+                size="sm"
+                className="rounded-xl px-4"
+              >
                 Log in
               </Button>
-              <Button as={Link} to="/signup" variant="primary" size="sm" className="rounded-full px-5 shadow-sm shadow-sky/25 hover:shadow-md hover:shadow-sky/35">
+              <Button
+                as={Link}
+                to="/signup"
+                variant="primary"
+                size="sm"
+                className="shadow-sky/25 hover:shadow-sky/35 rounded-full px-5 shadow-sm hover:shadow-md"
+              >
                 Sign up
               </Button>
             </>
@@ -97,20 +129,20 @@ export const Header = () => {
         <button
           ref={buttonRef}
           type="button"
-          className="relative flex h-10 w-10 items-center justify-center rounded-xl text-ink transition-colors hover:bg-slate/5 md:hidden"
+          className="text-ink hover:bg-slate/5 relative flex h-10 w-10 items-center justify-center rounded-xl transition-colors md:hidden"
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
           <div className="relative h-5 w-5">
             <span
-              className={`absolute left-0 top-0 h-0.5 w-5 bg-ink transition-transform duration-200 ease-out ${open ? "translate-y-[8px] rotate-45" : "translate-y-0 rotate-0"}`}
+              className={`bg-ink absolute top-0 left-0 h-0.5 w-5 transition-transform duration-200 ease-out ${open ? "translate-y-[8px] rotate-45" : "translate-y-0 rotate-0"}`}
             />
             <span
-              className={`absolute left-0 top-2 h-0.5 w-5 bg-ink transition-opacity duration-150 ${open ? "opacity-0" : "opacity-100"}`}
+              className={`bg-ink absolute top-2 left-0 h-0.5 w-5 transition-opacity duration-150 ${open ? "opacity-0" : "opacity-100"}`}
             />
             <span
-              className={`absolute left-0 top-4 h-0.5 w-5 bg-ink transition-transform duration-200 ease-out ${open ? "-translate-y-[8px] -rotate-45" : "translate-y-0 rotate-0"}`}
+              className={`bg-ink absolute top-4 left-0 h-0.5 w-5 transition-transform duration-200 ease-out ${open ? "-translate-y-[8px] -rotate-45" : "translate-y-0 rotate-0"}`}
             />
           </div>
         </button>
@@ -121,7 +153,7 @@ export const Header = () => {
         ref={menuRef}
         className={`overflow-hidden transition-[max-height] duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${open ? "max-h-96" : "max-h-0"}`}
       >
-        <div className="border-t border-slate/8 bg-white">
+        <div className="border-slate/8 border-t bg-white">
           <div className="mx-auto max-w-6xl px-6 py-5">
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -129,19 +161,28 @@ export const Header = () => {
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
-                    `rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-                      ? "bg-sky/8 text-sky"
-                      : "text-ink/55 hover:bg-slate/5 hover:text-ink"
+                    `relative rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-sky/8 text-sky"
+                        : "text-ink/55 hover:bg-slate/5 hover:text-ink"
                     }`
                   }
                   end={link.to === "/"}
                   onClick={() => setOpen(false)}
                 >
-                  {link.label}
+                  {({ isActive }) => (
+                    <>
+                      {link.label}
+                      <span
+                        aria-hidden="true"
+                        className={`bg-sky absolute bottom-1 left-1/2 h-0.5 w-1/2 -translate-x-1/2 rounded-full transition-transform duration-300 ease-out ${isActive ? "scale-x-100" : "scale-x-0"}`}
+                      />
+                    </>
+                  )}
                 </NavLink>
               ))}
             </nav>
-            <div className="mt-4 flex gap-2.5 border-t border-slate/8 pt-4">
+            <div className="border-slate/8 mt-4 flex gap-2.5 border-t pt-4">
               {user ? (
                 <>
                   <Button
@@ -154,7 +195,12 @@ export const Header = () => {
                   >
                     {accountLink.label}
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1 rounded-full cursor-pointer" onClick={handleLogout}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 cursor-pointer rounded-full"
+                    onClick={handleLogout}
+                  >
                     Log out
                   </Button>
                 </>
@@ -175,7 +221,7 @@ export const Header = () => {
                     to="/signup"
                     variant="primary"
                     size="sm"
-                    className="flex-1 rounded-xl shadow-sm shadow-sky/25"
+                    className="shadow-sky/25 flex-1 rounded-xl shadow-sm"
                     onClick={() => setOpen(false)}
                   >
                     Sign up

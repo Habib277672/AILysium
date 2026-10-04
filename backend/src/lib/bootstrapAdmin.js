@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import { generateUniqueUsername } from "./username.js";
 import { prisma } from "./prisma.js";
 
 // Ensures exactly one admin account exists, sourced from environment
@@ -6,6 +7,8 @@ import { prisma } from "./prisma.js";
 // every server start — it's a no-op once the admin already exists.
 export const bootstrapAdmin = async () => {
     const { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_FULL_NAME, ADMIN_PHONE_NUMBER } = process.env;
+
+    const username = await generateUniqueUsername(ADMIN_FULL_NAME || "AiLysium Admin");
 
     if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
         console.warn(
@@ -38,6 +41,7 @@ export const bootstrapAdmin = async () => {
     await prisma.user.create({
         data: {
             fullName: ADMIN_FULL_NAME || "AiLysium Admin",
+            username,
             email: ADMIN_EMAIL.toLowerCase(),
             phoneNumber: ADMIN_PHONE_NUMBER || "+10000000000",
             passwordHash,

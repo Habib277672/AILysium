@@ -83,8 +83,14 @@ export const AITools = () => {
   };
 
   const handleSearchChange = (event) => {
-    setSearch(event.target.value);
+    const value = event.target.value;
+    setSearch(value);
     setVisibleCount(PAGE_SIZE);
+    // Restore the full grid immediately on clear instead of waiting
+    // for the debounce — otherwise the last search result lingers.
+    if (value === "") {
+      setDebouncedSearch("");
+    }
   };
 
   return (
@@ -200,7 +206,7 @@ export const AITools = () => {
         </Reveal>
 
         <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             {visibleTools.map((tool, index) => (
               <motion.div
                 key={`${activeCategory}-${tool.name}`}

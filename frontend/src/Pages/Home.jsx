@@ -9,11 +9,32 @@ import { FAQItem } from "../Components/UI/FAQItem";
 import { TestimonialSection } from "../Components/UI/TestimonialSection";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
 import { Reveal } from "../Components/UI/Reveal";
-import { FaLaptopCode, FaPalette, FaBriefcase, FaBullhorn, FaChartLine, FaShieldAlt } from "react-icons/fa";
-import { FaSearch, FaUserPlus, FaLock, FaChalkboardTeacher } from "react-icons/fa";
+import {
+  FaLaptopCode,
+  FaPalette,
+  FaBriefcase,
+  FaBullhorn,
+  FaChartLine,
+  FaShieldAlt,
+} from "react-icons/fa";
+import {
+  FaSearch,
+  FaUserPlus,
+  FaLock,
+  FaChalkboardTeacher,
+} from "react-icons/fa";
 
 import heroImg from "../assets/Images/hero_img.webp";
 import aboutImg from "../assets/Images/home_abt.webp";
+
+const heroFadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+};
 
 const skillCategories = [
   { name: "Development", icon: <FaLaptopCode /> },
@@ -63,11 +84,26 @@ const howItWorks = [
 ];
 
 const faqs = [
-  { question: "What is the structure of the Kids AI course?", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
-  { question: "How does the one-on-one VIP program work?", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
-  { question: "When does the Freelancer AI course start?", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
-  { question: "How do I enroll my child in a course?", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
-  { question: "What payment methods do you accept?", answer: "[PLACEHOLDER CONTENT — answer to be provided]" },
+  {
+    question: "What is the structure of the Kids AI course?",
+    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+  },
+  {
+    question: "How does the one-on-one VIP program work?",
+    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+  },
+  {
+    question: "When does the Freelancer AI course start?",
+    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+  },
+  {
+    question: "How do I enroll my child in a course?",
+    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+  },
 ];
 
 export const Home = () => {
@@ -82,7 +118,7 @@ export const Home = () => {
         const { data } = await api.get("/courses");
         const featured = data.filter((course) => course.isFeatured).slice(0, 3);
         setCourses(featured);
-      } catch (err) {
+      } catch {
         setCoursesError("Couldn't load programs right now.");
       } finally {
         setCoursesLoading(false);
@@ -94,48 +130,56 @@ export const Home = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-cloud">
+      <section className="bg-cloud relative overflow-hidden">
         <div
           className="pointer-events-none absolute inset-0 opacity-40"
           style={{
-            backgroundImage: "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)",
+            backgroundImage:
+              "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)",
             backgroundSize: "22px 22px",
           }}
         />
-        <div className="pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 rounded-full bg-sky/20 blur-[120px]" />
-        <div className="pointer-events-none absolute -bottom-40 left-[-10%] h-96 w-96 rounded-full bg-sky-light/20 blur-[120px]" />
+        <div className="bg-sky/20 pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 rounded-full blur-[120px]" />
+        <div className="bg-sky-light/20 pointer-events-none absolute -bottom-40 left-[-10%] h-96 w-96 rounded-full blur-[120px]" />
 
         <div className="relative mx-auto grid max-w-6xl items-end gap-8 px-6 pt-8 pb-0 sm:gap-16 md:grid-cols-2 md:items-center md:pt-10 md:pb-0">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.1 } },
+            }}
             className="order-1 pb-4 text-center sm:pb-20 sm:text-left md:pb-30"
           >
-            <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-sm font-medium text-sky sm:mt-0">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky" />
-              Forget the hype
-            </span>
-
-            <h1 className="mt-3 font-heading text-3xl font-extrabold leading-[1.08] tracking-tight text-ink sm:mt-6 sm:text-4xl md:text-[3.5rem] md:leading-[1.1]">
-              Learn AI from{" "}
-              <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
-                zero to building
+            <motion.h1
+              variants={heroFadeUp}
+              className="font-heading text-ink mt-0.5 text-3xl leading-[1.08] font-extrabold tracking-tight text-balance sm:mt-1 sm:text-4xl md:text-[3.5rem] md:leading-[1.1]"
+            >
+              Learn AI from zero to{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                building real projects
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-4 max-w-md text-base leading-relaxed text-slate sm:text-lg">
-              Hands-on training for every stage — from teen beginners to
-              freelancers — with real skills and tools you apply each week.
-            </p>
+            <motion.p
+              variants={heroFadeUp}
+              className="text-muted mt-4 max-w-lg text-base leading-relaxed sm:text-lg"
+            >
+              Hands-on training for every stage — teen beginners to freelancers
+              — with real skills and tools you apply every week.
+            </motion.p>
 
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:justify-start sm:gap-4">
+            <motion.div
+              variants={heroFadeUp}
+              className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:justify-start sm:gap-4"
+            >
               <Button
                 as={Link}
                 to="/courses"
                 variant="primary"
                 size="md"
-                className="shadow-lg shadow-sky/25 hover:shadow-sky/40 sm:size-lg"
+                className="shadow-sky/25 hover:shadow-sky/40 sm:size-lg shadow-lg"
               >
                 Explore programs
               </Button>
@@ -148,7 +192,7 @@ export const Home = () => {
               >
                 Let's Talk
               </Button>
-            </div>
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -167,16 +211,19 @@ export const Home = () => {
       </section>
 
       {/* Impact stats */}
-      <section className="relative border-t border-slate/10 bg-white">
+      <section className="border-slate/10 relative border-t bg-white">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
           <Reveal id="impact-header" className="max-w-xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-3.5 py-1 text-xs font-medium uppercase tracking-wide text-sky">
+            <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-medium tracking-wide uppercase">
               Why AiLysium
             </span>
-            <h2 className="mt-3 font-heading text-3xl font-bold leading-snug text-ink md:text-4xl">
-              Real skills, <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">real fast</span>
+            <h2 className="font-heading text-ink mt-3 text-3xl leading-snug font-bold md:text-4xl">
+              Real skills,{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                real fast
+              </span>
             </h2>
-            <p className="mt-2 max-w-md text-base leading-relaxed text-slate">
+            <p className="text-slate mt-2 max-w-md text-base leading-relaxed">
               Your child doesn't just watch AI — they build with it. Twelve
               weeks, twelve skills, and a project they actually ship.
             </p>
@@ -189,15 +236,17 @@ export const Home = () => {
                 id={`impact-${index}`}
                 y={12}
                 delay={index * 0.08}
-                className="group relative overflow-hidden rounded-2xl border border-slate/10 bg-white p-6 shadow-sm shadow-ink/5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-ink/8"
+                className="group border-slate/10 shadow-ink/5 hover:shadow-ink/8 relative overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
               >
-                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-sky/8 transition-transform duration-300 group-hover:scale-125" />
+                <div className="bg-sky/8 pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full transition-transform duration-300 group-hover:scale-125" />
                 <div className="relative">
-                  <p className="font-heading text-4xl font-extrabold tracking-tight text-ink">
+                  <p className="font-heading text-ink text-4xl font-extrabold tracking-tight">
                     {stat.value}
                   </p>
-                  <div className="mt-3 h-px w-8 bg-sky/30" />
-                  <p className="mt-3 text-sm leading-snug text-slate">{stat.label}</p>
+                  <div className="bg-sky/30 mt-3 h-px w-8" />
+                  <p className="text-slate mt-3 text-sm leading-snug">
+                    {stat.label}
+                  </p>
                 </div>
               </Reveal>
             ))}
@@ -206,24 +255,23 @@ export const Home = () => {
       </section>
 
       {/* Find the right course — category cards, no search bar */}
-      <section className="relative overflow-hidden bg-cloud py-20 md:py-24">
+      <section className="bg-cloud relative overflow-hidden py-20 md:py-24">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
-        <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 blur-[160px]" />
+        <div className="bg-sky/20 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6 text-center">
           <Reveal id="skills-header">
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-              <span className="h-1 w-1 rounded-full bg-sky" />
+            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+              <span className="bg-sky h-1 w-1 rounded-full" />
               Explore Skills
             </span>
-            <h2 className="mt-4 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
-              Find the right course{" "}
-              <span className="text-sky">for you</span>
+            <h2 className="font-heading text-ink mt-4 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
+              Find the right course <span className="text-sky">for you</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-muted">
-              Every program is built around the tools and skills below —
-              pick one that interests you.
+            <p className="text-muted mx-auto mt-3 max-w-lg text-base leading-relaxed">
+              Every program is built around the tools and skills below — pick
+              one that interests you.
             </p>
           </Reveal>
 
@@ -234,13 +282,15 @@ export const Home = () => {
                 id={`skill-${index}`}
                 y={14}
                 delay={index * 0.07}
-                className="group relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border border-slate/10 bg-white px-3 py-6 shadow-sm shadow-ink/5 transition-all duration-300 hover:-translate-y-2 hover:border-sky/25 hover:shadow-xl hover:shadow-sky/10"
+                className="group border-slate/10 shadow-ink/5 hover:border-sky/25 hover:shadow-sky/10 relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border bg-white px-3 py-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
-                <span className="pointer-events-none absolute -top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-sky/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky/10 to-sky-light/15 text-xl text-sky transition-all duration-300 group-hover:scale-110 group-hover:from-sky group-hover:to-sky-light group-hover:text-white group-hover:shadow-lg group-hover:shadow-sky/40">
+                <span className="bg-sky/5 pointer-events-none absolute -top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="from-sky/10 to-sky-light/15 text-sky group-hover:from-sky group-hover:to-sky-light group-hover:shadow-sky/40 relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-xl transition-all duration-300 group-hover:scale-110 group-hover:text-white group-hover:shadow-lg">
                   {category.icon}
                 </span>
-                <span className="relative text-[13px] font-semibold text-ink transition-colors duration-200 group-hover:text-sky">{category.name}</span>
+                <span className="text-ink group-hover:text-sky relative text-[13px] font-semibold transition-colors duration-200">
+                  {category.name}
+                </span>
               </Reveal>
             ))}
           </div>
@@ -250,15 +300,21 @@ export const Home = () => {
       {/* Programs — top 3 featured, admin-controlled */}
       <section className="relative overflow-hidden bg-white py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <Reveal id="programs-header" className="flex flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
-              <span className="h-1 w-1 rounded-full bg-sky" />
+          <Reveal
+            id="programs-header"
+            className="flex flex-col items-center text-center"
+          >
+            <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
+              <span className="bg-sky h-1 w-1 rounded-full" />
               Our Programs
             </span>
-            <h2 className="mt-5 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
-              Find your perfect <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">AI program</span>
+            <h2 className="font-heading text-ink mt-5 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
+              Find your perfect{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                AI program
+              </span>
             </h2>
-            <p className="mt-3 max-w-lg text-base leading-relaxed text-muted">
+            <p className="text-muted mt-3 max-w-lg text-base leading-relaxed">
               Beginner to freelancer — pick the path that matches your goals.
             </p>
           </Reveal>
@@ -271,7 +327,9 @@ export const Home = () => {
             </div>
           )}
           {!coursesLoading && coursesError && (
-            <p className="mt-14 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600">{coursesError}</p>
+            <p className="mt-14 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+              {coursesError}
+            </p>
           )}
 
           {!coursesLoading && !coursesError && (
@@ -289,15 +347,22 @@ export const Home = () => {
                 ))}
 
                 {courses.length === 0 && (
-                  <p className="col-span-full py-10 text-center text-sm text-muted">
-                    No featured programs are set yet — an admin can feature courses from the Courses page.
+                  <p className="text-muted col-span-full py-10 text-center text-sm">
+                    No featured programs are set yet — an admin can feature
+                    courses from the Courses page.
                   </p>
                 )}
               </div>
 
               {courses.length > 0 && (
                 <Reveal id="view-all-cta" y={12} className="mt-14 text-center">
-                  <Button as={Link} to="/courses" variant="primary" size="lg" className="rounded-full px-8 py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35">
+                  <Button
+                    as={Link}
+                    to="/courses"
+                    variant="primary"
+                    size="lg"
+                    className="shadow-sky/25 hover:shadow-sky/35 rounded-full px-8 py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
+                  >
                     View all programs
                   </Button>
                 </Reveal>
@@ -308,21 +373,24 @@ export const Home = () => {
       </section>
 
       {/* How it works */}
-      <section className="relative overflow-hidden bg-cloud py-20 md:py-28">
+      <section className="bg-cloud relative overflow-hidden py-20 md:py-28">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
-        <div className="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 blur-[160px]" />
+        <div className="bg-sky/20 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6">
           <Reveal id="how-header" className="text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-              <span className="h-1 w-1 rounded-full bg-sky" />
+            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+              <span className="bg-sky h-1 w-1 rounded-full" />
               Simple Process
             </span>
-            <h2 className="mt-3 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
-              From sign-up to <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">your first build</span>
+            <h2 className="font-heading text-ink mt-3 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
+              From sign-up to{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                your first build
+              </span>
             </h2>
-            <p className="mx-auto mt-2 max-w-md text-base leading-relaxed text-muted">
+            <p className="text-muted mx-auto mt-2 max-w-md text-base leading-relaxed">
               Four simple steps — no friction, just results.
             </p>
           </Reveal>
@@ -330,7 +398,7 @@ export const Home = () => {
           <div className="relative mt-12">
             {/* Connector line — desktop only */}
             <div className="pointer-events-none absolute top-[2.75rem] left-0 hidden h-px w-full lg:block">
-              <div className="h-full w-full bg-gradient-to-r from-sky/10 via-sky/25 to-sky/10" />
+              <div className="from-sky/10 via-sky/25 to-sky/10 h-full w-full bg-gradient-to-r" />
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
@@ -344,8 +412,8 @@ export const Home = () => {
                 >
                   {/* Icon circle with glow */}
                   <div className="relative z-10 mb-6">
-                    <div className="absolute inset-0 rounded-full bg-sky/15 blur-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    <div className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-sky/20 bg-white text-sky shadow-lg shadow-sky/10 transition-all duration-300 group-hover:scale-110 group-hover:border-sky group-hover:from-sky group-hover:to-sky-light group-hover:shadow-xl group-hover:shadow-sky/25">
+                    <div className="bg-sky/15 absolute inset-0 rounded-full opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
+                    <div className="border-sky/20 text-sky shadow-sky/10 group-hover:border-sky group-hover:from-sky group-hover:to-sky-light group-hover:shadow-sky/25 relative flex h-14 w-14 items-center justify-center rounded-full border-2 bg-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
                       <span className="text-xl transition-transform duration-300 group-hover:scale-110">
                         {item.icon}
                       </span>
@@ -353,15 +421,15 @@ export const Home = () => {
                   </div>
 
                   {/* Step number */}
-                  <span className="mb-3 font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-sky/50 transition-colors group-hover:text-sky">
+                  <span className="font-heading text-sky/50 group-hover:text-sky mb-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors">
                     Step {item.step}
                   </span>
 
                   {/* Content */}
-                  <h3 className="font-heading text-lg font-bold text-ink transition-colors group-hover:text-sky">
+                  <h3 className="font-heading text-ink group-hover:text-sky text-lg font-bold transition-colors">
                     {item.title}
                   </h3>
-                  <p className="mt-2.5 max-w-[260px] text-sm leading-relaxed text-muted">
+                  <p className="text-muted mt-2.5 max-w-[260px] text-sm leading-relaxed">
                     {item.description}
                   </p>
                 </Reveal>
@@ -378,28 +446,46 @@ export const Home = () => {
       <section className="relative overflow-hidden bg-white py-16 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-            <Reveal id="about-text" x={-20} className="text-center md:text-left">
-              <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky">
-                <span className="h-1 w-1 rounded-full bg-sky" />
+            <Reveal
+              id="about-text"
+              x={-20}
+              className="text-center md:text-left"
+            >
+              <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
+                <span className="bg-sky h-1 w-1 rounded-full" />
                 About AiLysium
               </span>
-              <h2 className="mt-5 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
-                Hands-on AI training, built for <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">real skills</span>
+              <h2 className="font-heading text-ink mt-5 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+                Hands-on AI training, built for{" "}
+                <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                  real skills
+                </span>
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
+              <p className="text-muted mt-4 text-sm leading-relaxed sm:text-base">
                 AiLysium is based in Pakistan, training teen beginners and
-                freelancers to actually build with AI — not just talk about
-                it. Every program pairs real mentors with weekly, hands-on
-                projects, so students leave with a portfolio, not just notes.
+                freelancers to actually build with AI — not just talk about it.
+                Every program pairs real mentors with weekly, hands-on projects,
+                so students leave with a portfolio, not just notes.
               </p>
-              <Button as={Link} to="/about" variant="primary" size="md" className="mt-7 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35">
+              <Button
+                as={Link}
+                to="/about"
+                variant="primary"
+                size="md"
+                className="shadow-sky/20 hover:shadow-sky/35 mt-7 rounded-full px-6 shadow-lg"
+              >
                 Learn more about us
               </Button>
             </Reveal>
 
-            <Reveal id="about-image" x={20} delay={0.1} className="relative mx-auto w-full max-w-md md:mx-0 md:max-w-none">
-              <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky/8 via-transparent to-sky-light/8" />
-              <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white shadow-xl shadow-ink/5">
+            <Reveal
+              id="about-image"
+              x={20}
+              delay={0.1}
+              className="relative mx-auto w-full max-w-md md:mx-0 md:max-w-none"
+            >
+              <div className="from-sky/8 to-sky-light/8 absolute -inset-4 rounded-[2rem] bg-gradient-to-br via-transparent" />
+              <div className="border-slate/10 shadow-ink/5 relative overflow-hidden rounded-3xl border bg-white shadow-xl">
                 <img
                   src={aboutImg}
                   alt="AiLysium training"
@@ -413,27 +499,44 @@ export const Home = () => {
       </section>
 
       {/* FAQ */}
-      <section className="relative overflow-hidden bg-cloud py-16 md:py-28">
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-28">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-[1fr_1.4fr] md:items-start md:gap-12">
-          <Reveal id="faq-text" className="text-center md:text-left md:sticky md:top-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-              <span className="h-1 w-1 rounded-full bg-sky" />
+          <Reveal
+            id="faq-text"
+            className="text-center md:sticky md:top-8 md:text-left"
+          >
+            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+              <span className="bg-sky h-1 w-1 rounded-full" />
               FAQ
             </span>
-            <h2 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink sm:text-3xl md:text-[2.75rem] md:leading-tight">
-              Got <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">questions?</span>
+            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+              Got{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                questions?
+              </span>
             </h2>
-            <p className="mt-2 mx-auto max-w-xs text-sm leading-relaxed text-muted sm:text-base md:mx-0">
-              Can't find what you're looking for? Reach out and we'll get back to you.
+            <p className="text-muted mx-auto mt-2 max-w-xs text-sm leading-relaxed sm:text-base md:mx-0">
+              Can't find what you're looking for? Reach out and we'll get back
+              to you.
             </p>
-            <Button as={Link} to="/contact" variant="primary" size="md" className="mt-5 rounded-full px-6 shadow-lg shadow-sky/20 hover:shadow-sky/35">
+            <Button
+              as={Link}
+              to="/contact"
+              variant="primary"
+              size="md"
+              className="shadow-sky/20 hover:shadow-sky/35 mt-5 rounded-full px-6 shadow-lg"
+            >
               Contact us
             </Button>
           </Reveal>
-          <Reveal id="faq-list" delay={0.1} className="divide-y divide-slate/10 rounded-3xl border border-slate/10 bg-white p-5 shadow-sm shadow-ink/4 transition-shadow duration-300 hover:shadow-lg hover:shadow-ink/5 sm:bg-white/70 sm:backdrop-blur-md sm:p-8">
+          <Reveal
+            id="faq-list"
+            delay={0.1}
+            className="divide-slate/10 border-slate/10 shadow-ink/4 hover:shadow-ink/5 divide-y rounded-3xl border bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg sm:bg-white/70 sm:p-8 sm:backdrop-blur-md"
+          >
             {faqs.map((faq, index) => (
               <FAQItem
                 key={faq.question}
@@ -450,7 +553,15 @@ export const Home = () => {
       {/* Consultation CTA */}
       <Reveal id="consultation">
         <ConsultationSection
-          heading={<>Still deciding? Let's <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">talk</span> it through.</>}
+          heading={
+            <>
+              Still deciding? Let's{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                talk
+              </span>{" "}
+              it through.
+            </>
+          }
         />
       </Reveal>
     </div>
