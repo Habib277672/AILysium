@@ -96,9 +96,9 @@ export const SecondaryDashboard = () => {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Search by name or email (min 2 characters)…"
+                                    placeholder="Search by name, username, or email (min 2 characters)…"
                                     value={userQuery}
-                                    onChange={(event) => setUserQuery(event.target.value)}
+                                    onChange={(event) => setUserQuery(event.target.value.replace(/^@/, ""))}
                                     className="w-full rounded-xl border border-slate/20 px-4 py-3 text-sm focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/20"
                                 />
                                 {userQuery.trim().length >= 2 && (

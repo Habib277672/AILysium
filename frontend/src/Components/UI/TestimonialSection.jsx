@@ -1,59 +1,60 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Reveal } from "./Reveal";
-import woman1 from "../../assets/Images/Testimonials_imgs/woman_1.webp";
-import woman2 from "../../assets/Images/Testimonials_imgs/woman_2.webp";
-import woman3 from "../../assets/Images/Testimonials_imgs/woman_3.webp";
-import woman4 from "../../assets/Images/Testimonials_imgs/woman_4.webp";
-import man1 from "../../assets/Images/Testimonials_imgs/man_1.webp";
-import man2 from "../../assets/Images/Testimonials_imgs/man_2.webp";
 
 const testimonials = [
   {
     name: "Ayesha Khan",
     role: "Parent of a Kids AI Course Student",
     summary:
-      "Her son progressed from gaming to building his own web project over three months.",
-    image: woman1,
+      "I honestly did not expect my son to enjoy learning this much. He started with games and now builds small web projects on his own at home with confidence daily!",
+    image: "",
   },
   {
     name: "Bilal Ahmed",
     role: "Parent of a VIP Program Student",
     summary:
-      "Values the one-on-one guidance and hands-on work with image and video AI tools.",
-    image: man1,
+      "I really liked the direct guidance. My son was not just watching lessons, he was using AI tools and creating useful things by himself with confidence each day.",
+    image: "",
   },
   {
     name: "Fatima Noor",
     role: "Parent of a Kids AI Course Student",
     summary:
-      "Appreciates the clear roadmap, the focus on responsible AI use, and AI agents.",
-    image: woman2,
+      "The roadmap made learning much easier for us. I also liked that they teach kids to use AI responsibly, and not just look for quick answers when they get stuck.",
+    image: "",
   },
   {
     name: "Imran Ali",
     role: 'Parent of a "Freelancers AI" Course Student',
     summary:
-      "Highlights the freelancer preparation — video, websites, automation — and his child's growing confidence.",
-    image: man2,
+      "My child now thinks about skills and freelancing in a new way. From websites to videos and automation, he is learning practical skills he can use in real life.",
+    image: "",
   },
   {
     name: "Sana Malik",
     role: "Parent of a Kids AI Course Student",
     summary:
-      "Loves watching her daughter go from curious beginner to confidently prompting and building her own tools.",
-    image: woman3,
+      "At first my daughter was simply curious about AI. Now she writes better prompts, tries different tools, and builds small projects herself with more confidence!",
+    image: "",
   },
   {
     name: "Hira Sheikh",
     role: 'Parent of a "Freelancers AI" Course Student',
     summary:
-      "Says the practical, project-based approach gave her daughter real skills she now uses to freelance part-time.",
-    image: woman4,
+      "I liked the practical approach. My daughter worked on real projects, and she is already using those skills for freelance work online with confidence right now.",
+    image: "",
   },
 ];
 
-const AUTO_SWIPE_INTERVAL = 5000;
+const AUTO_SWIPE_INTERVAL = 4000;
+
+const getInitials = (name) => {
+  const parts = name.trim().split(/\s+/);
+  return (
+    (parts[0]?.[0] ?? "") + (parts.length > 1 ? parts[parts.length - 1][0] : "")
+  ).toUpperCase();
+};
 
 const StarIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -67,6 +68,7 @@ export const TestimonialSection = ({ revealPrefix = "testimonials" }) => {
   const timerRef = useRef(null);
 
   const total = testimonials.length;
+  const visibleCount = isMobile ? 1 : 3;
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
@@ -75,12 +77,13 @@ export const TestimonialSection = ({ revealPrefix = "testimonials" }) => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Advance a full page at a time so every visible card is replaced.
   const startTimer = useCallback(() => {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % total);
+      setCurrent((prev) => (prev + visibleCount) % total);
     }, AUTO_SWIPE_INTERVAL);
-  }, [total]);
+  }, [total, visibleCount]);
 
   useEffect(() => {
     startTimer();
@@ -88,145 +91,172 @@ export const TestimonialSection = ({ revealPrefix = "testimonials" }) => {
   }, [startTimer]);
 
   const prev = () => {
-    setCurrent((p) => (p - 1 + total) % total);
+    setCurrent((p) => (p - visibleCount + total) % total);
     startTimer();
   };
 
   const next = () => {
-    setCurrent((p) => (p + 1) % total);
+    setCurrent((p) => (p + visibleCount) % total);
     startTimer();
   };
 
-  const visibleCount = isMobile ? 1 : 3;
-  const visible = Array.from({ length: visibleCount }, (_, i) =>
-    testimonials[(current + i) % total]
+  const visible = Array.from(
+    { length: visibleCount },
+    (_, i) => testimonials[(current + i) % total],
   );
 
-  const progress = ((current + 1) / total) * 100;
+  const progress = ((current + visibleCount) / total) * 100;
 
   return (
     <section className="relative overflow-hidden bg-white py-20 md:py-28">
-
       <div className="relative mx-auto max-w-6xl px-6">
         {/* Header */}
-        <Reveal id={`${revealPrefix}-header`} className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm">
-              <span className="h-1 w-1 rounded-full bg-sky" />
-              Testimonials
+        <Reveal id={`${revealPrefix}-header`} className="text-center">
+          <h2 className="font-heading text-ink text-[25px] leading-snug font-bold md:text-[2.75rem] md:leading-tight">
+            Feedbacks From{" "}
+            <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+              Learners
             </span>
-            <h2 className="mt-3 font-heading text-3xl font-bold leading-snug text-ink md:text-[2.75rem] md:leading-tight">
-              Loved by <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">parents & students</span>
-            </h2>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={prev}
-              className="group flex h-11 w-11 items-center justify-center rounded-full cursor-pointer border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
-              aria-label="Previous"
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform duration-200 group-hover:-translate-x-0.5">
-                <path d="M11 4L6 9L11 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            <div className="relative h-1.5 w-20 overflow-hidden rounded-full bg-slate/10">
-              <motion.div
-                className="absolute inset-y-0 left-0 rounded-full bg-sky"
-                initial={false}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={next}
-              className="group flex h-11 w-11 items-center justify-center rounded-full cursor-pointer border border-slate/20 bg-white text-slate shadow-sm transition-all duration-200 hover:border-sky hover:text-sky hover:shadow-md hover:shadow-sky/10"
-              aria-label="Next"
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform duration-200 group-hover:translate-x-0.5">
-                <path d="M7 4L12 9L7 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+          </h2>
         </Reveal>
 
         {/* Cards */}
-        <Reveal
-          id={`${revealPrefix}-cards`}
-          delay={0.1}
-          className="mt-10"
-        >
+        <Reveal id={`${revealPrefix}-cards`} delay={0.1} className="mt-10">
           <div
             onMouseEnter={() => clearInterval(timerRef.current)}
             onMouseLeave={startTimer}
           >
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {visible.map((t, i) => (
-                <motion.div
-                  key={t.name}
-                  layout={!isMobile}
-                  initial={{ opacity: 0, scale: isMobile ? 1 : 0.95, y: isMobile ? 8 : 24 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: isMobile ? 1 : 0.95, y: isMobile ? -8 : -24 }}
-                  transition={
-                    isMobile
-                      ? { duration: 0.2, ease: "easeOut", delay: i * 0.04 }
-                      : {
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <AnimatePresence mode="popLayout">
+                {visible.map((t, i) => (
+                  <motion.div
+                    key={t.name}
+                    layout={!isMobile}
+                    initial={{
+                      opacity: 0,
+                      scale: isMobile ? 1 : 0.95,
+                      y: isMobile ? 8 : 24,
+                    }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{
+                      opacity: 0,
+                      scale: isMobile ? 1 : 0.95,
+                      y: isMobile ? -8 : -24,
+                    }}
+                    transition={
+                      isMobile
+                        ? { duration: 0.2, ease: "easeOut", delay: i * 0.04 }
+                        : {
                           layout: { duration: 0.35, ease: "easeInOut" },
                           opacity: { duration: 0.25 },
                           scale: { duration: 0.35, ease: "easeOut" },
                           y: { duration: 0.35, ease: "easeOut" },
                           delay: i * 0.08,
                         }
-                  }
-                  className="group relative overflow-hidden rounded-3xl border border-slate/15 bg-white p-7 shadow-sm shadow-ink/4 transition-all duration-300 hover:-translate-y-1 hover:border-sky/20 hover:shadow-xl hover:shadow-sky/8 sm:bg-white/70 sm:backdrop-blur-md"
-                >
-                  {/* Decorative gradient corner */}
-                  <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-sky/8 to-transparent transition-transform duration-500 group-hover:scale-150" />
-
-                  {/* Stars */}
-                  <div className="flex gap-0.5 text-amber-400">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <StarIcon key={j} />
-                    ))}
-                  </div>
-
-                  {/* Quote */}
-                  <p className="mt-4 text-[15px] leading-relaxed text-slate">
-                    &ldquo;{t.summary}&rdquo;
-                  </p>
-
-                  {/* Author */}
-                  <div className="mt-5 flex items-center gap-3.5 border-t border-slate/10 pt-5">
-                    <div className="relative">
-                      <div className="absolute -inset-0.5 rounded-full bg-gradient-to-br from-sky to-sky-light opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                      <img
-                        src={t.image}
-                        alt={t.name}
-                        width="44"
-                        height="44"
-                        className="relative h-11 w-11 rounded-full object-cover"
-                      />
+                    }
+                    className="group border-slate/15 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 relative overflow-hidden rounded-3xl border bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:bg-white/70 sm:backdrop-blur-md"
+                  >
+                    {/* Stars */}
+                    <div className="flex gap-0.5 text-amber-400">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <StarIcon key={j} />
+                      ))}
                     </div>
-                    <div>
-                      <p className="font-heading text-sm font-bold text-ink">
-                        {t.name}
-                      </p>
-                      <p className="mt-0.5 text-xs text-muted">{t.role}</p>
+
+                    {/* Quote */}
+                    <p className="text-slate mt-4 text-[15px] leading-relaxed">
+                      &ldquo;{t.summary}&rdquo;
+                    </p>
+
+                    {/* Author */}
+                    <div className="border-slate/10 mt-5 flex items-center gap-3.5 border-t pt-5">
+                      <div className="relative">
+                        <div className="from-sky to-sky-light absolute -inset-0.5 rounded-full bg-gradient-to-br opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        {t.image ? (
+                          <img
+                            src={t.image}
+                            alt={t.name}
+                            width="44"
+                            height="44"
+                            className="relative h-11 w-11 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="from-sky to-sky-light relative grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
+                            {getInitials(t.name)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-heading text-ink text-sm font-bold">
+                          {t.name}
+                        </p>
+                        <p className="text-muted mt-0.5 text-xs">{t.role}</p>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
-        </div>
         </Reveal>
+
+        {/* Navigation — bottom center */}
+        <div className="mt-10 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={prev}
+            className="group border-slate/20 text-slate hover:border-sky hover:text-sky hover:shadow-sky/10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:shadow-md"
+            aria-label="Previous"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              className="transition-transform duration-200 group-hover:-translate-x-0.5"
+            >
+              <path
+                d="M11 4L6 9L11 14"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          <div className="bg-slate/10 relative h-1.5 w-20 overflow-hidden rounded-full">
+            <motion.div
+              className="bg-sky absolute inset-y-0 left-0 rounded-full"
+              initial={false}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={next}
+            className="group border-slate/20 text-slate hover:border-sky hover:text-sky hover:shadow-sky/10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:shadow-md"
+            aria-label="Next"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+            >
+              <path
+                d="M7 4L12 9L7 14"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
   );

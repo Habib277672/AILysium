@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/Images/logo.webp";
 
 const socialLinks = [
-  { href: "#", label: "Instagram" },
-  { href: "#", label: "Facebook" },
-  { href: "#", label: "X (Twitter)" },
-  { href: "#", label: "YouTube" },
-  { href: "#", label: "LinkedIn" },
-  { href: "#", label: "TikTok" },
+  { href: "https://www.instagram.com/ailysiumofficial2026/?hl=en", label: "Instagram" },
+  { href: "https://www.facebook.com/profile.php?id=61592615186779", label: "Facebook" },
+  // { href: "#", label: "X (Twitter)" },
+  // { href: "#", label: "YouTube" },
+  { href: "https://www.linkedin.com/company/145248085", label: "LinkedIn" },
+  // { href: "#", label: "TikTok" },
 ];
 
 const companyLinks = [
@@ -45,13 +45,13 @@ export const Footer = () => {
               </div>
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/60">
-              Hands-on AI training for teen beginners and freelancers. Based in
+              Hands-on AI training for teen beginners and freelancers. Based in Gujranwala,
               Pakistan, providing accessible AI education to students across the
               country.
             </p>
             <div className="mt-5 space-y-2.5 text-sm">
               <a
-                href="mailto:email@mybusiness.com"
+                href="mailto:ailysiumofficial@gmail.com"
                 className="flex items-center gap-2.5 text-white/50 transition-colors duration-200 hover:text-white"
               >
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5">
@@ -73,10 +73,10 @@ export const Footer = () => {
                     />
                   </svg>
                 </span>
-                email@mybusiness.com
+                ailysiumofficial@gmail.com
               </a>
               <a
-                href="https://wa.me/12345678900"
+                href="https://wa.me/+923111390351"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2.5 text-white/50 transition-colors duration-200 hover:text-white"
@@ -92,7 +92,7 @@ export const Footer = () => {
                     />
                   </svg>
                 </span>
-                +12345678900
+                +923111390351
               </a>
             </div>
           </div>
@@ -174,7 +174,7 @@ export const Footer = () => {
               Terms &amp; Conditions
             </Link>
           </div>
-          <p>Course discovery, enrollment &amp; payment platform.</p>
+          <p>An AI academy where you learn by building</p>
         </div>
       </div>
     </footer>

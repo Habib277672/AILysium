@@ -1,26 +1,31 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { TestimonialSection } from "../Components/UI/TestimonialSection";
 import { ConsultationSection } from "../Components/UI/ConsultationSection";
 import { Reveal } from "../Components/UI/Reveal";
+
 import founderImg from "../assets/Images/founder_img.webp";
+import abdullah_img from "../assets/Images/mentors/abdullah_founder.webp";
+import seerat_img from "../assets/Images/mentors/seerat.webp";
+import amara_img from "../assets/Images/mentors/amara.webp";
 
 const whatWeDoCards = [
   {
     title: "Live, Instructor-Led Sessions",
     description:
-      "Every program runs on real, scheduled sessions with a mentor — not pre-recorded lectures you watch alone.",
+      "Real classes at set times with a trainer present throughout, not pre-recorded lectures you watch alone.",
   },
   {
     title: "Learn From Anywhere",
     description:
-      "Based in Pakistan, built for students anywhere with an internet connection — no campus required.",
+      "Based in Pakistan and built for students everywhere. All you need is an internet connection.",
   },
   {
-    title: "Personalised Feedback",
+    title: "Hands-On Projects",
     description:
-      "Your mentor reviews your actual work each week, so feedback is specific to what you built, not generic.",
+      "Each week ends with something you created, leading to a final project, a portfolio piece and a certificate.",
   },
 ];
 
@@ -28,12 +33,12 @@ const whyChooseUsCards = [
   {
     title: "Built Around Real Projects",
     description:
-      "Every course is structured —  so you finish with something you built,—  not just notes you took.",
+      "Every course is planned week by week, so you finish with something you made, not just notes.",
   },
   {
-    title: "Committed Mentors",
+    title: "Instructors Who Practise",
     description:
-      "You learn from a specific mentor for your program — not a rotating pool of unknown instructors.",
+      "You learn from a specific mentor for your program, not a rotating pool of unknown instructors.",
   },
   {
     title: "Real Human Support",
@@ -43,15 +48,47 @@ const whyChooseUsCards = [
 ];
 
 const teamMembers = [
-  { name: "Muhammad Abdullah", role: "Mentor — Kids AI" },
-  { name: "Seerat Munir", role: "Mentor — Freelancer AI" },
+  {
+    name: "Muhammad Abdullah",
+    role: "Founder, Lead Instructor",
+    img: abdullah_img,
+  },
+  { name: "Seerat Munir", role: "Graphic Design with AI", img: seerat_img },
+  { name: "Umm e Ammara", role: "Fashion Design with AI", img: amara_img },
 ];
 
+const getInitials = (name) => {
+  const parts = name.trim().split(/\s+/);
+  return (
+    (parts[0]?.[0] ?? "") + (parts.length > 1 ? parts[parts.length - 1][0] : "")
+  ).toUpperCase();
+};
+
 export const About = () => {
+  useEffect(() => {
+    const previousTitle = document.title;
+    const description =
+      "AiLysium is an AI academy and solutions studio teaching students, professionals and institutions through live, project-based learning.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    document.title = "About AiLysium | AI Academy in Gujranwala, Pakistan";
+    meta.setAttribute("content", description);
+    return () => {
+      document.title = previousTitle;
+      if (previousDescription === null) meta.remove();
+      else meta.setAttribute("content", previousDescription);
+    };
+  }, []);
+
   return (
     <div>
       {/* Top section */}
-      <section className="bg-cloud relative overflow-hidden py-16 md:py-32">
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-36">
         <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
         <div className="bg-sky/15 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
@@ -61,16 +98,12 @@ export const About = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-          <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-            <span className="bg-sky h-1 w-1 rounded-full" />
-            About AiLysium
-          </span>
-          <h1 className="font-heading text-ink mt-4 text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
-            Building AI skills, one{" "}
+          <h1 className="font-heading text-ink text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
+            Building AI Skills, one{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              real project
+              Real Project
             </span>{" "}
-            at a time
+            at a Time
           </h1>
           <p className="text-muted mx-auto mt-4 max-w-xl text-sm leading-relaxed sm:text-base md:mt-5">
             AiLysium exists because most AI education is talk, not practice. We
@@ -85,27 +118,24 @@ export const About = () => {
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
             <Reveal id="who-text" x={-20} className="text-center md:text-left">
-              <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
-                <span className="bg-sky h-1 w-1 rounded-full" />
-                Who We Are
-              </span>
-              <h2 className="font-heading text-ink mt-4 text-2xl leading-snug font-bold sm:text-3xl md:mt-5 md:text-[2.75rem] md:leading-tight">
-                Personalised learning,{" "}
+
+              <h2 className="font-heading text-ink text-2xl leading-snug font-bold sm:text-3xl md:mt-5 md:text-[2.75rem] md:leading-tight">
+                Personalised Learning,{" "}
                 <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                  anytime, anywhere
+                  Anytime, Anywhere
                 </span>
               </h2>
               <p className="text-muted mx-auto mt-4 max-w-lg text-sm leading-relaxed sm:text-base md:mx-0 md:mt-5">
-                AiLysium is an AI education platform based in Pakistan, training
-                teen beginners through the Kids AI program and freelancers
-                through Freelancer AI. We're not a video library — every program
-                is mentor-led, hands-on, and structured around shipping a real
-                project, not just finishing a syllabus.
+                AiLysium is an AI academy and solutions studio in Gujranwala,
+                Pakistan. We train school students, professionals and
+                institutions through live classes with a trainer present
+                throughout. Every course follows a planned order and ends with a
+                finished project, not just a syllabus.
               </p>
               <div className="mt-6 flex items-center justify-center gap-5 sm:gap-6 md:mt-7 md:justify-start">
                 <div>
                   <p className="font-heading text-ink text-xl font-bold sm:text-2xl">
-                    2+
+                    10+
                   </p>
                   <p className="text-muted text-xs">Programs</p>
                 </div>
@@ -114,7 +144,7 @@ export const About = () => {
                   <p className="font-heading text-ink text-xl font-bold sm:text-2xl">
                     1:1
                   </p>
-                  <p className="text-muted text-xs">Mentor feedback</p>
+                  <p className="text-muted text-xs">Mentor Feedback</p>
                 </div>
                 <div className="bg-slate/15 h-10 w-px" />
                 <div>
@@ -187,7 +217,7 @@ export const About = () => {
                       </svg>
                     </div>
                     <p className="font-heading text-ink mt-2.5 text-sm font-bold sm:mt-3">
-                      Weekly builds
+                      Weekly Builds
                     </p>
                     <p className="text-muted mt-0.5 text-xs">
                       Ship something every week
@@ -218,7 +248,7 @@ export const About = () => {
                       </svg>
                     </div>
                     <p className="font-heading text-ink mt-2.5 text-sm font-bold sm:mt-3">
-                      Real portfolio
+                      Real Portfolio
                     </p>
                     <p className="text-muted mt-0.5 text-xs">
                       Projects you can show
@@ -267,19 +297,16 @@ export const About = () => {
 
         <div className="relative mx-auto max-w-6xl px-6 text-center">
           <Reveal id="why-header">
-            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Built on Trust
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
-              Why choose{" "}
+
+            <h2 className="font-heading text-ink text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+              Why Choose{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
                 AiLysium
               </span>
             </h2>
             <p className="text-muted mx-auto mt-2 max-w-xl text-sm leading-relaxed sm:text-base">
               We'd rather teach fewer students well than a lot of students
-              poorly — that shows up in how every program is run.
+              poorly, that shows up in how every program is run.
             </p>
           </Reveal>
 
@@ -291,7 +318,7 @@ export const About = () => {
                 delay={index * 0.1}
                 className="group border-slate/10 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 relative overflow-hidden rounded-3xl border bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:bg-white/70 sm:p-7 sm:backdrop-blur-md"
               >
-                <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" />
+                {/* <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" /> */}
                 <div className="flex items-center gap-3">
                   <div className="from-sky to-sky-light shadow-sky/25 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md transition-transform duration-300 group-hover:scale-110 sm:h-12 sm:w-12">
                     {index === 0 && (
@@ -375,12 +402,6 @@ export const About = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
               </div>
-              <div className="border-slate/10 shadow-ink/5 absolute -right-3 -bottom-3 rounded-2xl border bg-white px-4 py-2.5 shadow-lg sm:-right-4 sm:-bottom-4 sm:px-5 sm:py-3">
-                <p className="font-heading text-ink text-sm font-bold">
-                  Founder
-                </p>
-                <p className="text-muted text-xs">AiLysium</p>
-              </div>
             </Reveal>
 
             {/* Right — Data */}
@@ -390,26 +411,24 @@ export const About = () => {
               delay={0.1}
               className="text-center md:text-left"
             >
-              <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-                <span className="bg-sky h-1 w-1 rounded-full" />
-                Meet the Founder
-              </span>
-              <h2 className="font-heading text-ink mt-4 text-2xl leading-snug font-bold sm:text-3xl md:mt-5 md:text-[2.75rem] md:leading-tight">
+
+              <h2 className="font-heading text-ink text-2xl leading-snug font-bold sm:text-3xl md:mt-5 md:text-[2.75rem] md:leading-tight">
                 Muhammad{" "}
                 <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
                   Abdullah
                 </span>
               </h2>
               <p className="text-muted mx-auto mt-4 max-w-lg text-sm leading-relaxed sm:text-base md:mx-0 md:mt-5">
-                The person behind AiLysium — building a platform where teen
-                beginners and freelancers learn AI through real, hands-on
-                projects instead of just watching videos.
+                Muhammad Abdullah comes from digital marketing, IT services and
+                entrepreneurship. He ran an international freelance team before
+                moving into AI education. He designs the curriculum, leads the
+                Kids AI Course and runs Studio work.
               </p>
 
               <div className="mt-6 grid grid-cols-3 gap-3 sm:gap-4 md:mt-7">
                 <div className="border-slate/10 shadow-ink/4 hover:shadow-sky/8 rounded-2xl border bg-white p-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-4">
                   <p className="font-heading text-ink text-lg font-bold sm:text-xl">
-                    2+
+                    10+
                   </p>
                   <p className="text-muted mt-0.5 text-xs sm:mt-1">Programs</p>
                 </div>
@@ -442,7 +461,7 @@ export const About = () => {
           {/* Team */}
           <Reveal id="team" className="mt-12 md:mt-16">
             <h3 className="font-heading text-ink text-lg font-bold sm:text-xl">
-              Mentors leading our courses
+              Mentors Leading Our Courses
             </h3>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:gap-5 md:mt-6 md:grid-cols-3">
               {teamMembers.map((member, index) => (
@@ -450,13 +469,17 @@ export const About = () => {
                   key={index}
                   className="group border-slate/10 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 flex items-center gap-3.5 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:gap-4 sm:p-5"
                 >
-                  <div className="from-sky to-sky-light shadow-sky/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white shadow-md sm:h-12 sm:w-12 sm:text-sm">
-                    {member.name
-                      .split(" ")
-                      .map((p) => p[0])
-                      .join("")
-                      .slice(0, 2)}
-                  </div>
+                  {member.img ? (
+                    <img
+                      src={member.img}
+                      alt={member.name}
+                      className="ring-slate/10 h-10 w-10 shrink-0 rounded-full object-cover ring-1 sm:h-12 sm:w-12"
+                    />
+                  ) : (
+                    <div className="from-sky to-sky-light shadow-sky/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-xs font-bold text-white shadow-md sm:h-12 sm:w-12 sm:text-sm">
+                      {getInitials(member.name)}
+                    </div>
+                  )}
                   <div>
                     <p className="font-heading text-ink text-sm font-bold">
                       {member.name}
@@ -474,14 +497,11 @@ export const About = () => {
       <section className="relative overflow-hidden bg-white py-16 md:py-28">
         <div className="mx-auto max-w-6xl px-6 text-center">
           <Reveal id="what-header">
-            <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Online Learning, Done Right
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+
+            <h2 className="font-heading text-ink text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
               What{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                we do
+                We Do
               </span>
             </h2>
             <p className="text-muted mx-auto mt-2 max-w-xl text-sm leading-relaxed sm:text-base">
@@ -498,7 +518,7 @@ export const About = () => {
                 delay={index * 0.1}
                 className="group border-slate/10 shadow-ink/4 hover:border-sky/20 hover:shadow-sky/8 relative overflow-hidden rounded-3xl border bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7"
               >
-                <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" />
+                {/* <div className="from-sky/8 pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-150" /> */}
                 <div className="flex items-center gap-3">
                   <div className="from-sky to-sky-light shadow-sky/25 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md transition-transform duration-300 group-hover:scale-110 sm:h-12 sm:w-12">
                     {index === 0 && (
@@ -568,13 +588,13 @@ export const About = () => {
         <ConsultationSection
           heading={
             <>
-              Get ready to{" "}
+              Get Ready to{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                build with AI
+                Build with AI
               </span>
             </>
           }
-          description="Browse our programs or talk to us first — either way, the next step is a real conversation, not a signup form."
+          description="Browse our programs or talk to us first. Either way, the next step is a real conversation, not a signup form."
           primaryCta={{ text: "Explore programs", to: "/courses" }}
           secondaryCta={{ text: "Contact us", to: "/contact" }}
         />

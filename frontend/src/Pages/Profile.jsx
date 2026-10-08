@@ -9,16 +9,9 @@ import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineCalendar, HiOutlineExclamationCircle, HiOutlineAcademicCap, HiOutlineArrowRight, HiOutlineLogout } from "react-icons/hi";
 
 const paymentBadgeStyles = {
-    PENDING: "bg-amber-50 text-amber-600",
-    CONFIRMED: "bg-emerald-50 text-emerald-600",
-    FAILED: "bg-red-50 text-red-600",
-    FREE: "bg-emerald-50 text-emerald-600",
-};
-
-const paymentDotStyles = {
-    PENDING: "bg-amber-500",
+    PENDING: "bg-amber-400",
     CONFIRMED: "bg-emerald-500",
-    FAILED: "bg-red-500",
+    FAILED: "bg-red-400",
     FREE: "bg-emerald-500",
 };
 
@@ -96,13 +89,11 @@ export const Profile = () => {
                             </div>
                             <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 sm:mt-2.5 sm:gap-2 sm:justify-start">
                                 {user.emailVerifiedAt ? (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/60 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 sm:px-3 sm:py-1">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs text-cloud font-semibol sm:px-3 sm:py-1">
                                         Verified
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200/60 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-600 sm:px-3 sm:py-1">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-xs text-cloud font-semibold sm:px-3 sm:py-1">
                                         Unverified
                                     </span>
                                 )}
@@ -243,8 +234,7 @@ export const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 pl-[2.75rem] sm:pl-0">
-                                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
-                                                <span className={`h-1.5 w-1.5 rounded-full ${paymentDotStyles[enrollment.paymentStatus]}`} />
+                                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs text-cloud font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
                                                 {enrollment.paymentStatus}
                                             </span>
                                             {isPending && (

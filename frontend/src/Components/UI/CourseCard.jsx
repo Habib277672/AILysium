@@ -33,18 +33,18 @@ export const CourseCard = ({ course }) => {
         <h3 className="font-heading text-lg sm:text-xl font-bold leading-snug text-ink/75 transition-colors group-hover:text-sky">{course.title}</h3>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{course.description}</p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-x-4 gap-y-2 text-xs sm:text-sm text-muted">
+        <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-x-2 gap-y-2 text-xs sm:text-sm text-muted">
           <Badge variant={statusBadgeVariant[course.status]} className="text-xs">{statusLabel[course.status]}</Badge>
           {course.isFree && (
             <Badge variant="success" className="text-xs">Free</Badge>
           )}
-          <span className="flex items-center gap-1.5">
-            <svg className="h-3.5 w-3.5 text-sky/60 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM8 4v4l2.5 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className="flex items-center gap-1.5 border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
+            <svg className="h-3.5 w-3.5 text-sky/90 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM8 4v4l2.5 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             {course.duration}
           </span>
           {course.mentor && (
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 text-sky/60 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" /><path d="M3 14.5c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
+            <span className="flex items-center gap-1.5 border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
+              <svg className="h-3.5 w-3.5 text-sky/90 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" /><path d="M3 14.5c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
               {course.mentor}
             </span>
           )}

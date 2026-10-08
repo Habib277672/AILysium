@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Reveal } from "../Components/UI/Reveal";
@@ -5,19 +6,19 @@ import { Reveal } from "../Components/UI/Reveal";
 const sections = [
   {
     title: "Acceptance of terms",
-    body: "By accessing AiLysium, creating an account, or enrolling in a program, you agree to these Terms & Conditions and our Privacy Policy. If you do not agree, please do not use the platform.",
+    body: "By accessing AiLysium, creating an account or enrolling in a program, you agree to these Terms & Conditions and our Privacy Policy. If you do not agree, please do not use the platform.",
   },
   {
     title: "Eligibility",
-    body: "AiLysium offers AI training programs, with a focus on teen beginners and freelancers. If you are under 18, you may only use the platform with the consent of a parent or guardian. By registering, you confirm that the information you provide is accurate and that you meet these eligibility requirements.",
+    body: "AiLysium offers live online AI training for school students, professionals, teachers and institutions. If you are under 18, you may only use the platform with the consent of a parent or guardian. By registering, you confirm that the information you provide is accurate and that you meet these eligibility requirements.",
   },
   {
     title: "Your account",
-    body: "You are responsible for keeping your login credentials confidential and for all activity that happens under your account. Notify us immediately if you suspect unauthorized access. Accounts are personal — you may not share, sell, or transfer them.",
+    body: "You are responsible for keeping your login credentials confidential and for all activity that happens under your account. Notify us immediately if you suspect unauthorized access. Accounts are personal, so you may not share, sell or transfer them.",
   },
   {
-    title: "Programs, enrollment, and payment",
-    body: "Course descriptions, schedules, and prices may change before you enroll. A spot in a program is confirmed only after your payment is successfully processed. We reserve the right to cancel or reschedule sessions; if we cancel a program you paid for, you will be offered a replacement session or a refund.",
+    title: "Programs, enrollment and payment",
+    body: "Course descriptions, schedules and prices may change before you enroll. A spot in a program is confirmed only after your payment is successfully processed. We reserve the right to cancel or reschedule sessions. If we cancel a program you paid for, you will be offered a replacement session or a refund.",
   },
   {
     title: "Refunds and cancellations",
@@ -25,34 +26,35 @@ const sections = [
   },
   {
     title: "Communications",
-    body: "By registering, you agree to receive service-related messages from us — verification emails, enrollment updates, and program notices — via email and WhatsApp. You can opt out of promotional messages at any time, but we will still send essential account and service messages.",
+    body: "By registering, you agree to receive service messages from us, such as verification emails, enrollment updates and program notices, by email and WhatsApp. You can opt out of promotional messages at any time, but we will still send essential account and service messages.",
   },
   {
     title: "Acceptable use",
     body: "You agree not to:",
     items: [
       "Share your account or access another user's account.",
-      "Copy, resell, or redistribute program materials outside your enrolled cohort.",
-      "Use the platform for any unlawful, harmful, or fraudulent purpose.",
-      "Interfere with the site's operation — including attempting to breach security or overload our systems.",
+      "Copy, resell or redistribute program materials outside your enrolled batch.",
+      "Use the platform for any unlawful, harmful or fraudulent purpose.",
+      "Interfere with the operation of the site, including attempting to breach security or overload our systems.",
       "Post or transmit content that infringes the rights of others.",
+      "Enter personal information into AI tools during classes, as our safety rules require.",
     ],
   },
   {
     title: "Intellectual property",
-    body: "All AiLysium content — course materials, videos, slides, platform design, and branding — belongs to AiLysium or its licensors and is protected by copyright. We grant you a limited, personal license to use these materials for your own learning during your enrollment. Projects you create during a program belong to you.",
+    body: "All AiLysium content, including course materials, videos, slides, platform design and branding, belongs to AiLysium or its licensors and is protected by copyright. We grant you a limited, personal license to use these materials for your own learning during your enrollment. Projects you create during a program belong to you.",
   },
   {
     title: "Third-party tools and links",
-    body: "Our AI tools directory and programs reference third-party services. Those tools are governed by their own terms and policies — we are not responsible for their content, availability, or practices. Using a third-party tool is at your own discretion.",
+    body: "Our AI tools directory and programs reference third-party services such as ChatGPT, Claude and Gemini. Those tools are governed by their own terms and policies, and we are not responsible for their content, availability or practices. Using a third-party tool is at your own discretion.",
   },
   {
     title: "Disclaimers",
-    body: "AiLysium is provided “as is” and “as available”. While we aim to deliver high-quality training, we do not guarantee any specific learning outcome, income, certification, or employment result from completing a program. Technical interruptions may occasionally occur.",
+    body: "AiLysium is provided “as is” and “as available”. While we aim to deliver high-quality live training, we do not guarantee any specific income, job or employment result from completing a program. Certificates are awarded according to each program's completion and assessment requirements. Technical interruptions may occasionally occur.",
   },
   {
     title: "Limitation of liability",
-    body: "To the maximum extent permitted by law, AiLysium shall not be liable for indirect, incidental, or consequential damages arising from your use of the platform. Our total liability for any claim related to the service is limited to the amount you paid us for the program in question.",
+    body: "To the maximum extent permitted by law, AiLysium shall not be liable for indirect, incidental or consequential damages arising from your use of the platform. Our total liability for any claim related to the service is limited to the amount you paid us for the program in question.",
   },
   {
     title: "Termination",
@@ -64,12 +66,31 @@ const sections = [
   },
   {
     title: "Contact us",
-    body: "Questions about these Terms & Conditions? Reach out through our contact page and we'll get back to you.",
+    body: "Questions about these Terms & Conditions? Contact us and we will get back to you. Email: ailysiumofficial@gmail.com. WhatsApp or phone: 0311 1390351. Location: Gujranwala, Pakistan.",
     link: { to: "/contact", label: "Contact AiLysium" },
   },
 ];
-
 export const TermsConditions = () => {
+  useEffect(() => {
+    const previousTitle = document.title;
+    const description =
+      "Read the AiLysium Terms & Conditions covering accounts, enrollment, payments, refunds, acceptable use and your rights.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    document.title = "Terms & Conditions | AiLysium Academy";
+    meta.setAttribute("content", description);
+    return () => {
+      document.title = previousTitle;
+      if (previousDescription === null) meta.remove();
+      else meta.setAttribute("content", previousDescription);
+    };
+  }, []);
+
   return (
     <div>
       {/* Hero */}
@@ -83,22 +104,22 @@ export const TermsConditions = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-          <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+          {/* <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
             <span className="bg-sky h-1 w-1 rounded-full" />
             Legal
-          </span>
-          <h1 className="font-heading text-ink mt-4 text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
+          </span> */}
+          <h1 className="font-heading text-ink text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
             Terms &{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
               Conditions
             </span>
           </h1>
           <p className="text-muted mx-auto mt-4 max-w-xl text-sm leading-relaxed sm:text-base md:mt-5">
-            The ground rules for using AiLysium — your rights, our commitments,
-            and what we expect from each other.
+            The ground rules for using AiLysium, including your rights, our
+            commitments and what we expect from each other.
           </p>
           <p className="text-muted/60 mt-3 text-xs font-medium tracking-wider uppercase">
-            Last updated: September 2026
+            Last updated: October 2026
           </p>
         </motion.div>
       </section>
@@ -108,7 +129,7 @@ export const TermsConditions = () => {
         <Reveal id="terms-intro" y={10}>
           <p className="text-slate text-sm leading-relaxed">
             These Terms & Conditions govern your use of the AiLysium platform,
-            website, and programs. Please read them carefully — they form a
+            website, and programs. Please read them carefully, they form a
             binding agreement between you and AiLysium.
           </p>
         </Reveal>

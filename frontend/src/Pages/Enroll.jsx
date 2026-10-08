@@ -29,7 +29,13 @@ export const Enroll = () => {
                     navigate("/profile", { replace: true });
                 } else {
                     toast.success("Enrollment started — continue to payment.");
-                    navigate(`/payment?enrollmentId=${enrollment.id}`, { replace: true });
+                    navigate(`/payment?enrollmentId=${enrollment.id}`, {
+                        replace: true,
+                        // Hand the fresh enrollment to the payment page directly —
+                        // the list query is invalidated at this exact moment, so
+                        // without this the payment page flashes a skeleton first.
+                        state: { enrollment },
+                    });
                 }
             },
             onError: (err) => {
@@ -110,96 +116,118 @@ export const Enroll = () => {
                 className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12"
             >
                 {/* Course card */}
-                <div className="rounded-3xl border border-slate/10 bg-white p-5 shadow-xl shadow-ink/5 sm:p-8">
-                    {/* Header */}
-                    <div className="text-center">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sky/8 px-3 py-1 text-xs font-semibold text-sky">
-                            <span className="h-1.5 w-1.5 rounded-full bg-sky" />
-                            {isAvailable ? "Enrollment open" : "Coming soon"}
-                        </span>
-                        <h2 className="mt-4 font-heading text-xl font-bold text-ink sm:text-2xl md:text-3xl">
-                            {course.title}
-                        </h2>
-                        <p className="mt-2 text-sm leading-relaxed text-muted">
-                            {course.description}
-                        </p>
-                    </div>
+                <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white p-5 shadow-2xl shadow-sky/10 sm:p-8">
+                    {/* Soft decorative glows */}
+                    <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-sky/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky/5 blur-3xl" />
 
-                    {/* Details row */}
-                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm sm:gap-6">
-                        <div className="flex items-center gap-2 text-ink">
-                            <HiOutlineClock className="h-4 w-4 text-sky" />
-                            <span className="font-medium">{course.duration}</span>
+                    {/* Top accent line */}
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky/20 via-sky to-sky/20" />
+
+                    <div className="relative">
+                        {/* Header */}
+                        <div className="text-center">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/8 px-3.5 py-1 text-xs font-semibold text-sky">
+                                <span className="relative flex h-2 w-2">
+                                    {isAvailable && (
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky opacity-60" />
+                                    )}
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-sky" />
+                                </span>
+                                {isAvailable ? "Enrollment open" : "Coming soon"}
+                            </span>
+
+                            <h2 className="mt-4 font-heading text-2xl font-bold tracking-tight text-ink sm:text-3xl md:text-4xl">
+                                {course.title}
+                            </h2>
+                            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
+                                {course.description}
+                            </p>
                         </div>
-                        {course.ageRange && (
-                            <>
-                                <div className="hidden h-4 w-px bg-slate/15 sm:block" />
-                                <div className="flex items-center gap-2 text-ink">
-                                    <HiOutlineUser className="h-4 w-4 text-sky" />
-                                    <span className="font-medium">Ages {course.ageRange}</span>
+
+                        {/* Detail chips */}
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                            {course.duration && (
+                                <div className="flex items-center gap-2 rounded-full border border-sky/15 bg-sky/5 px-4 py-2 text-sm font-medium text-ink">
+                                    <HiOutlineClock className="h-4 w-4 text-sky" />
+                                    {course.duration}
                                 </div>
-                            </>
+                            )}
+                            {course.ageRange && (
+                                <div className="flex items-center gap-2 rounded-full border border-sky/15 bg-sky/5 px-4 py-2 text-sm font-medium text-ink">
+                                    <HiOutlineUser className="h-4 w-4 text-sky" />
+                                    Age {course.ageRange}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Price panel */}
+                        <div className="mt-6 rounded-2xl border border-sky/15 bg-gradient-to-br from-sky/8 via-sky/3 to-transparent p-5 text-center sm:mt-7">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">
+                                Price
+                            </p>
+                            <p className="mt-1 font-heading text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+                                {course.isFree ? (
+                                    <span className="text-sky">Free of Cost</span>
+                                ) : (
+                                    <>
+                                        <span className="mr-1.5 align-top text-lg font-bold text-sky sm:text-xl">
+                                            PKR
+                                        </span>
+                                        {course.price.toLocaleString()}
+                                    </>
+                                )}
+                            </p>
+                        </div>
+
+                        {/* Alerts */}
+                        {!isVerified && (
+                            <div className="mt-6 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
+                                <p className="text-sm text-amber-700">
+                                    Verify your email first.{" "}
+                                    <Link to="/profile" className="font-semibold underline decoration-amber-300 underline-offset-2 transition-colors hover:text-amber-800">
+                                        Resend
+                                    </Link>
+                                </p>
+                            </div>
                         )}
+
+                        {!isAvailable && (
+                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
+                                <p className="text-sm text-amber-700">
+                                    This program isn't open for enrollment yet.
+                                </p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-red-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-red-500" />
+                                <p className="text-sm text-red-600">{error}</p>
+                            </div>
+                        )}
+
+                        {/* CTA */}
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            className="mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-sky/35 disabled:translate-y-0 disabled:shadow-none"
+                            onClick={handleConfirm}
+                            disabled={!isAvailable || createEnrollment.isPending || !isVerified}
+                        >
+                            {createEnrollment.isPending ? "Enrolling..." : confirmLabel}
+                        </Button>
+
+                        <Link
+                            to="/courses"
+                            className="mt-4 flex items-center justify-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-sky"
+                        >
+                            <HiOutlineArrowLeft className="h-4 w-4" />
+                            Back to courses
+                        </Link>
                     </div>
-
-                    {/* Divider */}
-                    <div className="my-6 h-px bg-slate/10 sm:my-7" />
-
-                    {/* Price */}
-                    <div className="text-center">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted/60">Price</p>
-                        <p className="mt-1 font-heading text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-                            {course.isFree ? "Free of Cost" : `PKR ${course.price.toLocaleString()}`}
-                        </p>
-                    </div>
-
-                    {/* Alerts */}
-                    {!isVerified && (
-                        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
-                            <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
-                            <p className="text-sm text-amber-700">
-                                Verify your email first.{" "}
-                                <Link to="/profile" className="font-semibold underline decoration-amber-300 underline-offset-2 transition-colors hover:text-amber-800">
-                                    Resend
-                                </Link>
-                            </p>
-                        </div>
-                    )}
-
-                    {!isAvailable && (
-                        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
-                            <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
-                            <p className="text-sm text-amber-700">
-                                This program isn't open for enrollment yet.
-                            </p>
-                        </div>
-                    )}
-
-                    {error && (
-                        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-red-50 px-4 py-3">
-                            <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-red-500" />
-                            <p className="text-sm text-red-600">{error}</p>
-                        </div>
-                    )}
-
-                    {/* CTA */}
-                    <Button
-                        variant="primary"
-                        size="lg"
-                        className="mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35"
-                        onClick={handleConfirm}
-                        disabled={!isAvailable || createEnrollment.isPending || !isVerified}
-                    >
-                        {createEnrollment.isPending ? "Enrolling..." : confirmLabel}
-                    </Button>
-
-                    <Link
-                        to="/courses"
-                        className="mt-4 flex items-center justify-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-sky"
-                    >
-                        <HiOutlineArrowLeft className="h-4 w-4" />
-                        Back to courses
-                    </Link>
                 </div>
             </motion.div>
         </div>

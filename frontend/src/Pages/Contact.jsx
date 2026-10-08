@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "motion/react";
@@ -14,40 +14,45 @@ import { Reveal } from "../Components/UI/Reveal";
 import {
   FaInstagram,
   FaFacebookF,
-  FaYoutube,
+  // FaYoutube,
   FaLinkedinIn,
-  FaTiktok,
+  // FaTiktok,
 } from "react-icons/fa";
-import { SiX } from "react-icons/si";
+// import { SiX } from "react-icons/si";
 
-const PLACEHOLDER_EMAIL = "email@mybusiness.com";
-const PLACEHOLDER_PHONE = "+12345678900";
+const PLACEHOLDER_EMAIL = " ailysiumofficial@gmail.com";
+const PLACEHOLDER_PHONE = "+923111390351";
 const WHATSAPP_LINK = `https://wa.me/${PLACEHOLDER_PHONE.replace("+", "")}`;
 
 const contactFaqs = [
   {
-    question: "Kids AI installment payments",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Can I speak to the instructor first?",
+    answer:
+      "Yes. A free consultation is available on WhatsApp at 0311 1390351. You can ask questions, meet the instructor and see exactly what you or your child will learn.",
   },
   {
-    question: "Scheduling weekly sessions",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Are classes live?",
+    answer:
+      "Yes. Classes are live online with a trainer present in every session.",
   },
   {
-    question: "Missed classes",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "How long is each class?",
+    answer:
+      "Each class is one hour. The Kids AI Course has 6 classes per week for 12 weeks, which makes 72 live classes in total.",
   },
   {
-    question: "Access to course materials and roadmap",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Does my child need any experience?",
+    answer: "No. The Kids AI Course starts from zero.",
   },
   {
-    question: "VIP payment",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Is it safe for children?",
+    answer:
+      "Yes. We require parent permission, use supervised accounts, share no personal details on AI tools, and keep a live trainer in every class.",
   },
   {
-    question: "Tool/resource availability after the course",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "What does a student finish with?",
+    answer:
+      "A working project, a portfolio piece and a certificate. Every week also ends with something the student created.",
   },
 ];
 
@@ -60,7 +65,36 @@ const initialForm = {
   message: "",
 };
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
 export const Contact = () => {
+  useEffect(() => {
+    const previousTitle = document.title;
+    const description =
+      "Contact AiLysium in Gujranwala for a free consultation about our AI courses, Studio services or partnerships.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    document.title = "Contact AiLysium Academy | WhatsApp 0311 1390351";
+    meta.setAttribute("content", description);
+    return () => {
+      document.title = previousTitle;
+      if (previousDescription === null) meta.remove();
+      else meta.setAttribute("content", previousDescription);
+    };
+  }, []);
+
   // Live, AVAILABLE-only course titles — replaces the old hardcoded
   // programOptions array. If admin renames/adds/removes a course, this
   // dropdown reflects it automatically, no code change needed here.
@@ -115,7 +149,7 @@ export const Contact = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-cloud relative overflow-hidden py-16 md:py-40">
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-45">
         <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
         <div className="bg-sky/15 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
@@ -125,14 +159,11 @@ export const Contact = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-          <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-            <span className="bg-sky h-1 w-1 rounded-full" />
-            Contact
-          </span>
-          <h1 className="font-heading text-ink mt-3 text-3xl leading-tight font-extrabold sm:text-4xl md:text-5xl">
+          <h1 className="font-heading text-ink text-3xl leading-tight font-extrabold sm:text-4xl md:text-5xl">
             Contact AiLysium to{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              start learning AI
+              <br />
+              Start Learning AI
             </span>
           </h1>
           <div className="text-muted mt-4 flex flex-col items-center gap-3 text-sm sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
@@ -191,14 +222,14 @@ export const Contact = () => {
             </svg>
           </div>
           <h2 className="font-heading text-ink mt-4 text-2xl font-bold sm:mt-5 sm:text-3xl">
-            Get in{" "}
+            Get In{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              touch
+              Touch
             </span>
           </h2>
           <p className="text-muted mx-auto mt-2.5 max-w-lg text-sm sm:mt-3">
-            Have questions about our programs? Reach out on WhatsApp or fill out
-            the form below — we'll get back to you shortly.
+            Have questions about our programs? Message us on WhatsApp or fill
+            out the form below and we will get back to you shortly.
           </p>
         </Reveal>
         <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 md:grid-cols-[1fr_1.4fr]">
@@ -225,9 +256,9 @@ export const Contact = () => {
                 </div>
                 <div className="px-5 py-4 sm:px-6 sm:py-5">
                   <p className="text-muted text-sm leading-relaxed">
-                    Ask us anything about the Kids AI course or VIP program.
-                    Send a message on WhatsApp or use the form and we'll help
-                    you get started.
+                    Ask us anything about the Kids AI Course, Studio services or
+                    partnerships. Message us on WhatsApp or use the form and we
+                    will help you get started.
                   </p>
                   <Button
                     as="a"
@@ -269,17 +300,29 @@ export const Contact = () => {
                 </div>
                 <div className="px-5 py-4 sm:px-6 sm:py-5">
                   <p className="text-muted text-sm leading-relaxed">
-                    Stay updated with our latest AI tips, student showcases, and
-                    program announcements.
+                    Stay updated with our latest AI tips, student projects and
+                    course announcements.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2 sm:mt-5 sm:gap-2.5">
                     {[
-                      { icon: FaInstagram, label: "Instagram", href: "#" },
-                      { icon: FaFacebookF, label: "Facebook", href: "#" },
-                      { icon: SiX, label: "X", href: "#" },
-                      { icon: FaYoutube, label: "YouTube", href: "#" },
-                      { icon: FaLinkedinIn, label: "LinkedIn", href: "#" },
-                      { icon: FaTiktok, label: "TikTok", href: "#" },
+                      {
+                        icon: FaInstagram,
+                        label: "Instagram",
+                        href: "https://www.instagram.com/ailysiumofficial2026/?hl=en",
+                      },
+                      {
+                        icon: FaFacebookF,
+                        label: "Facebook",
+                        href: "https://www.facebook.com/profile.php?id=61592615186779",
+                      },
+                      // { icon: SiX, label: "X", href: "#" },
+                      // { icon: FaYoutube, label: "YouTube", href: "#" },
+                      {
+                        icon: FaLinkedinIn,
+                        label: "LinkedIn",
+                        href: "https://www.linkedin.com/company/145248085",
+                      },
+                      // { icon: FaTiktok, label: "TikTok", href: "#" },
                     ].map(({ icon: Icon, label, href }) => (
                       <a
                         key={label}
@@ -302,36 +345,96 @@ export const Contact = () => {
           <Reveal id="contact-form" x={20} delay={0.1} className="h-full">
             <div className="border-slate/10 bg-cloud h-full rounded-lg border p-4 shadow-sm sm:p-6">
               {submitted ? (
-                <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
-                  <div className="bg-cloud text-sky flex h-14 w-14 items-center justify-center rounded-2xl">
-                    <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                <motion.div
+                  initial="hidden"
+                  animate="show"
+                  variants={{
+                    hidden: {},
+                    show: {
+                      transition: {
+                        staggerChildren: 0.12,
+                        delayChildren: 0.05,
+                      },
+                    },
+                  }}
+                  className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center"
+                >
+                  {/* Animated success badge */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.6 },
+                      show: {
+                        opacity: 1,
+                        scale: 1,
+                        transition: {
+                          duration: 0.45,
+                          ease: [0.22, 1, 0.36, 1],
+                        },
+                      },
+                    }}
+                    className="from-sky to-sky-light shadow-sky/30 relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br shadow-lg"
+                  >
+                    {/* Pulse ring */}
+                    <motion.span
+                      aria-hidden="true"
+                      className="border-sky absolute inset-0 rounded-full border-2"
+                      initial={{ opacity: 0.5, scale: 1 }}
+                      animate={{ opacity: 0, scale: 1.6 }}
+                      transition={{
+                        duration: 0.8,
+                        delay: 0.3,
+                        ease: "easeOut",
+                      }}
+                    />
+                    <svg
+                      className="h-8 w-8"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <motion.path
+                        d="M5 13l4 4L19 7"
+                        stroke="white"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{
+                          duration: 0.45,
+                          delay: 0.3,
+                          ease: "easeOut",
+                        }}
                       />
                     </svg>
-                  </div>
-                  <p className="font-heading text-ink mt-1 text-xl font-bold">
-                    Message sent
-                  </p>
-                  <p className="text-muted max-w-sm text-sm">
-                    Thanks for reaching out — we'll get back to you soon.
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="cursor-pointer rounded-full"
-                    onClick={() => {
-                      setForm(initialForm);
-                      setSubmitted(false);
-                    }}
+                  </motion.div>
+
+                  <motion.p
+                    variants={fadeUp}
+                    className="font-heading text-ink mt-1 text-xl font-bold"
                   >
-                    Send another message
-                  </Button>
-                </div>
+                    Message sent
+                  </motion.p>
+                  <motion.p
+                    variants={fadeUp}
+                    className="text-muted max-w-sm text-sm"
+                  >
+                    Thanks for reaching out, we'll get back to you soon.
+                  </motion.p>
+                  <motion.div variants={fadeUp}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="cursor-pointer rounded-full"
+                      onClick={() => {
+                        setForm(initialForm);
+                        setSubmitted(false);
+                      }}
+                    >
+                      Send another message
+                    </Button>
+                  </motion.div>
+                </motion.div>
               ) : (
                 <>
                   {error && (
@@ -386,7 +489,11 @@ export const Contact = () => {
                         setForm((prev) => ({ ...prev, program: value }))
                       }
                       options={programOptions}
-                      placeholder={coursesLoading ? "Loading programs…" : "Select a program"}
+                      placeholder={
+                        coursesLoading
+                          ? "Loading programs…"
+                          : "Select a program"
+                      }
                       disabled={coursesLoading}
                     />
 
@@ -405,7 +512,7 @@ export const Contact = () => {
                       variant="primary"
                       size="md"
                       disabled={submitMessage.isPending}
-                      className="shadow-sky/20 cursor-pointer justify-self-start rounded-full px-6 shadow-lg"
+                      className="shadow-sky/20 w-full cursor-pointer justify-self-start rounded-full px-6 shadow-lg"
                     >
                       {submitMessage.isPending ? "Sending..." : "Send message"}
                     </Button>
@@ -419,10 +526,6 @@ export const Contact = () => {
 
       {/* Contact FAQs */}
       <section className="bg-cloud relative overflow-hidden py-20 md:py-24">
-        <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
-        <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-full bg-gradient-to-t from-white via-white/80 to-transparent" />
-        <div className="bg-sky/10 pointer-events-none absolute top-1/2 left-1/4 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
-
         <div className="relative mx-auto max-w-3xl px-6">
           <Reveal id="contact-faq-header" className="text-center">
             <div className="bg-sky/10 text-sky mx-auto flex h-14 w-14 items-center justify-center rounded-2xl">
@@ -439,7 +542,7 @@ export const Contact = () => {
             <h2 className="font-heading text-ink mt-5 text-3xl font-bold">
               Common{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                questions
+                Questions
               </span>
             </h2>
             <p className="text-muted mt-3 text-sm">
@@ -471,16 +574,17 @@ export const Contact = () => {
         <ConsultationSection
           heading={
             <>
-              Don't wait for your kid to{" "}
+              Start Your{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                fall behind
+                AI Journey{" "}
               </span>
+              Today
             </>
           }
-          description="Every week your child waits is a skill they miss. Book a free consultation today and see them start building with AI, not just watching it."
+          description="Book a free consultation, meet the instructor and see exactly what you or your child will learn. Every week ends with something real that you built."
           primaryCta={{
             text: "Chat on WhatsApp",
-            href: "https://wa.me/12345678900",
+            href: "https://wa.me/03111390351",
           }}
           secondaryCta={{ text: "Explore programs", to: "/courses" }}
         />

@@ -59,6 +59,27 @@ export const AITools = () => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
+    const previousTitle = document.title;
+    const description =
+      "Explore the 30+ AI tools used in AiLysium courses, grouped by purpose: assistants, research, media, study, building and automation.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    document.title =
+      "AI Tools We Teach | ChatGPT, Claude, Gemini and More | AiLysium";
+    meta.setAttribute("content", description);
+    return () => {
+      document.title = previousTitle;
+      if (previousDescription === null) meta.remove();
+      else meta.setAttribute("content", previousDescription);
+    };
+  }, []);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 400);
@@ -106,20 +127,18 @@ export const AITools = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-          <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-            <span className="bg-sky h-1 w-1 rounded-full" />
-            AI Tools
-          </span>
-          <h1 className="font-heading text-ink mt-4 text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
-            The tools you'll{" "}
+
+          <h1 className="font-heading text-ink text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
+            The Tools You'll{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              actually build with
+              <br />
+              Actually Build With
             </span>
           </h1>
           <p className="text-muted mx-auto mt-4 max-w-xl text-sm leading-relaxed sm:text-base md:mt-5">
-            A directory of the AI tools shaping how people build, write, design,
-            and automate today — browse by category to find what fits your
-            project.
+            Explore the AI tools used in AiLysium courses, from ChatGPT, Claude
+            and Gemini to research, image, video, study and automation tools.
+            Browse by category to find the right tool for your project.
           </p>
         </motion.div>
       </section>
@@ -127,15 +146,15 @@ export const AITools = () => {
       {/* Search + category tabs + tool grid */}
       <section className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
         <Reveal id="aitools-header" className="text-center">
-          <h2 className="font-heading text-ink text-2xl font-extrabold sm:text-3xl md:text-4xl">
-            Explore AI tools{" "}
+          <h2 className="font-heading text-ink text-lg font-extrabold whitespace-nowrap max-[359px]:text-base md:text-4xl">
+            Explore AI Tools{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              by category
+              By Category
             </span>
           </h2>
-          <p className="text-muted mx-auto mt-3 max-w-md text-sm">
-            Browse through our curated collection of AI tools organized by what
-            they do best.
+          <p className="text-muted mx-auto mt-3 max-w-md text-sm leading-relaxed md:max-w-lg">
+            Find AI tools grouped by what they do best, including AI assistants,
+            research, image and video creation, study, coding and automation.
           </p>
         </Reveal>
 
@@ -149,7 +168,7 @@ export const AITools = () => {
             <HiOutlineSearch className="text-muted/50 absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search tools…"
+              placeholder="Search AI tools"
               value={search}
               onChange={handleSearchChange}
               className="border-slate/15 shadow-ink/3 placeholder:text-muted/40 focus:border-sky focus:ring-sky/15 focus:shadow-sky/8 w-full rounded-full border bg-white py-3 pr-5 pl-12 text-sm shadow-sm transition-all duration-300 focus:shadow-md focus:ring-2 focus:outline-none sm:py-3.5"
@@ -183,11 +202,10 @@ export const AITools = () => {
                 key={category}
                 type="button"
                 onClick={() => handleCategoryChange(category)}
-                className={`relative inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200 sm:px-3.5 sm:py-2 ${
-                  activeCategory === category
-                    ? "border-sky text-white"
-                    : "border-slate/15 text-muted hover:border-sky/40 hover:text-sky shadow-ink/3 bg-white shadow-sm"
-                }`}
+                className={`relative inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200 sm:px-3.5 sm:py-2 ${activeCategory === category
+                  ? "border-sky text-white"
+                  : "border-slate/15 text-muted hover:border-sky/40 hover:text-sky shadow-ink/3 bg-white shadow-sm"
+                  }`}
               >
                 {activeCategory === category && (
                   <motion.span
@@ -326,13 +344,13 @@ export const AITools = () => {
         <ConsultationSection
           heading={
             <>
-              Want to work with AI tools{" "}
+              Want to Use AI Tools{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                hands-on?
+                Hands-on?
               </span>
             </>
           }
-          description="Every AiLysium program is built around real, weekly practice with AI tools — not just watching demos."
+          description="Every AiLysium course is built around live classes and weekly practice with real AI tools. You learn one skill at a time and finish with something you made."
           primaryCta={{ text: "Explore programs", to: "/courses" }}
           secondaryCta={{ text: "Talk to us", to: "/contact" }}
         />

@@ -1,8 +1,8 @@
 const variants = {
     sky: "bg-sky/10 text-sky",
     ink: "bg-ink/5 text-ink",
-    success: "bg-emerald-100 text-emerald-700",
-    warning: "bg-amber-100 text-amber-700",
+    success: "bg-emerald-500 text-cloud",
+    warning: "bg-amber-400 text-cloud",
 };
 
 export const Badge = ({ children, variant = "sky", className = "" }) => {

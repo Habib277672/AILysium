@@ -170,19 +170,17 @@ export const Header = () => {
                   end={link.to === "/"}
                   onClick={() => setOpen(false)}
                 >
-                  {({ isActive }) => (
-                    <>
-                      {link.label}
-                      <span
-                        aria-hidden="true"
-                        className={`bg-sky absolute bottom-1 left-1/2 h-0.5 w-1/2 -translate-x-1/2 rounded-full transition-transform duration-300 ease-out ${isActive ? "scale-x-100" : "scale-x-0"}`}
-                      />
-                    </>
-                  )}
+                  {link.label}
                 </NavLink>
               ))}
             </nav>
-            <div className="border-slate/8 mt-4 flex gap-2.5 border-t pt-4">
+          </div>
+
+          {/* Full-width divider, aligned with the menu's top border */}
+          <div className="border-slate/8 border-t" />
+
+          <div className="mx-auto max-w-6xl px-6 py-4">
+            <div className="flex gap-2.5">
               {user ? (
                 <>
                   <Button

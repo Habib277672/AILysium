@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CourseCard } from "../Components/UI/CourseCard";
 import { CourseCardSkeleton } from "../Components/UI/CourseCardSkeleton";
@@ -17,6 +17,26 @@ const filterLabel = {
 export const Courses = () => {
   const { data: courses = [], isLoading, isError } = useCourses();
   const [filter, setFilter] = useState("All");
+
+  useEffect(() => {
+    const previousTitle = document.title;
+    const description =
+      "Browse AiLysium's live online AI programs for students, professionals and teachers.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    document.title = "AI Courses in Pakistan | Live Online Programs | AiLysium";
+    meta.setAttribute("content", description);
+    return () => {
+      document.title = previousTitle;
+      if (previousDescription === null) meta.remove();
+      else meta.setAttribute("content", previousDescription);
+    };
+  }, []);
 
   const visibleCourses =
     filter === "All"
@@ -38,21 +58,18 @@ export const Courses = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-          <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-            <span className="bg-sky h-1 w-1 rounded-full" />
-            Programs
-          </span>
-          <h1 className="font-heading text-ink mt-4 text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
-            Find the right{" "}
+          <h1 className="font-heading text-ink text-2xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
+            Pick Your Path Into{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-              AI program
-            </span>{" "}
-            for you
+              <br />
+              Practical AI Skills Today
+            </span>
           </h1>
           <p className="text-muted mx-auto mt-4 max-w-xl text-sm leading-relaxed sm:text-base md:mt-5">
-            Browse hands-on AI training for teen beginners, personalized
-            mentorship, and a freelancer-ready track — no account needed to
-            browse.
+            Browse AiLysium's live online AI programs for students,
+            professionals and teachers. Every program teaches one skill at a
+            time and ends with something you built. Create an account to enroll
+            in any course.
           </p>
         </motion.div>
       </section>
@@ -66,7 +83,7 @@ export const Courses = () => {
                 key={status}
                 type="button"
                 onClick={() => setFilter(status)}
-                className={`relative rounded-full cursor-pointer border px-5 py-2.5 text-sm font-semibold transition-colors duration-300 ${filter === status
+                className={`relative cursor-pointer rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors duration-300 ${filter === status
                   ? "border-sky text-white"
                   : "border-slate/20 text-slate hover:border-sky/40 hover:text-sky bg-white"
                   }`}

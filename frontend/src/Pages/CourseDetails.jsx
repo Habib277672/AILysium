@@ -139,8 +139,8 @@ export const CourseDetails = () => {
                         className="mt-5 max-w-xl"
                     >
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm ${isAvailable ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                                <span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? "bg-emerald-500" : "bg-amber-500"}`} />
+                            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs text-cloud font-semibold backdrop-blur-sm ${isAvailable ? "bg-emerald-500" : "bg-amber-400"}`}>
+                                {/* <span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? "bg-emerald-500 text-cloud" : "bg-amber-500"}`} /> */}
                                 {statusLabel[course.status]}
                             </span>
                             <span className="flex items-center gap-1.5 text-xs text-slate-600 sm:text-sm">
@@ -160,10 +160,10 @@ export const CourseDetails = () => {
                             )} */}
                         </div>
 
-                        <h1 className="mt-3 font-heading text-2xl font-bold leading-snug text-ink drop-shadow-sm sm:text-3xl md:text-[2.75rem] md:leading-tight">
+                        <h1 className="mt-3 font-heading text-ink text-2xl font-extrabold leading-tight drop-shadow-sm sm:text-3xl md:text-[2.75rem]">
                             {course.title}
                         </h1>
-                        <p className="mt-2 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
+                        <p className="mt-2 max-w-lg text-sm leading-relaxed text-neutral-600 sm:text-base">
                             {course.description}
                         </p>
 

@@ -47,8 +47,8 @@ const skillCategories = [
 
 const impactStats = [
   { label: "Skills in 12 weeks", value: "12", highlight: true },
-  { label: "Hands-on projects", value: "3" },
-  { label: "Pro tools covered", value: "30+" },
+  { label: "Live classes with a trainer", value: "72" },
+  { label: "AI tools you learn to use", value: "30+" },
   { label: "From zero to builder", value: "100%" },
 ];
 
@@ -85,24 +85,36 @@ const howItWorks = [
 
 const faqs = [
   {
-    question: "What is the structure of the Kids AI course?",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "How is the Kids AI Course structured?",
+    answer:
+      "It runs for 12 weeks with 72 one-hour live classes, split into three months: Foundations, Create and Study, and Build.",
   },
   {
-    question: "How does the one-on-one VIP program work?",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Is it live or recorded?",
+    answer: "Live online, with a trainer present in every class.",
   },
   {
-    question: "When does the Freelancer AI course start?",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Does my child need any experience?",
+    answer: "No. The course starts from zero.",
   },
   {
-    question: "How do I enroll my child in a course?",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "What does the student finish with?",
+    answer: "A working project, a portfolio piece and a certificate.",
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "[PLACEHOLDER CONTENT — answer to be provided]",
+    question: "Is it safe for children?",
+    answer:
+      "Yes. We require parent permission, use supervised accounts, share no personal details on AI tools, and keep a live trainer in every class.",
+  },
+  {
+    question: "Can we speak to the instructor first?",
+    answer:
+      "Yes. A free consultation is available on WhatsApp at 0311 1390351.",
+  },
+  {
+    question: "When do the other courses start?",
+    answer:
+      "They are coming soon. You can join the waitlist on each course page.",
   },
 ];
 
@@ -111,6 +123,23 @@ export const Home = () => {
   const [coursesLoading, setCoursesLoading] = useState(true);
   const [coursesError, setCoursesError] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    const description =
+      "Live online AI training for students, professionals and institutions, plus AI solutions for businesses. AiLysium Academy, Gujranwala, Pakistan.";
+    let meta = document.querySelector('meta[name="description"]');
+    const previous = meta?.getAttribute("content") ?? null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", description);
+    return () => {
+      if (previous === null) meta.remove();
+      else meta.setAttribute("content", previous);
+    };
+  }, []);
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -154,11 +183,11 @@ export const Home = () => {
           >
             <motion.h1
               variants={heroFadeUp}
-              className="font-heading text-ink mt-0.5 text-3xl leading-[1.08] font-extrabold tracking-tight text-balance sm:mt-1 sm:text-4xl md:text-[3.5rem] md:leading-[1.1]"
+              className="font-heading text-ink mt-8 text-3xl leading-[1.08] font-extrabold tracking-tight text-balance sm:mt-6 sm:text-4xl md:text-[3.5rem] md:leading-[1.1]"
             >
               Learn AI from zero to{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                building real projects
+                Building Real Projects
               </span>
             </motion.h1>
 
@@ -166,8 +195,10 @@ export const Home = () => {
               variants={heroFadeUp}
               className="text-muted mt-4 max-w-lg text-base leading-relaxed sm:text-lg"
             >
-              Hands-on training for every stage — teen beginners to freelancers
-              — with real skills and tools you apply every week.
+              Practical training for every stage, from school students starting
+              out to freelancers and professionals. Each week you learn one new
+              skill with real AI tools and use it to make something of your
+              own.{" "}
             </motion.p>
 
             <motion.div
@@ -213,19 +244,17 @@ export const Home = () => {
       {/* Impact stats */}
       <section className="border-slate/10 relative border-t bg-white">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
-          <Reveal id="impact-header" className="max-w-xl">
-            <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-medium tracking-wide uppercase">
-              Why AiLysium
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-3xl leading-snug font-bold md:text-4xl">
-              Real skills,{" "}
+          <Reveal id="impact-header" className="mx-auto max-w-xl text-center">
+
+            <h2 className="font-heading text-ink mt-2 text-3xl leading-snug font-bold sm:text-4xl md:text-5xl">
+              Real Skills,{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                real fast
+                Real Fast
               </span>
             </h2>
-            <p className="text-slate mt-2 max-w-md text-base leading-relaxed">
-              Your child doesn't just watch AI — they build with it. Twelve
-              weeks, twelve skills, and a project they actually ship.
+            <p className="text-slate mx-auto mt-2 max-w-md text-base leading-relaxed">
+              No scattered videos and no theory overload. Each week teaches one
+              clear skill and ends with something you create.
             </p>
           </Reveal>
 
@@ -238,12 +267,12 @@ export const Home = () => {
                 delay={index * 0.08}
                 className="group border-slate/10 shadow-ink/5 hover:shadow-ink/8 relative overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
               >
-                <div className="bg-sky/8 pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full transition-transform duration-300 group-hover:scale-125" />
-                <div className="relative">
+                {/* <div className="bg-sky/8 pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full transition-transform duration-300 group-hover:scale-125" /> */}
+                <div className="relative text-center">
                   <p className="font-heading text-ink text-4xl font-extrabold tracking-tight">
                     {stat.value}
                   </p>
-                  <div className="bg-sky/30 mt-3 h-px w-8" />
+                  <div className="bg-sky/30 mx-auto mt-3 h-px w-12" />
                   <p className="text-slate mt-3 text-sm leading-snug">
                     {stat.label}
                   </p>
@@ -258,20 +287,17 @@ export const Home = () => {
       <section className="bg-cloud relative overflow-hidden py-20 md:py-24">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
-        <div className="bg-sky/20 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
+        <div className="bg-sky/10 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6 text-center">
           <Reveal id="skills-header">
-            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Explore Skills
-            </span>
-            <h2 className="font-heading text-ink mt-4 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
-              Find the right course <span className="text-sky">for you</span>
+            <h2 className="font-heading text-ink text-2xl tracking-tight leading-snug font-bold sm:text-3xl md:text-4xl md:tracking-normal lg:text-[2.75rem] lg:leading-tight">
+              Find the Right Course <span className="text-sky">For You</span>
             </h2>
             <p className="text-muted mx-auto mt-3 max-w-lg text-base leading-relaxed">
-              Every program is built around the tools and skills below — pick
-              one that interests you.
+              Whether you are a school student, a working professional or an
+              institution, there is a path for you. Start with the course that
+              fits where you are today.
             </p>
           </Reveal>
 
@@ -304,18 +330,14 @@ export const Home = () => {
             id="programs-header"
             className="flex flex-col items-center text-center"
           >
-            <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Our Programs
-            </span>
-            <h2 className="font-heading text-ink mt-5 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
-              Find your perfect{" "}
+            <h2 className="font-heading text-ink text-2xl leading-snug font-bold whitespace-nowrap max-[359px]:text-base sm:text-3xl md:text-4xl lg:text-[2.75rem] lg:leading-tight">
+              Find Your Perfect{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                AI program
+                AI Program
               </span>
             </h2>
             <p className="text-muted mt-3 max-w-lg text-base leading-relaxed">
-              Beginner to freelancer — pick the path that matches your goals.
+              Beginner to freelancer, pick the path that matches your goals.
             </p>
           </Reveal>
 
@@ -376,65 +398,47 @@ export const Home = () => {
       <section className="bg-cloud relative overflow-hidden py-20 md:py-28">
         <div className="pointer-events-none absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-white to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-full bg-gradient-to-t from-white to-transparent" />
-        <div className="bg-sky/20 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
+        <div className="bg-sky/10 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
         <div className="relative mx-auto max-w-6xl px-6">
           <Reveal id="how-header" className="text-center">
-            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              Simple Process
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-3xl leading-snug font-bold md:text-[2.75rem] md:leading-tight">
-              From sign-up to{" "}
+            <h2 className="font-heading text-ink text-2xl tracking-tighter leading-snug font-bold sm:text-3xl md:text-4xl md:tracking-normal lg:text-[2.75rem] lg:leading-tight">
+              From Sign-up to{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                your first build
+                Your First Build
               </span>
             </h2>
             <p className="text-muted mx-auto mt-2 max-w-md text-base leading-relaxed">
-              Four simple steps — no friction, just results.
+              Four simple steps, no friction, just results.
             </p>
           </Reveal>
 
-          <div className="relative mt-12">
-            {/* Connector line — desktop only */}
-            <div className="pointer-events-none absolute top-[2.75rem] left-0 hidden h-px w-full lg:block">
-              <div className="from-sky/10 via-sky/25 to-sky/10 h-full w-full bg-gradient-to-r" />
-            </div>
-
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              {howItWorks.map((item, index) => (
-                <Reveal
-                  key={item.step}
-                  id={`step-${item.step}`}
-                  y={16}
-                  delay={index * 0.1}
-                  className="group relative flex flex-col items-center text-center"
-                >
-                  {/* Icon circle with glow */}
-                  <div className="relative z-10 mb-6">
-                    <div className="bg-sky/15 absolute inset-0 rounded-full opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
-                    <div className="border-sky/20 text-sky shadow-sky/10 group-hover:border-sky group-hover:from-sky group-hover:to-sky-light group-hover:shadow-sky/25 relative flex h-14 w-14 items-center justify-center rounded-full border-2 bg-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
-                      <span className="text-xl transition-transform duration-300 group-hover:scale-110">
-                        {item.icon}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Step number */}
-                  <span className="font-heading text-sky/50 group-hover:text-sky mb-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors">
-                    Step {item.step}
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {howItWorks.map((item, index) => (
+              <Reveal
+                key={item.step}
+                id={`step-${item.step}`}
+                y={16}
+                delay={index * 0.1}
+                className="group border-slate/10 shadow-ink/5 hover:shadow-ink/8 relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="flex items-start justify-between">
+                  <span className="bg-sky/10 text-sky group-hover:bg-sky grid h-11 w-11 place-items-center rounded-xl text-lg transition-all duration-200 group-hover:text-white">
+                    {item.icon}
                   </span>
+                  <span className="font-heading text-sky/15 group-hover:text-sky/25 text-4xl leading-none font-extrabold transition-colors select-none">
+                    {item.step}
+                  </span>
+                </div>
 
-                  {/* Content */}
-                  <h3 className="font-heading text-ink group-hover:text-sky text-lg font-bold transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-muted mt-2.5 max-w-[260px] text-sm leading-relaxed">
-                    {item.description}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
+                <h3 className="font-heading text-ink mt-5 text-lg font-bold">
+                  {item.title}
+                </h3>
+                <p className="text-muted mt-2 text-sm leading-relaxed">
+                  {item.description}
+                </p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -451,21 +455,18 @@ export const Home = () => {
               x={-20}
               className="text-center md:text-left"
             >
-              <span className="border-sky/20 bg-sky/5 text-sky inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-widest uppercase">
-                <span className="bg-sky h-1 w-1 rounded-full" />
-                About AiLysium
-              </span>
-              <h2 className="font-heading text-ink mt-5 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
-                Hands-on AI training, built for{" "}
+              <h2 className="font-heading text-ink text-xl tracking-tighter leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:tracking-normal md:leading-tight">
+                An AI Academy Built on{" "}
                 <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                  real skills
+                  Real Projects
                 </span>
               </h2>
               <p className="text-muted mt-4 text-sm leading-relaxed sm:text-base">
-                AiLysium is based in Pakistan, training teen beginners and
-                freelancers to actually build with AI — not just talk about it.
-                Every program pairs real mentors with weekly, hands-on projects,
-                so students leave with a portfolio, not just notes.
+                AiLysium is an AI academy and solutions studio in Gujranwala,
+                Pakistan. We teach AI through live, hands-on lessons that take
+                learners from zero to real working projects. Our studio uses the
+                same tools for paying clients, so what we teach is what we
+                practise.
               </p>
               <Button
                 as={Link}
@@ -508,14 +509,10 @@ export const Home = () => {
             id="faq-text"
             className="text-center md:sticky md:top-8 md:text-left"
           >
-            <span className="border-sky/20 text-sky inline-flex items-center gap-2 rounded-full border bg-white/60 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
-              <span className="bg-sky h-1 w-1 rounded-full" />
-              FAQ
-            </span>
-            <h2 className="font-heading text-ink mt-3 text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
+            <h2 className="font-heading text-ink text-2xl leading-snug font-bold sm:text-3xl md:text-[2.75rem] md:leading-tight">
               Got{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                questions?
+                Questions?
               </span>
             </h2>
             <p className="text-muted mx-auto mt-2 max-w-xs text-sm leading-relaxed sm:text-base md:mx-0">
@@ -555,11 +552,11 @@ export const Home = () => {
         <ConsultationSection
           heading={
             <>
-              Still deciding? Let's{" "}
+              Still Deciding? Let's{" "}
               <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
-                talk
-              </span>{" "}
-              it through.
+                Talk
+              </span>
+              .
             </>
           }
         />

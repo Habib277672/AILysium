@@ -1,84 +1,93 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 import { ScrollToTop } from "../UI/ScrollToTop";
+import { AdminHeader } from "../UI/AdminHeader";
+import { AdminSidebar } from "../UI/AdminSidebar";
 
-const adminLinks = [
-    { to: "/admin", label: "Dashboard", end: true },
-    { to: "/admin/secondary-dashboard", label: "Secondary Dashboard" },
-    { to: "/admin/users", label: "Users" },
-    { to: "/admin/enrollments", label: "Enrollments" },
-    { to: "/admin/courses", label: "Courses" },
-    { to: "/admin/contact-messages", label: "Messages" },
-];
-
-const linkClass = ({ isActive }) =>
-    `block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${isActive ? "bg-sky/10 text-sky" : "text-slate hover:bg-cloud hover:text-ink"
-    }`;
+const SIDEBAR_STORAGE_KEY = "adminSidebarExpanded";
+const SIDEBAR_WIDTH = 256; // expanded (16rem)
+const RAIL_WIDTH = 88; // collapsed icon rail (5.5rem)
+const SLIDE_EASE = "transform 300ms cubic-bezier(0.22, 1, 0.36, 1)";
 
 export const AdminLayout = () => {
-    const { user, logout } = useAuth();
+  // Desktop collapse state is persisted; the mobile drawer is session-only
+  // so the sidebar never covers the page on a fresh phone visit.
+  const [expanded, setExpanded] = useState(
+    () => localStorage.getItem(SIDEBAR_STORAGE_KEY) !== "0",
+  );
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia("(min-width: 768px)").matches,
+  );
+  // The content column swaps its margin instantly and is visually slid into
+  // place with a transform — animating the margin itself would reflow the
+  // whole page (and re-render the charts) on every frame.
+  const [slide, setSlide] = useState({ offset: 0, animate: false });
 
-    return (
-        <div className="flex min-h-screen bg-cloud">
-            <ScrollToTop />
-            <aside className="hidden w-64 shrink-0 border-r border-slate/10 bg-white md:block">
-                <div className="flex h-full flex-col p-6">
-                    <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-sky" />
-                        <span className="font-heading text-lg font-bold text-ink">
-                            AiLysium
-                        </span>
-                    </div>
-                    <p className="mt-1 text-xs uppercase tracking-wide text-slate/50">
-                        Admin
-                    </p>
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 768px)");
+    const onChange = (event) => setIsDesktop(event.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
-                    <nav className="mt-8 flex flex-1 flex-col gap-1">
-                        {adminLinks.map((link) => (
-                            <NavLink key={link.to} to={link.to} end={link.end} className={linkClass}>
-                                {link.label}
-                            </NavLink>
-                        ))}
-                    </nav>
+  useEffect(() => {
+    localStorage.setItem(SIDEBAR_STORAGE_KEY, expanded ? "1" : "0");
+  }, [expanded]);
 
-                    <div className="border-t border-slate/10 pt-4">
-                        <p className="text-sm font-medium text-ink">{user?.fullName}</p>
-                        <p className="text-xs text-slate/60">{user?.email}</p>
-                        <button
-                            type="button"
-                            onClick={logout}
-                            className="mt-3 text-sm font-medium text-slate hover:text-sky"
-                        >
-                            Log out
-                        </button>
-                    </div>
-                </div>
-            </aside>
+  // Collapsed on desktop = icon rail (labels hidden, still usable).
+  const rail = isDesktop && !expanded;
 
-            <div className="flex-1">
-                {/* Mobile nav — simplified to a horizontal scroll strip rather
-            than a hamburger drawer, since admin usage is primarily
-            desktop-first, unlike the public site. */}
-                <div data-lenis-prevent className="flex gap-2 overflow-x-auto border-b border-slate/10 bg-white px-4 py-3 md:hidden">
-                    {adminLinks.map((link) => (
-                        <NavLink
-                            key={link.to}
-                            to={link.to}
-                            end={link.end}
-                            className={({ isActive }) =>
-                                `shrink-0 rounded-full px-4 py-2 text-sm font-medium ${isActive ? "bg-sky/10 text-sky" : "text-slate"
-                                }`
-                            }
-                        >
-                            {link.label}
-                        </NavLink>
-                    ))}
-                </div>
+  const toggleSidebar = () => {
+    if (!isDesktop) {
+      setMobileOpen((value) => !value);
+      return;
+    }
+    const before = expanded ? SIDEBAR_WIDTH : RAIL_WIDTH;
+    const next = !expanded;
+    const after = next ? SIDEBAR_WIDTH : RAIL_WIDTH;
+    setExpanded(next);
+    // Phase 1: jump to the new margin, offset back to the old visual
+    // position with transitions disabled.
+    setSlide({ offset: before - after, animate: false });
+    // Phase 2: next frame, release the offset with the transition enabled.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSlide({ offset: 0, animate: true }));
+    });
+  };
 
-                <main className="p-6 md:p-10">
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    );
+  const closeMobileDrawer = () => setMobileOpen(false);
+
+  return (
+    <div className="bg-cloud flex min-h-screen">
+      <ScrollToTop />
+
+      <AdminSidebar
+        rail={rail}
+        mobileOpen={mobileOpen}
+        onToggle={toggleSidebar}
+        onClose={closeMobileDrawer}
+      />
+
+      <div
+        className={`flex min-w-0 flex-1 flex-col ${rail ? "md:ml-[5rem]" : "md:ml-64"}`}
+        style={{
+          transform: `translateX(${slide.offset}px)`,
+          transition: slide.animate ? SLIDE_EASE : undefined,
+        }}
+      >
+        <AdminHeader
+          expanded={expanded}
+          isDesktop={isDesktop}
+          rail={rail}
+          mobileOpen={mobileOpen}
+          onToggle={toggleSidebar}
+        />
+
+        <main className="flex-1 p-6 md:p-10">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 };
