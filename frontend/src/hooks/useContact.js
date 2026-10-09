@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export const contactKeys = {
@@ -24,7 +24,7 @@ export const useAdminContactMessages = (page, search) => {
             const { data } = await api.get("/admin/contact-messages", { params: { page, search } });
             return data;
         },
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
     });
 };
 

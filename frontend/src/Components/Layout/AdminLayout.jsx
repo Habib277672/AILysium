@@ -84,7 +84,7 @@ export const AdminLayout = () => {
           onToggle={toggleSidebar}
         />
 
-        <main className="flex-1 p-6 md:p-10">
+        <main className="flex-1 p-4 sm:p-6 md:p-10">
           <Outlet />
         </main>
       </div>

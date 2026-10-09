@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/Images/logo.webp";
 import {
   FaBookOpen,
@@ -10,16 +9,10 @@ import {
   FaTachometerAlt,
   FaTimes,
   FaUsers,
-  FaWrench,
 } from "react-icons/fa";
 
 const adminLinks = [
   { to: "/admin", label: "Dashboard", end: true, icon: FaTachometerAlt },
-  {
-    to: "/admin/secondary-dashboard",
-    label: "Secondary Dashboard",
-    icon: FaWrench,
-  },
   { to: "/admin/users", label: "Users", icon: FaUsers },
   { to: "/admin/enrollments", label: "Enrollments", icon: FaClipboardList },
   { to: "/admin/courses", label: "Courses", icon: FaBookOpen },
@@ -43,14 +36,6 @@ const chevronStyle = (rotate) => ({
 });
 
 export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
-  const { user } = useAuth();
-
-  const initials = (user?.fullName ?? "A")
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
 
   const renderNav = (isRail) => (
     <nav aria-label="Admin" className="flex flex-1 flex-col gap-1.5">
@@ -149,22 +134,6 @@ export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
             </p>
 
             {renderNav(false)}
-
-            <div className="border-slate/10 bg-cloud/70 rounded-xl border p-3">
-              <div className="flex items-center gap-2.5">
-                <span className="bg-sky/10 text-sky grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold">
-                  {initials}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-ink truncate text-xs font-semibold">
-                    {user?.fullName}
-                  </p>
-                  <p className="text-slate/60 truncate text-[11px]">
-                    {user?.email}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Collapsed rail view */}
@@ -178,7 +147,7 @@ export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
                 onClick={onToggle}
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
-                className="bg-sky/10 text-sky hover:bg-sky/10 mb-4 grid h-9 w-9 place-items-center rounded-xl transition-colors"
+                className="bg-sky/10 text-sky hover:bg-sky/10 mb-4 grid h-9 w-9 cursor-pointer place-items-center rounded-xl transition-colors"
               >
                 <FaChevronRight style={chevronStyle(rail ? "0deg" : "90deg")} />
               </button>

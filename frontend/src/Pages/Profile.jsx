@@ -9,10 +9,10 @@ import { Skeleton } from "../Components/UI/Skeleton";
 import { HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineCalendar, HiOutlineExclamationCircle, HiOutlineAcademicCap, HiOutlineArrowRight, HiOutlineLogout } from "react-icons/hi";
 
 const paymentBadgeStyles = {
-    PENDING: "bg-amber-400",
-    CONFIRMED: "bg-emerald-500",
-    FAILED: "bg-red-400",
-    FREE: "bg-emerald-500",
+    PENDING: "bg-amber-500/10 text-amber-600 border border-amber-500",
+    CONFIRMED: "bg-emerald-500/10 text-emerald-600 border border-emerald-500",
+    FAILED: "bg-red-500/10 text-red-600 border border-red-500",
+    FREE: "bg-emerald-500/10 text-emerald-600 border border-emerald-500",
 };
 
 export const Profile = () => {
@@ -25,7 +25,7 @@ export const Profile = () => {
         try {
             await resendVerification({ email: user.email });
             toast.success("Verification email sent again.");
-        } catch (err) {
+        } catch {
             toast.error("Couldn't resend the email. Please try again.");
         } finally {
             setResendState("sent");
@@ -89,15 +89,15 @@ export const Profile = () => {
                             </div>
                             <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 sm:mt-2.5 sm:gap-2 sm:justify-start">
                                 {user.emailVerifiedAt ? (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs text-cloud font-semibol sm:px-3 sm:py-1">
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500 px-2.5 py-0.5 text-xs font-semibol sm:px-3 sm:py-1">
                                         Verified
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-xs text-cloud font-semibold sm:px-3 sm:py-1">
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500 px-2.5 py-0.5 text-xs font-semibold sm:px-3 sm:py-1">
                                         Unverified
                                     </span>
                                 )}
-                                <span className="rounded-full border border-sky/15 bg-sky/8 px-2.5 py-0.5 text-xs font-semibold text-sky sm:px-3 sm:py-1">
+                                <span className="rounded-full border border-sky bg-sky/8 px-2.5 py-0.5 text-xs font-semibold text-sky sm:px-3 sm:py-1">
                                     {user.role}
                                 </span>
                             </div>
@@ -208,9 +208,11 @@ export const Profile = () => {
                     {!loading && !error && enrollments.length > 0 && (
                         <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
                             {enrollments.map((enrollment) => {
-                                const isPending = enrollment.paymentStatus === "PENDING";
-                                const CardTag = isPending ? Link : "div";
-                                const cardProps = isPending
+                                const needsPayment =
+                                    enrollment.paymentStatus === "PENDING" ||
+                                    enrollment.paymentStatus === "FAILED";
+                                const CardTag = needsPayment ? Link : "div";
+                                const cardProps = needsPayment
                                     ? { to: `/payment?enrollmentId=${enrollment.id}` }
                                     : {};
 
@@ -218,7 +220,7 @@ export const Profile = () => {
                                     <CardTag
                                         key={enrollment.id}
                                         {...cardProps}
-                                        className={`group flex flex-col gap-2.5 rounded-2xl border border-slate/10 bg-white px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-sky/15 hover:shadow-md hover:shadow-sky/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 sm:py-4 ${isPending ? "cursor-pointer border-l-2 border-l-amber-400" : "border-l-2 border-l-emerald-400"}`}
+                                        className={`group flex flex-col gap-2.5 rounded-2xl border border-slate/10 bg-white px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-sky/15 hover:shadow-md hover:shadow-sky/5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 sm:py-4 ${needsPayment ? `cursor-pointer border-l-2 ${enrollment.paymentStatus === "FAILED" ? "border-l-red-400" : "border-l-amber-400"}` : "border-l-2 border-l-emerald-400"}`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
@@ -234,10 +236,10 @@ export const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 pl-[2.75rem] sm:pl-0">
-                                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs text-cloud font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
+                                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs  font-semibold sm:px-3 sm:py-1 ${paymentBadgeStyles[enrollment.paymentStatus]}`}>
                                                 {enrollment.paymentStatus}
                                             </span>
-                                            {isPending && (
+                                            {needsPayment && (
                                                 <span className="inline-flex items-center gap-1 text-sm font-medium text-sky transition-colors group-hover:text-sky-light">
                                                     Pay now
                                                     <HiOutlineArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

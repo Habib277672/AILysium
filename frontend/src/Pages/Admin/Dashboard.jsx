@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import {
@@ -42,6 +42,7 @@ import {
   FaSort,
   FaSortDown,
   FaSortUp,
+  FaTimesCircle,
   FaUsers,
 } from "react-icons/fa";
 
@@ -56,7 +57,7 @@ const columnHelper = createColumnHelper();
 const paymentBadgeVariant = {
   PENDING: "warning",
   CONFIRMED: "success",
-  FAILED: "warning",
+  FAILED: "danger",
   FREE: "success",
 };
 
@@ -69,6 +70,7 @@ const enrollmentColumns = columnHelper.columns([
     cell: ({ row }) => (
       <Link
         to={`/admin/users/${row.original.userId}`}
+        state={{ from: "/admin" }}
         className="text-ink hover:text-sky font-medium hover:underline"
       >
         {row.original.userName}
@@ -160,7 +162,10 @@ const AnimatedNumber = ({ value }) => {
   return <motion.span>{rounded}</motion.span>;
 };
 
-export const AdminDashboard = () => {
+// memo: the admin layout re-renders on every sidebar toggle (expanded /
+// slide state), and re-rendering this page's charts + table during the
+// animation is what made the sidebar feel laggy on the dashboard.
+export const AdminDashboard = memo(() => {
   const { user } = useAuth();
 
   // /admin/users and /admin/enrollments return a paginated envelope
@@ -235,7 +240,7 @@ export const AdminDashboard = () => {
   }, [recentEnrollments]);
 
   const tableData = useMemo(
-    () => recentEnrollments.slice(0, 10),
+    () => recentEnrollments.slice(0, 5),
     [recentEnrollments],
   );
 
@@ -291,36 +296,31 @@ export const AdminDashboard = () => {
       label: "Total users",
       value: usersData?.total ?? 0,
       icon: FaUsers,
-      tint: "bg-sky/10 text-sky",
-      bar: "from-sky to-sky-light",
     },
     {
       label: "Total courses",
       value: courses.length,
       icon: FaBookOpen,
-      tint: "bg-violet-500/10 text-violet-600",
-      bar: "from-violet-500 to-violet-400",
     },
     {
       label: "Total enrollments",
       value: enrollmentsData?.total ?? 0,
       icon: FaClipboardList,
-      tint: "bg-indigo-500/10 text-indigo-600",
-      bar: "from-indigo-500 to-indigo-400",
     },
     {
       label: "Confirmed payments",
       value: confirmedData?.total ?? 0,
       icon: FaCheckCircle,
-      tint: "bg-emerald-500/10 text-emerald-600",
-      bar: "from-emerald-500 to-emerald-400",
     },
     {
       label: "Pending payments",
       value: pendingData?.total ?? 0,
       icon: FaHourglassHalf,
-      tint: "bg-amber-500/10 text-amber-600",
-      bar: "from-amber-500 to-amber-400",
+    },
+    {
+      label: "Failed payments",
+      value: failedData?.total ?? 0,
+      icon: FaTimesCircle,
     },
   ];
 
@@ -357,35 +357,33 @@ export const AdminDashboard = () => {
   return (
     <motion.div initial="hidden" animate="show" variants={staggerContainer}>
       {/* Greeting banner */}
-      <motion.section
-        variants={sectionVariant}
-        className="bg-ink-soft relative overflow-hidden rounded-2xl p-6 text-white sm:p-8"
-      >
-        <div className="bg-sky/30 pointer-events-none absolute -top-16 -right-10 h-52 w-52 rounded-full blur-3xl" />
-        <div className="bg-sky-light/20 pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full blur-3xl" />
-
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h1 className="font-heading  text-3xl font-bold sm:text-4xl">
-              {greeting}, {firstName}
+      <motion.section variants={sectionVariant}>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="font-heading text-ink mt-3 text-2xl leading-tight font-extrabold sm:text-3xl lg:text-4xl">
+              {greeting},{" "}
+              <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
+                {firstName}
+              </span>
             </h1>
-            <p className="mt-2 max-w-lg text-sm text-white/70">
+            <p className="text-muted mt-2 max-w-lg text-sm leading-relaxed sm:text-base">
               Here&apos;s your AiLysium snapshot — {today}.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link
               to="/admin/enrollments"
-              className="bg-sky hover:bg-sky-light shadow-sky/40 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors"
+              className="bg-sky hover:bg-sky-light shadow-sky/40 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg"
             >
               View enrollment report
               <FaArrowRight className="text-xs" />
             </Link>
             <Link
               to="/admin/courses"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-white hover:bg-white/10"
+              className="border-slate/20 text-ink hover:border-sky/40 hover:text-sky hover:shadow-sky/10 inline-flex items-center justify-center gap-2 rounded-full border bg-white px-5 py-3 text-sm font-semibold shadow-sm transition-all hover:shadow-md"
             >
+              <FaBookOpen className="text-sky text-xs" />
               Manage courses
             </Link>
           </div>
@@ -395,28 +393,23 @@ export const AdminDashboard = () => {
       {/* KPI stats */}
       <motion.div
         variants={sectionVariant}
-        className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+        className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3"
       >
         {stats.map((stat) => (
           <Card
             key={stat.label}
             padding="sm"
-            className="relative overflow-hidden transition-shadow hover:shadow-md"
+            className="transition-shadow hover:shadow-md"
           >
-            <span
-              className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${stat.bar}`}
-            />
-            <div className="flex items-center gap-3.5">
-              <span
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-lg ${stat.tint}`}
-              >
+            <div className="flex items-center gap-2.5 sm:gap-3.5">
+              <span className="bg-sky/10 text-sky grid h-9 w-9 shrink-0 place-items-center rounded-xl text-base sm:h-11 sm:w-11 sm:text-lg">
                 <stat.icon />
               </span>
               <div className="min-w-0">
-                <p className="text-muted text-xs font-medium tracking-wide uppercase">
+                <p className="text-muted text-[10px] leading-tight font-medium tracking-wide uppercase sm:text-xs">
                   {stat.label}
                 </p>
-                <p className="font-heading text-ink text-2xl font-bold">
+                <p className="font-heading text-ink mt-0.5 text-xl font-bold sm:text-2xl">
                   <AnimatedNumber value={stat.value} />
                 </p>
               </div>
@@ -425,12 +418,12 @@ export const AdminDashboard = () => {
         ))}
       </motion.div>
 
-      {/* Charts row — payment donut + enrollment activity */}
+      {/* Payments + course catalog */}
       <motion.div
         variants={sectionVariant}
-        className="mt-6 grid gap-4 lg:grid-cols-3"
+        className="mt-6 grid gap-4 md:grid-cols-2"
       >
-        <Card className="lg:col-span-1">
+        <Card>
           <ChartHeader
             title="Payments"
             subtitle="Confirmed, pending, failed & free"
@@ -492,12 +485,71 @@ export const AdminDashboard = () => {
           )}
         </Card>
 
-        <Card className="lg:col-span-2">
+        {/* Course catalog */}
+        <Card>
+          <ChartHeader
+            title="Course catalog"
+            subtitle="Courses by publication status"
+          />
+          <div className="mt-4 h-[220px] sm:h-[240px]">
+            {courses.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={courseStatusData}
+                  layout="vertical"
+                  margin={{ top: 4, right: 16, bottom: 0, left: 0 }}
+                >
+                  <CartesianGrid
+                    horizontal={false}
+                    stroke="#eaf3fb"
+                    strokeDasharray="4 4"
+                  />
+                  <XAxis
+                    type="number"
+                    allowDecimals={false}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="label"
+                    width={96}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                  />
+                  <Tooltip
+                    content={<ChartTooltip />}
+                    cursor={{ fill: "rgba(0,133,254,0.06)" }}
+                  />
+                  <Bar
+                    dataKey="count"
+                    name="Courses"
+                    radius={[0, 8, 8, 0]}
+                    barSize={22}
+                  >
+                    {courseStatusData.map((entry) => (
+                      <Cell key={entry.label} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyChart message="No courses yet." />
+            )}
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Enrollment activity — full width */}
+      <motion.div variants={sectionVariant} className="mt-4">
+        <Card>
           <ChartHeader
             title="Enrollment activity"
             subtitle="Latest enrollments grouped by day"
           />
-          <div className="mt-4 h-[300px]">
+          <div className="mt-4 h-[240px] sm:h-[300px]">
             {activityData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -564,67 +616,9 @@ export const AdminDashboard = () => {
         </Card>
       </motion.div>
 
-      {/* Course status bars + latest enrollments table */}
-      <motion.div
-        variants={sectionVariant}
-        className="mt-4 grid gap-4 lg:grid-cols-3"
-      >
-        <Card>
-          <ChartHeader
-            title="Course catalog"
-            subtitle="Courses by publication status"
-          />
-          <div className="mt-4 h-[240px]">
-            {courses.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={courseStatusData}
-                  layout="vertical"
-                  margin={{ top: 4, right: 16, bottom: 0, left: 0 }}
-                >
-                  <CartesianGrid
-                    horizontal={false}
-                    stroke="#eaf3fb"
-                    strokeDasharray="4 4"
-                  />
-                  <XAxis
-                    type="number"
-                    allowDecimals={false}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="label"
-                    width={96}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-                  <Tooltip
-                    content={<ChartTooltip />}
-                    cursor={{ fill: "rgba(0,133,254,0.06)" }}
-                  />
-                  <Bar
-                    dataKey="count"
-                    name="Courses"
-                    radius={[0, 8, 8, 0]}
-                    barSize={22}
-                  >
-                    {courseStatusData.map((entry) => (
-                      <Cell key={entry.label} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <EmptyChart message="No courses yet." />
-            )}
-          </div>
-        </Card>
-
-        <div className="border-slate/10 shadow-ink/5 overflow-hidden rounded-2xl border bg-white shadow-sm lg:col-span-2">
+      {/* Latest enrollments — full width */}
+      <motion.div variants={sectionVariant} className="mt-4">
+        <div className="border-slate/10 shadow-ink/5 overflow-hidden rounded-2xl border bg-white shadow-sm">
           <div className="border-slate/10 flex flex-wrap items-center justify-between gap-2 border-b px-5 py-4">
             <div>
               <h3 className="font-heading text-ink text-base font-semibold">
@@ -644,7 +638,7 @@ export const AdminDashboard = () => {
           </div>
 
           <div data-lenis-prevent className="overflow-x-auto">
-            <table className="text-slate divide-slate/10 min-w-full divide-y text-sm">
+            <table className="text-slate divide-slate/10 w-full min-w-[40rem] divide-y text-sm">
               <thead className="bg-cloud text-slate/60 text-left text-xs tracking-wide uppercase">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
@@ -713,4 +707,4 @@ export const AdminDashboard = () => {
       </motion.div>
     </motion.div>
   );
-};
+});

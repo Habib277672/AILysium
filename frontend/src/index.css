@@ -113,3 +113,38 @@ h4 {
     scrollbar-color: var(--color-sky) var(--color-cloud);
   }
 }
+
+/* Neutral gray scrollbar for elements that scroll sideways but shouldn't
+   show the loud sky-blue themed bar (e.g. admin tables, filter tabs) */
+.scrollbar-neutral {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-cloud) transparent;
+}
+.scrollbar-neutral::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.scrollbar-neutral::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-neutral::-webkit-scrollbar-thumb {
+  background: var(--color-cloud);
+  border-radius: 999px;
+  border: none;
+}
+.scrollbar-neutral::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cloud);
+}
+.scrollbar-neutral::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Recharts (dashboard graphs / status bars) marks its <svg> focusable for its
+   accessibility layer, so clicking a chart paints a browser focus outline.
+   The charts aren't interactive controls — suppress the ring. */
+.recharts-wrapper :focus,
+.recharts-wrapper :focus-visible,
+.recharts-surface:focus,
+.recharts-surface:focus-visible {
+  outline: none;
+}

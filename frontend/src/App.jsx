@@ -29,7 +29,6 @@ import { AdminUserDetail } from "./Pages/Admin/UserDetail";
 import { NotFound } from "./Pages/NotFound";
 import { AdminContactMessages } from "./Pages/Admin/ContactMessages";
 import { AdminContactMessageDetail } from "./Pages/Admin/ContactMessageDetail";
-import { SecondaryDashboard } from "./Pages/Admin/SecondaryDashboard";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -88,7 +87,6 @@ const App = () => {
           element: <AdminLayout />,
           children: [
             { index: true, element: <AdminDashboard /> },
-            { path: "secondary-dashboard", element: <SecondaryDashboard /> },
             { path: "enrollments", element: <AdminEnrollments /> },
             { path: "courses", element: <AdminCourses /> },
             { path: "users", element: <AdminUsers /> },
