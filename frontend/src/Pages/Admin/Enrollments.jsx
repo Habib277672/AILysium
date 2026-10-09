@@ -14,8 +14,9 @@ import {
 import { Card } from "../../Components/UI/Card";
 import { Button } from "../../Components/UI/Button";
 import { CustomSelect } from "../../Components/UI/CustomSelect";
+import { Modal } from "../../Components/UI/Modal";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { FaUserPlus, FaSearch, FaTimes } from "react-icons/fa";
+import { FaUserPlus, FaSearch } from "react-icons/fa";
 
 const paymentBadgeVariant = {
   PENDING: "warning",
@@ -115,9 +116,8 @@ export const AdminEnrollments = () => {
 
   const courseOptions = courses.map((course) => ({
     value: course.id,
-    label: `${course.title} ${
-      course.isFree ? "(Free)" : `— PKR ${course.price.toLocaleString()}`
-    }`,
+    label: `${course.title} ${course.isFree ? "(Free)" : `PKR ${course.price.toLocaleString()}`
+      }`,
   }));
 
   const matching = matchingUsers.filter((u) => u.role !== "ADMIN");
@@ -151,6 +151,7 @@ export const AdminEnrollments = () => {
         `Enrolled ${selectedUser.fullName} — status set to ${paymentStatus}.`,
       );
       resetForm();
+      setShowForm(false);
     } catch (err) {
       const message =
         err.response?.data?.error || "Couldn't create this enrollment.";
@@ -185,88 +186,75 @@ export const AdminEnrollments = () => {
 
         <Button
           type="button"
-          variant={showForm ? "outline" : "primary"}
+          variant="primary"
           size="md"
-          onClick={() => setShowForm((open) => !open)}
+          onClick={() => setShowForm(true)}
           className="w-full cursor-pointer sm:w-auto"
-          aria-expanded={showForm}
+          aria-haspopup="dialog"
         >
-          {showForm ? (
-            <>
-              <FaTimes className="text-sm" />
-              Close form
-            </>
-          ) : (
-            <>
-              <FaUserPlus className="text-sm" />
-              Add enrollment
-            </>
-          )}
+          <FaUserPlus className="text-sm" />
+          Add enrollment
         </Button>
       </motion.div>
 
-      {/* 2. Manual enrollment panel (collapsible) */}
-      {showForm && (
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Card padding="sm" className="relative w-full sm:p-6 lg:p-8">
-            {/* Not overflow-hidden: that would clip the select dropdowns when
-                they open past the card's bottom edge on small screens */}
-            <span className="from-sky/20 via-sky to-sky/20 absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r" />
-
-            <div className="flex items-start gap-3 sm:gap-4">
-              <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11">
-                <FaUserPlus />
-              </span>
-              <div className="min-w-0">
-                <h2 className="font-heading text-ink text-base font-bold sm:text-lg">
-                  Manual enrollment
-                </h2>
-                <p className="text-muted mt-1 max-w-xl text-sm leading-relaxed">
-                  Enroll any user into any course and set their payment status
-                  directly. Useful for offline payments, special cases or
-                  corrections.
-                </p>
-              </div>
+      {/* 2. Manual enrollment modal */}
+      <Modal
+        open={showForm}
+        onClose={() => setShowForm(false)}
+        panelClassName="sm:max-w-xl lg:max-w-2xl"
+      >
+        <Card padding="sm" className="border-0 shadow-none sm:p-6 lg:p-8">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11">
+              <FaUserPlus />
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-heading text-ink pr-8 text-base font-bold sm:text-lg">
+                Manual enrollment
+              </h2>
+              <p className="text-muted mt-1 max-w-xl text-sm leading-relaxed">
+                Enroll any user into any course and set their payment status
+                directly. Useful for offline payments, special cases or
+                corrections.
+              </p>
             </div>
+          </div>
 
-            <div className="border-slate/10 mt-6 h-px border-t" />
+          <div className="border-slate/10 mt-6 h-px border-t" />
 
-            <form
-              onSubmit={handleSubmit}
-              className="mt-6 grid gap-5 sm:grid-cols-2"
-            >
-              {/* Step 1: user */}
-              <div className="min-w-0 sm:col-span-2">
-                <span className="text-ink mb-2 block text-sm font-medium">
-                  User
-                </span>
-                {selectedUser ? (
-                  <div className="border-sky/30 bg-sky/5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-xl border px-4 py-3">
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <Avatar name={selectedUser.fullName} />
-                      <div className="min-w-0">
-                        <p className="text-ink truncate text-sm font-medium">
-                          {selectedUser.fullName}
-                        </p>
-                        <p className="text-slate truncate text-xs">
-                          {selectedUser.email}
-                        </p>
-                      </div>
+          <form
+            onSubmit={handleSubmit}
+            className="mt-6 grid gap-5 sm:grid-cols-2"
+          >
+            {/* Step 1: user */}
+            <div className="min-w-0 sm:col-span-2">
+              <span className="text-ink mb-2 block text-sm font-medium">
+                User
+              </span>
+              {selectedUser ? (
+                <div className="border-sky/30 bg-sky/5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-xl border px-4 py-3">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <Avatar name={selectedUser.fullName} />
+                    <div className="min-w-0">
+                      <p className="text-ink truncate text-sm font-medium">
+                        {selectedUser.fullName}
+                      </p>
+                      <p className="text-slate truncate text-xs">
+                        {selectedUser.email}
+                      </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedUser(null)}
-                      className="border-sky/30 text-sky hover:bg-sky/10 shrink-0 cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors"
-                    >
-                      Change
-                    </button>
                   </div>
-                ) : (
-                  <div className="relative min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUser(null)}
+                    className="border-sky/30 text-sky hover:bg-sky/10 shrink-0 cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="min-w-0">
+                  <div className="relative">
                     <FaSearch className="text-slate/40 pointer-events-none absolute top-1/2 left-4 h-3.5 w-3.5 -translate-y-1/2" />
                     <input
                       type="text"
@@ -277,96 +265,94 @@ export const AdminEnrollments = () => {
                       }
                       className="border-slate/20 text-ink placeholder:text-slate/40 hover:border-sky/40 focus:border-sky focus:ring-sky/20 w-full rounded-xl border py-3 pr-4 pl-10 text-sm transition-colors focus:ring-2 focus:outline-none"
                     />
-                    {userQuery.trim().length >= 2 && (
-                      <div
-                        data-lenis-prevent
-                        className="border-slate/10 shadow-ink/10 absolute z-30 mt-2 max-h-56 w-full overflow-y-auto rounded-xl border bg-white py-1 shadow-lg"
-                      >
-                        {matching.length === 0 ? (
-                          <p className="text-slate px-4 py-3 text-sm">
-                            No matching users.
-                          </p>
-                        ) : (
-                          matching.map((user) => (
-                            <button
-                              key={user.id}
-                              type="button"
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setUserQuery("");
-                              }}
-                              className="hover:bg-cloud flex w-full min-w-0 cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors"
-                            >
-                              <Avatar
-                                name={user.fullName}
-                                size="h-8 w-8 text-[10px]"
-                              />
-                              <span className="min-w-0">
-                                <span className="text-ink block truncate text-sm font-medium">
-                                  {user.fullName}
-                                </span>
-                                <span className="text-slate block truncate text-xs">
-                                  {user.email}
-                                </span>
-                              </span>
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    )}
                   </div>
-                )}
-              </div>
-
-              {/* Step 2: course */}
-              <CustomSelect
-                label="Course"
-                value={courseId}
-                onChange={setCourseId}
-                options={courseOptions}
-                placeholder="Select a course"
-              />
-
-              {/* Step 3: payment status */}
-              <CustomSelect
-                label="Payment status"
-                value={paymentStatus}
-                onChange={setPaymentStatus}
-                options={statusOptions}
-              />
-
-              {selectedCourse?.isFree && paymentStatus !== "FREE" && (
-                <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700 sm:col-span-2">
-                  This course is marked free. Consider setting the status to
-                  &quot;Free&quot; instead of {paymentStatus.toLowerCase()}.
-                </p>
+                  {/* Inline listbox (not absolute) so it never clips inside the modal */}
+                  {userQuery.trim().length >= 2 && (
+                    <div className="border-slate/10 shadow-ink/10 mt-2 max-h-56 overflow-y-auto rounded-xl border bg-white py-1">
+                      {matching.length === 0 ? (
+                        <p className="text-slate px-4 py-3 text-sm">
+                          No matching users.
+                        </p>
+                      ) : (
+                        matching.map((user) => (
+                          <button
+                            key={user.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setUserQuery("");
+                            }}
+                            className="hover:bg-cloud flex w-full min-w-0 cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors"
+                          >
+                            <Avatar
+                              name={user.fullName}
+                              size="h-8 w-8 text-[10px]"
+                            />
+                            <span className="min-w-0">
+                              <span className="text-ink block truncate text-sm font-medium">
+                                {user.fullName}
+                              </span>
+                              <span className="text-slate block truncate text-xs">
+                                {user.email}
+                              </span>
+                            </span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
+            </div>
 
-              <div className="flex flex-col-reverse gap-3 sm:col-span-2 sm:flex-row sm:items-center">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="md"
-                  disabled={createEnrollment.isPending}
-                  className="w-full cursor-pointer sm:w-auto"
-                >
-                  <FaUserPlus className="text-sm" />
-                  {createEnrollment.isPending ? "Enrolling..." : "Enroll user"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="md"
-                  onClick={resetForm}
-                  className="hover:shadow-sky/10 w-full cursor-pointer bg-white transition-all hover:shadow-sm sm:w-auto"
-                >
-                  Clear form
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </motion.div>
-      )}
+            {/* Step 2: course */}
+            <CustomSelect
+              label="Course"
+              value={courseId}
+              onChange={setCourseId}
+              options={courseOptions}
+              placeholder="Select a course"
+            />
+
+            {/* Step 3: payment status */}
+            <CustomSelect
+              label="Payment status"
+              value={paymentStatus}
+              onChange={setPaymentStatus}
+              options={statusOptions}
+            />
+
+            {selectedCourse?.isFree && paymentStatus !== "FREE" && (
+              <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700 sm:col-span-2">
+                This course is marked free. Consider setting the status to
+                &quot;Free&quot; instead of {paymentStatus.toLowerCase()}.
+              </p>
+            )}
+
+            <div className="flex flex-col-reverse gap-3 sm:col-span-2 sm:flex-row sm:items-center">
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={createEnrollment.isPending}
+                className="w-full cursor-pointer sm:w-auto"
+              >
+                <FaUserPlus className="text-sm" />
+                {createEnrollment.isPending ? "Enrolling..." : "Enroll user"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="md"
+                onClick={resetForm}
+                className="hover:shadow-sky/10 w-full cursor-pointer bg-white transition-all hover:shadow-sm sm:w-auto"
+              >
+                Clear form
+              </Button>
+            </div>
+          </form>
+        </Card>
+      </Modal>
 
       {/* 3. Enrollment list */}
       <motion.div variants={fadeUp}>
@@ -404,11 +390,10 @@ export const AdminEnrollments = () => {
                 key={status}
                 type="button"
                 onClick={() => setStatusFilter(status)}
-                className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200 sm:px-3.5 sm:py-2 ${
-                  statusFilter === status
+                className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-200 sm:px-3.5 sm:py-1.5 ${statusFilter === status
                     ? "border-sky text-white"
                     : "border-slate/15 text-muted hover:border-sky/40 hover:text-sky shadow-ink/3 bg-white shadow-sm"
-                }`}
+                  }`}
               >
                 {statusFilter === status && (
                   <motion.span
@@ -425,10 +410,11 @@ export const AdminEnrollments = () => {
           </div>
         </div>
 
-        {/* List container */}
+        {/* List container — capped height so the table scrolls internally
+            instead of the whole page */}
         <div
           data-lenis-prevent
-          className="border-slate/10 shadow-ink/5 scrollbar-neutral mt-4 overflow-x-auto rounded-2xl border bg-white shadow-sm"
+          className="border-slate/10 shadow-ink/5 scrollbar-neutral mt-4 max-h-[65vh] overflow-auto rounded-2xl border bg-white shadow-sm"
         >
           {/* Remounts on tab / debounced search / page change so the data
               fades in smoothly while placeholderData keeps old rows visible */}
@@ -448,13 +434,13 @@ export const AdminEnrollments = () => {
 
             {!loading && !error && (
               <table className="divide-slate/10 min-w-full divide-y text-sm">
-                <thead className="bg-cloud text-slate/60 text-left text-xs tracking-wide uppercase">
+                <thead className="bg-cloud text-slate/60 sticky top-0 z-10 text-left text-xs tracking-wide uppercase">
                   <tr>
-                    <th className="px-5 py-3 font-medium">User</th>
-                    <th className="px-5 py-3 font-medium">Phone</th>
-                    <th className="px-5 py-3 font-medium">Course</th>
-                    <th className="px-5 py-3 font-medium">Enrolled</th>
-                    <th className="px-5 py-3 font-medium">Payment</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">User</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Phone</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Course</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Enrolled</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Payment</th>
                   </tr>
                 </thead>
                 <tbody className="divide-slate/10 divide-y">
@@ -493,6 +479,7 @@ export const AdminEnrollments = () => {
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap">
                         <Badge
+                          size="xs"
                           variant={
                             paymentBadgeVariant[enrollment.paymentStatus] ??
                             "sky"

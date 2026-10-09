@@ -94,7 +94,7 @@ const enrollmentColumns = columnHelper.columns([
     header: "Status",
     sortFn: "text",
     cell: ({ getValue }) => (
-      <Badge variant={paymentBadgeVariant[getValue()] ?? "sky"}>
+      <Badge size="xs" variant={paymentBadgeVariant[getValue()] ?? "sky"}>
         {getValue()}
       </Badge>
     ),

@@ -59,7 +59,7 @@ export const AdminLayout = () => {
   const closeMobileDrawer = () => setMobileOpen(false);
 
   return (
-    <div className="bg-cloud flex min-h-screen">
+    <div className="bg-cloud flex min-h-screen overflow-x-clip">
       <ScrollToTop />
 
       <AdminSidebar

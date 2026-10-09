@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAdminCourses } from "../../hooks/useAdmin";
+import { useAdminFiltersStore } from "../../store/adminFiltersStore";
 import {
   useCreateCourse,
   useUpdateCourse,
@@ -11,9 +12,13 @@ import { motion } from "motion/react";
 import { Badge } from "../../Components/UI/Badge";
 import { Button } from "../../Components/UI/Button";
 import { Card } from "../../Components/UI/Card";
+import { Modal } from "../../Components/UI/Modal";
+import { Pagination } from "../../Components/UI/Pagination";
 import { Skeleton } from "../../Components/UI/Skeleton";
 import { CourseForm } from "../../Components/Admin/CourseForm";
 import { FaBookOpen, FaDownload, FaPen, FaPlus, FaTrash } from "react-icons/fa";
+
+const PAGE_SIZE = 20;
 
 const statusBadgeVariant = {
   AVAILABLE: "successSoft",
@@ -55,18 +60,28 @@ export const AdminCourses = () => {
   } = useAdminCourses();
   const [formTarget, setFormTarget] = useState(null); // null | "new" | course object
   const [deleteError, setDeleteError] = useState("");
-  const formRef = useRef(null);
 
-  // Smoothly bring the form into view whenever it opens (Edit from a card
-  // far down the list, or New course from the header).
+  const page = useAdminFiltersStore((state) => state.coursesPage);
+  const setPage = useAdminFiltersStore((state) => state.setCoursesPage);
+
+  // Newest first; an edited course (updatedAt bumped) floats to the top too.
+  const sortedCourses = [...courses].sort((a, b) => {
+    const aTime = a.updatedAt ?? a.createdAt;
+    const bTime = b.updatedAt ?? b.createdAt;
+    return new Date(bTime) - new Date(aTime);
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sortedCourses.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageCourses = sortedCourses.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE,
+  );
+
+  // Clamp the stored page if deletes shrank the list below it.
   useEffect(() => {
-    if (formTarget && formRef.current) {
-      formRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [formTarget]);
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages, setPage]);
 
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
@@ -78,12 +93,14 @@ export const AdminCourses = () => {
     await createCourse.mutateAsync(payload);
     toast.success("Course created.");
     setFormTarget(null);
+    setPage(1); // new course sorts to the top — make sure it's visible
   };
 
   const handleUpdate = async (payload) => {
     await updateCourse.mutateAsync({ id: formTarget.id, payload });
     toast.success("Course updated.");
     setFormTarget(null);
+    setPage(1); // edited course bumps to the top — make sure it's visible
   };
 
   const handleDelete = (course) => {
@@ -145,17 +162,16 @@ export const AdminCourses = () => {
           </p>
         </div>
 
-        {!formTarget && (
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => setFormTarget("new")}
-            className="w-full cursor-pointer sm:w-auto"
-          >
-            <FaPlus className="text-xs" />
-            New course
-          </Button>
-        )}
+        <Button
+          variant="primary"
+          size="md"
+          onClick={() => setFormTarget("new")}
+          className="w-full cursor-pointer sm:w-auto"
+          aria-haspopup="dialog"
+        >
+          <FaPlus className="text-xs" />
+          New course
+        </Button>
       </motion.div>
 
       {deleteError && (
@@ -168,46 +184,42 @@ export const AdminCourses = () => {
       )}
 
       {/* Create / edit form */}
-      {formTarget && (
-        <motion.div
-          ref={formRef}
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="scroll-mt-24"
-        >
-          <Card padding="sm" className="sm:p-6 lg:p-8">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11">
-                {formTarget === "new" ? <FaPlus /> : <FaPen />}
-              </span>
-              <div className="min-w-0">
-                <h2 className="font-heading text-ink text-base font-bold sm:text-lg">
-                  {formTarget === "new"
-                    ? "Create a course"
-                    : `Editing "${formTarget.title}"`}
-                </h2>
-                <p className="text-muted mt-1 text-sm leading-relaxed">
-                  {formTarget === "new"
-                    ? "Fill in the details below — you can edit everything later."
-                    : "Update the course details below. Changes apply everywhere immediately."}
-                </p>
-              </div>
+      <Modal
+        open={Boolean(formTarget)}
+        onClose={() => setFormTarget(null)}
+        panelClassName="sm:max-w-xl lg:max-w-4xl"
+      >
+        <Card padding="sm" className="border-0 shadow-none sm:p-6 lg:p-8">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11">
+              {formTarget === "new" || !formTarget ? <FaPlus /> : <FaPen />}
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-heading text-ink pr-8 text-base font-bold sm:text-lg">
+                {formTarget === "new" || !formTarget
+                  ? "Create a course"
+                  : `Editing "${formTarget.title}"`}
+              </h2>
+              <p className="text-muted mt-1 text-sm leading-relaxed">
+                {formTarget === "new" || !formTarget
+                  ? "Fill in the details below — you can edit everything later."
+                  : "Update the course details below. Changes apply everywhere immediately."}
+              </p>
             </div>
+          </div>
 
-            <div className="border-slate/10 mt-5 h-px" />
+          <div className="border-slate/10 mt-5 h-px" />
 
-            <div className="mt-5">
-              <CourseForm
-                course={formTarget === "new" ? null : formTarget}
-                onSubmit={formTarget === "new" ? handleCreate : handleUpdate}
-                onCancel={() => setFormTarget(null)}
-                submitting={submitting}
-              />
-            </div>
-          </Card>
-        </motion.div>
-      )}
+          <div className="mt-5">
+            <CourseForm
+              course={formTarget === "new" ? null : formTarget}
+              onSubmit={formTarget === "new" ? handleCreate : handleUpdate}
+              onCancel={() => setFormTarget(null)}
+              submitting={submitting}
+            />
+          </div>
+        </Card>
+      </Modal>
 
       {/* Course list */}
       <motion.div variants={fadeUp}>
@@ -257,70 +269,78 @@ export const AdminCourses = () => {
             </Card>
           )}
 
-          {!loading &&
-            !error &&
-            courses.map((course) => (
-              <Card
-                key={course.id}
-                padding="sm"
-                className="hover:border-sky/20 hover:shadow-sky/5 flex flex-col gap-4 transition-all sm:flex-row sm:items-center sm:justify-between sm:p-6"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-12 sm:w-12">
-                    <FaBookOpen />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-heading text-ink truncate text-sm font-semibold sm:text-base">
-                        {course.title}
+          {!loading && !error && pageCourses.length > 0 && (
+            <motion.div
+              key={safePage}
+              initial={{ opacity: 0.35, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="grid gap-4"
+            >
+              {pageCourses.map((course) => (
+                <Card
+                  key={course.id}
+                  padding="sm"
+                  className="hover:border-sky/20 hover:shadow-sky/5 flex flex-col gap-4 transition-all sm:flex-row sm:items-center sm:justify-between sm:p-6"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="bg-sky/10 text-sky grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-12 sm:w-12">
+                      <FaBookOpen />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-heading text-ink truncate text-sm font-semibold sm:text-base">
+                          {course.title}
+                        </p>
+                        <Badge
+                          size="sm"
+                          variant={statusBadgeVariant[course.status] ?? "sky"}
+                        >
+                          {statusLabels[course.status] ?? course.status}
+                        </Badge>
+                      </div>
+                      <p className="text-muted mt-1 truncate text-xs">
+                        /{course.slug}
+                        <span className="bg-sky/10 text-sky ml-2 inline-block rounded-full px-2 py-0.5 font-semibold">
+                          {course.price > 0
+                            ? `PKR ${course.price.toLocaleString()}`
+                            : "Free"}
+                        </span>
                       </p>
-                      <Badge
-                        size="sm"
-                        variant={statusBadgeVariant[course.status] ?? "sky"}
-                      >
-                        {statusLabels[course.status] ?? course.status}
-                      </Badge>
                     </div>
-                    <p className="text-muted mt-1 truncate text-xs">
-                      /{course.slug}
-                      <span className="bg-sky/10 text-sky ml-2 inline-block rounded-full px-2 py-0.5 font-semibold">
-                        {course.price > 0
-                          ? `PKR ${course.price.toLocaleString()}`
-                          : "Free"}
-                      </span>
-                    </p>
                   </div>
-                </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleExport(course)}
-                    disabled={exportEnrollments.isPending}
-                    className={downloadBtn}
-                  >
-                    <FaDownload className="text-xs" />
-                    Download
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormTarget(course)}
-                    className={editBtn}
-                  >
-                    <FaPen className="text-xs" />
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(course)}
-                    className={deleteBtn}
-                  >
-                    <FaTrash className="text-xs" />
-                    Delete
-                  </button>
-                </div>
-              </Card>
-            ))}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleExport(course)}
+                      disabled={exportEnrollments.isPending}
+                      className={downloadBtn}
+                    >
+                      <FaDownload className="text-xs" />
+                      Download
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormTarget(course)}
+                      className={editBtn}
+                    >
+                      <FaPen className="text-xs" />
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(course)}
+                      className={deleteBtn}
+                    >
+                      <FaTrash className="text-xs" />
+                      Delete
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </motion.div>
+          )}
 
           {!loading && !error && courses.length === 0 && (
             <Card padding="lg" className="text-center">
@@ -333,6 +353,14 @@ export const AdminCourses = () => {
             </Card>
           )}
         </div>
+
+        {!loading && !error && totalPages > 1 && (
+          <Pagination
+            page={safePage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </motion.div>
     </motion.div>
   );

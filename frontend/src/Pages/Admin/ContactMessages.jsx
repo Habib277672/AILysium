@@ -48,7 +48,6 @@ export const AdminContactMessages = () => {
     >
       {/* Header */}
       <motion.div variants={fadeUp}>
-        <Badge variant="sky">Inbox</Badge>
         <h1 className="font-heading text-ink mt-3 text-2xl leading-tight font-extrabold sm:text-3xl lg:text-4xl">
           Contact{" "}
           <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">
@@ -88,7 +87,7 @@ export const AdminContactMessages = () => {
       <motion.div variants={fadeUp}>
         <div
           data-lenis-prevent
-          className="border-slate/10 shadow-ink/5 scrollbar-neutral overflow-x-auto rounded-2xl border bg-white shadow-sm"
+          className="border-slate/10 shadow-ink/5 scrollbar-neutral max-h-[65vh] overflow-auto rounded-2xl border bg-white shadow-sm"
         >
           {/* Remounts when the debounced search / page changes so new
               results fade in while placeholderData holds the old rows */}
@@ -108,12 +107,12 @@ export const AdminContactMessages = () => {
 
             {!loading && !error && (
               <table className="divide-slate/10 min-w-full divide-y text-sm">
-                <thead className="bg-cloud text-slate/60 text-left text-xs tracking-wide uppercase">
+                <thead className="bg-cloud text-slate/60 sticky top-0 z-10 text-left text-xs tracking-wide uppercase">
                   <tr>
-                    <th className="px-5 py-3 font-medium">Name</th>
-                    <th className="px-5 py-3 font-medium">Email</th>
-                    <th className="px-5 py-3 font-medium">Program</th>
-                    <th className="px-5 py-3 font-medium">Received</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Name</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Email</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Program</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Received</th>
                   </tr>
                 </thead>
                 <tbody className="divide-slate/10 divide-y">
@@ -137,7 +136,9 @@ export const AdminContactMessages = () => {
                         {message.email}
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap">
-                        <Badge size="sm" className="border border-sky">{message.program}</Badge>
+                        <Badge size="sm" className="border-sky border">
+                          {message.program}
+                        </Badge>
                       </td>
                       <td className="text-slate px-5 py-3.5 whitespace-nowrap">
                         {new Date(message.createdAt).toLocaleDateString()}

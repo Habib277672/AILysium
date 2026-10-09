@@ -9,8 +9,9 @@ const variants = {
 };
 
 const sizes = {
-  md: "px-3 py-1 text-sm",
+  md: "px-2.5 py-0.5 text-sm",
   sm: "px-2 py-0.5 text-[11px] font-semibold tracking-wide",
+  xs: "px-2 py-0.5 text-sm",
 };
 
 export const Badge = ({

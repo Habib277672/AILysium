@@ -127,7 +127,7 @@ export const AdminUserDetail = () => {
             </span>
 
             <div className="min-w-0 sm:flex-1">
-              <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:justify-start">
                 <Badge className="border-sky border" variant={"sky"}>
                   {user.role}
                 </Badge>

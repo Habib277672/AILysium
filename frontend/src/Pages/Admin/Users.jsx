@@ -109,7 +109,7 @@ export const AdminUsers = () => {
       <motion.div variants={fadeUp}>
         <div
           data-lenis-prevent
-          className="border-slate/10 shadow-ink/5 scrollbar-neutral overflow-x-auto rounded-2xl border bg-white shadow-sm"
+          className="border-slate/10 shadow-ink/5 scrollbar-neutral max-h-[65vh] overflow-auto rounded-2xl border bg-white shadow-sm"
         >
           {/* Remounts when the debounced search / page changes so new
               results fade in while keepPreviousData holds the old rows */}
@@ -129,14 +129,14 @@ export const AdminUsers = () => {
 
             {!loading && !error && (
               <table className="divide-slate/10 min-w-full divide-y text-sm">
-                <thead className="bg-cloud text-slate/60 text-left text-xs tracking-wide uppercase">
+                <thead className="bg-cloud text-slate/60 sticky top-0 z-10 text-left text-xs tracking-wide uppercase">
                   <tr>
-                    <th className="px-5 py-3 font-medium">User</th>
-                    <th className="px-5 py-3 font-medium">Email</th>
-                    <th className="px-5 py-3 font-medium">Phone</th>
-                    <th className="px-5 py-3 font-medium">Role</th>
-                    <th className="px-5 py-3 font-medium">Verified</th>
-                    <th className="px-5 py-3 font-medium">Joined</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">User</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Email</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Phone</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Role</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Verified</th>
+                    <th className="bg-cloud px-5 py-3 font-medium">Joined</th>
                   </tr>
                 </thead>
                 <tbody className="divide-slate/10 divide-y">
@@ -167,6 +167,7 @@ export const AdminUsers = () => {
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap">
                         <Badge
+                          size="xs"
                           className="border-sky border"
                           variant={roleBadgeVariant[user.role]}
                         >
@@ -175,9 +176,13 @@ export const AdminUsers = () => {
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap">
                         {user.emailVerifiedAt ? (
-                          <Badge variant="success">Verified</Badge>
+                          <Badge size="xs" variant="success">
+                            Verified
+                          </Badge>
                         ) : (
-                          <Badge variant="warning">Unverified</Badge>
+                          <Badge size="xs" variant="warning">
+                            Unverified
+                          </Badge>
                         )}
                       </td>
                       <td className="text-slate px-5 py-3.5 whitespace-nowrap">
