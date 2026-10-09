@@ -63,6 +63,11 @@ const paymentBadgeVariant = {
 
 const EMPTY_ENROLLMENTS = [];
 
+// The sidebar animates its width for ~300ms, which resizes the page content on
+// every frame. ResponsiveContainer would re-render every chart on each of those
+// frames. Debouncing makes the charts re-measure once, after the slide ends.
+const CHART_RESIZE_DEBOUNCE = 350;
+
 const enrollmentColumns = columnHelper.columns([
   columnHelper.accessor("userName", {
     header: "User",
@@ -250,6 +255,51 @@ export const AdminDashboard = memo(() => {
     data: tableData,
   });
 
+  // Memoized so the chart data keeps a stable identity between renders —
+  // a new array every render makes recharts restart its animations.
+  const confirmedTotal = confirmedData?.total ?? 0;
+  const pendingTotal = pendingData?.total ?? 0;
+  const failedTotal = failedData?.total ?? 0;
+  const freeTotal = freeData?.total ?? 0;
+
+  const paymentData = useMemo(
+    () =>
+      [
+        { name: "Confirmed", value: confirmedTotal, color: "#10b981" },
+        { name: "Pending", value: pendingTotal, color: "#f59e0b" },
+        { name: "Failed", value: failedTotal, color: "#ef4444" },
+        { name: "Free", value: freeTotal, color: "#0085fe" },
+      ].filter((entry) => entry.value > 0),
+    [confirmedTotal, pendingTotal, failedTotal, freeTotal],
+  );
+  const paymentTotal = useMemo(
+    () => paymentData.reduce((sum, entry) => sum + entry.value, 0),
+    [paymentData],
+  );
+
+  const courseStatusData = useMemo(
+    () => [
+      {
+        label: "Available",
+        count: courses.filter((course) => course.status === "AVAILABLE").length,
+        color: "#10b981",
+      },
+      {
+        label: "Coming soon",
+        count: courses.filter((course) => course.status === "COMING_SOON")
+          .length,
+        color: "#0085fe",
+      },
+      {
+        label: "Unpublished",
+        count: courses.filter((course) => course.status === "UNPUBLISHED")
+          .length,
+        color: "#94a3b8",
+      },
+    ],
+    [courses],
+  );
+
   const loading =
     usersLoading ||
     enrollmentsLoading ||
@@ -309,48 +359,18 @@ export const AdminDashboard = memo(() => {
     },
     {
       label: "Confirmed payments",
-      value: confirmedData?.total ?? 0,
+      value: confirmedTotal,
       icon: FaCheckCircle,
     },
     {
       label: "Pending payments",
-      value: pendingData?.total ?? 0,
+      value: pendingTotal,
       icon: FaHourglassHalf,
     },
     {
       label: "Failed payments",
-      value: failedData?.total ?? 0,
+      value: failedTotal,
       icon: FaTimesCircle,
-    },
-  ];
-
-  const paymentData = [
-    {
-      name: "Confirmed",
-      value: confirmedData?.total ?? 0,
-      color: "#10b981",
-    },
-    { name: "Pending", value: pendingData?.total ?? 0, color: "#f59e0b" },
-    { name: "Failed", value: failedData?.total ?? 0, color: "#ef4444" },
-    { name: "Free", value: freeData?.total ?? 0, color: "#0085fe" },
-  ].filter((entry) => entry.value > 0);
-  const paymentTotal = paymentData.reduce((sum, entry) => sum + entry.value, 0);
-
-  const courseStatusData = [
-    {
-      label: "Available",
-      count: courses.filter((course) => course.status === "AVAILABLE").length,
-      color: "#10b981",
-    },
-    {
-      label: "Coming soon",
-      count: courses.filter((course) => course.status === "COMING_SOON").length,
-      color: "#0085fe",
-    },
-    {
-      label: "Unpublished",
-      count: courses.filter((course) => course.status === "UNPUBLISHED").length,
-      color: "#94a3b8",
     },
   ];
 
@@ -367,7 +387,7 @@ export const AdminDashboard = memo(() => {
               </span>
             </h1>
             <p className="text-muted mt-2 max-w-lg text-sm leading-relaxed sm:text-base">
-              Here&apos;s your AiLysium snapshot — {today}.
+              Here&apos;s your AiLysium snapshot, {today}.
             </p>
           </div>
 
@@ -429,20 +449,24 @@ export const AdminDashboard = memo(() => {
             subtitle="Confirmed, pending, failed & free"
           />
           {paymentData.length === 0 ? (
-            <div className="mt-4 h-[220px]">
+            <div className="mt-4 h-[clamp(200px,28vw,260px)]">
               <EmptyChart message="No payments recorded yet." />
             </div>
           ) : (
             <>
-              <div className="relative mt-4 h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
+              <div className="relative mt-4 h-[clamp(200px,28vw,260px)]">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                  debounce={CHART_RESIZE_DEBOUNCE}
+                >
                   <PieChart>
                     <Pie
                       data={paymentData}
                       dataKey="value"
                       nameKey="name"
-                      innerRadius={62}
-                      outerRadius={88}
+                      innerRadius="58%"
+                      outerRadius="82%"
                       paddingAngle={3}
                       cornerRadius={6}
                       stroke="none"
@@ -491,9 +515,13 @@ export const AdminDashboard = memo(() => {
             title="Course catalog"
             subtitle="Courses by publication status"
           />
-          <div className="mt-4 h-[220px] sm:h-[240px]">
+          <div className="mt-4 h-[clamp(200px,28vw,260px)]">
             {courses.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                debounce={CHART_RESIZE_DEBOUNCE}
+              >
                 <BarChart
                   data={courseStatusData}
                   layout="vertical"
@@ -514,7 +542,7 @@ export const AdminDashboard = memo(() => {
                   <YAxis
                     type="category"
                     dataKey="label"
-                    width={96}
+                    width={88}
                     tickLine={false}
                     axisLine={false}
                     tick={{ fill: "#64748b", fontSize: 12 }}
@@ -527,7 +555,7 @@ export const AdminDashboard = memo(() => {
                     dataKey="count"
                     name="Courses"
                     radius={[0, 8, 8, 0]}
-                    barSize={22}
+                    maxBarSize={28}
                   >
                     {courseStatusData.map((entry) => (
                       <Cell key={entry.label} fill={entry.color} />
@@ -549,9 +577,13 @@ export const AdminDashboard = memo(() => {
             title="Enrollment activity"
             subtitle="Latest enrollments grouped by day"
           />
-          <div className="mt-4 h-[240px] sm:h-[300px]">
+          <div className="mt-4 h-[clamp(220px,32vw,320px)]">
             {activityData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                debounce={CHART_RESIZE_DEBOUNCE}
+              >
                 <AreaChart
                   data={activityData}
                   margin={{ top: 8, right: 8, bottom: 0, left: -18 }}
@@ -625,7 +657,7 @@ export const AdminDashboard = memo(() => {
                 Latest enrollments
               </h3>
               <p className="text-muted mt-0.5 text-xs">
-                Newest first — click a column to sort
+                Newest first, click a column to sort
               </p>
             </div>
             <Link

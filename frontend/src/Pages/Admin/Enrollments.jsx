@@ -391,8 +391,8 @@ export const AdminEnrollments = () => {
                 type="button"
                 onClick={() => setStatusFilter(status)}
                 className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-200 sm:px-3.5 sm:py-1.5 ${statusFilter === status
-                    ? "border-sky text-white"
-                    : "border-slate/15 text-muted hover:border-sky/40 hover:text-sky shadow-ink/3 bg-white shadow-sm"
+                  ? "border-sky text-white"
+                  : "border-slate/15 text-muted hover:border-sky/40 hover:text-sky shadow-ink/3 bg-white shadow-sm"
                   }`}
               >
                 {statusFilter === status && (

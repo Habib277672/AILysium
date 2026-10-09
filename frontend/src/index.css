@@ -39,6 +39,14 @@ html {
   color-scheme: light;
 }
 
+/* Admin: reserve the scrollbar gutter so chart-driven height changes never
+   toggle the scrollbar on/off — that width flip reflows the layout (and
+   re-triggers ResponsiveContainer) causing visible jitter of the fixed
+   sidebar. */
+html.admin-shell {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: var(--font-body);
   color: var(--color-slate);

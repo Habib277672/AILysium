@@ -36,7 +36,6 @@ const chevronStyle = (rotate) => ({
 });
 
 export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
-
   const renderNav = (isRail) => (
     <nav aria-label="Admin" className="flex flex-1 flex-col gap-1.5">
       {adminLinks.map((link) => (
@@ -52,8 +51,8 @@ export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
             <>
               <span
                 className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[13px] shadow-sm transition-all duration-200 ${isActive
-                  ? "bg-sky shadow-sky/40 text-white shadow-md"
-                  : "bg-cloud text-slate/70 group-hover:bg-sky/10 group-hover:text-sky"
+                    ? "bg-sky shadow-sky/40 text-white shadow-md"
+                    : "bg-cloud text-slate/70 group-hover:bg-sky/10 group-hover:text-sky"
                   }`}
               >
                 <link.icon className="size-5" />
@@ -84,7 +83,7 @@ export const AdminSidebar = ({ rail, mobileOpen, onToggle, onClose }) => {
 
       <aside
         aria-label="Admin navigation"
-        className={`border-slate/10 fixed inset-y-0 left-0 z-40 w-64 shrink-0 overflow-hidden border-r bg-white md:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+        className={`border-slate/10 fixed inset-y-0 left-0 z-40 w-64 shrink-0 overflow-hidden border-r bg-white will-change-transform md:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"
           } ${rail ? "md:w-[5rem]" : "md:w-64"}`}
         style={{
           transition:

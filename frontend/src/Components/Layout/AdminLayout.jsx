@@ -31,6 +31,13 @@ export const AdminLayout = () => {
     return () => media.removeEventListener("change", onChange);
   }, []);
 
+  // Reserve the scrollbar gutter on admin pages so chart resize/animation
+  // never toggles the scrollbar and reflows the fixed sidebar (jitter).
+  useEffect(() => {
+    document.documentElement.classList.add("admin-shell");
+    return () => document.documentElement.classList.remove("admin-shell");
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(SIDEBAR_STORAGE_KEY, expanded ? "1" : "0");
   }, [expanded]);

@@ -32,6 +32,12 @@ const statusLabels = {
   UNPUBLISHED: "Unpublished",
 };
 
+const statusBorder = {
+  AVAILABLE: "border border-emerald-500",
+  COMING_SOON: "border border-amber-500",
+  UNPUBLISHED: "border border-neutral-500",
+};
+
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   show: {
@@ -157,7 +163,7 @@ export const AdminCourses = () => {
             </span>
           </h1>
           <p className="text-muted mt-2 max-w-2xl text-sm leading-relaxed sm:text-base">
-            Create, edit and publish courses — or export each course&apos;s
+            Create, edit and publish courses, or export each course&apos;s
             enrollment list as a spreadsheet.
           </p>
         </div>
@@ -202,7 +208,7 @@ export const AdminCourses = () => {
               </h2>
               <p className="text-muted mt-1 text-sm leading-relaxed">
                 {formTarget === "new" || !formTarget
-                  ? "Fill in the details below — you can edit everything later."
+                  ? "Fill in the details below, you can edit everything later."
                   : "Update the course details below. Changes apply everywhere immediately."}
               </p>
             </div>
@@ -295,13 +301,14 @@ export const AdminCourses = () => {
                         <Badge
                           size="sm"
                           variant={statusBadgeVariant[course.status] ?? "sky"}
+                          className={statusBorder[course.status] ?? ""}
                         >
                           {statusLabels[course.status] ?? course.status}
                         </Badge>
                       </div>
                       <p className="text-muted mt-1 truncate text-xs">
                         /{course.slug}
-                        <span className="bg-sky/10 text-sky ml-2 inline-block rounded-full px-2 py-0.5 font-semibold">
+                        <span className="border-sky bg-sky/10 text-sky ml-2 inline-block rounded-full border px-2 py-0.5 font-semibold">
                           {course.price > 0
                             ? `PKR ${course.price.toLocaleString()}`
                             : "Free"}
@@ -348,7 +355,7 @@ export const AdminCourses = () => {
                 <FaBookOpen className="text-xl" />
               </span>
               <p className="text-slate mt-3 text-sm">
-                No courses yet — create your first one above.
+                No courses yet, create your first one above.
               </p>
             </Card>
           )}
