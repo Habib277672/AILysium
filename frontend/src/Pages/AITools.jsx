@@ -127,7 +127,6 @@ export const AITools = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-3xl px-6 text-center"
         >
-
           <h1 className="font-heading text-ink text-3xl leading-tight font-extrabold sm:text-4xl md:mt-5 md:text-5xl">
             The Tools You'll{" "}
             <span className="from-sky to-sky-light bg-gradient-to-r bg-clip-text text-transparent">

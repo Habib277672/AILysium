@@ -265,7 +265,7 @@ export const CourseForm = ({ course, onSubmit, onCancel, submitting }) => {
       <Input
         id="toolsCovered"
         label="Tools covered (comma-separated)"
-        placeholder="Python, JavaScript, Prompting"
+        placeholder="ChatGPT, MidJourney, Runway, ElevenLabs"
         value={form.toolsCovered}
         onChange={handleChange}
       />

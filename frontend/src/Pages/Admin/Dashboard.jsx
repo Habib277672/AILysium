@@ -386,7 +386,7 @@ export const AdminDashboard = memo(() => {
                 {firstName}
               </span>
             </h1>
-            <p className="text-muted mt-2 max-w-lg text-sm leading-relaxed sm:text-base">
+            <p className="text-muted mt-2 max-w-lg text-xs leading-relaxed sm:text-base">
               Here&apos;s your AiLysium snapshot, {today}.
             </p>
           </div>

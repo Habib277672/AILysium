@@ -57,7 +57,7 @@ export const Profile = () => {
                                     type="button"
                                     onClick={handleResend}
                                     disabled={resendState !== "idle"}
-                                    className="mt-2 text-sm font-medium text-amber-800 underline decoration-amber-300 underline-offset-2 transition-colors hover:text-amber-900 disabled:no-underline disabled:opacity-50"
+                                    className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-amber-500/25 transition-all duration-300 hover:bg-amber-600 hover:shadow-md hover:shadow-amber-500/35 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-amber-500 disabled:hover:shadow-sm disabled:hover:shadow-amber-500/25"
                                 >
                                     {resendState === "sent"
                                         ? "Verification email sent"

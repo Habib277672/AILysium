@@ -19,6 +19,10 @@ export const Reveal = ({
   // been revealed, which remounted the whole subtree on the next state
   // update — blowing away input focus and replaying layoutId animations.
   const [already] = useState(() => hasRevealed(id));
+  // will-change promotes a compositor layer — drop it once the reveal
+  // animation finishes, otherwise every heavy page keeps stale layers that
+  // make header/menu animations recomposite (visible lag on AI Tools).
+  const [promoted, setPromoted] = useState(!already);
 
   const mobile = isMobile();
   const safeY = mobile ? Math.min(y, 12) : y;
@@ -42,7 +46,8 @@ export const Reveal = ({
         ease: [0.22, 1, 0.36, 1],
       }}
       onViewportEnter={() => markRevealed(id)}
-      style={already ? undefined : { willChange: "transform, opacity" }}
+      onAnimationComplete={() => setPromoted(false)}
+      style={promoted ? { willChange: "transform, opacity" } : undefined}
     >
       {children}
     </motion.div>

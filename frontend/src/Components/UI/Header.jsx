@@ -45,7 +45,7 @@ export const Header = () => {
 
   return (
     <header className="border-slate/8 sticky top-0 z-50 border-b bg-white will-change-transform md:bg-white/80 md:backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+      <div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <Link to="/" className="group flex items-center">
           <img src={logo} alt="AiLysium" className="h-12 w-auto" />
@@ -58,10 +58,9 @@ export const Header = () => {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `relative rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? " text-sky"
-                    : "text-ink/55 hover:bg-slate/5 hover:text-ink"
+                `relative rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${isActive
+                  ? " text-sky"
+                  : "text-ink/55 hover:bg-slate/5 hover:text-ink"
                 }`
               }
               end={link.to === "/"}
@@ -148,14 +147,15 @@ export const Header = () => {
         </button>
       </div>
 
-      {/* Mobile menu — grid-template-rows animates smoothly without a
-          guessed max-height (no reflow stutter, no leftover gap) */}
+      {/* Mobile menu — absolute overlay under the bar so opening it never
+          reflows the page below (in-flow height animation reflowed heavy
+          pages like AI Tools every frame and caused visible lag) */}
       <div
         ref={menuRef}
-        className={`transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${open ? "grid grid-rows-[1fr]" : "grid grid-rows-[0fr]"}`}
+        className={`absolute inset-x-0 top-full z-50 transition-[grid-template-rows] duration-300 shadow-xs ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${open ? "grid grid-rows-[1fr]" : "pointer-events-none grid grid-rows-[0fr]"}`}
       >
         <div className="min-h-0 overflow-hidden">
-          <div className="border-slate/8 border-t bg-white">
+          <div className="border-slate/8 shadow-ink/10 border-t bg-white shadow-lg">
             <div className="mx-auto max-w-6xl px-6 py-5">
               <nav className="flex flex-col gap-1">
                 {navLinks.map((link) => (
@@ -163,10 +163,9 @@ export const Header = () => {
                     key={link.to}
                     to={link.to}
                     className={({ isActive }) =>
-                      `relative rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                        isActive
-                          ? "bg-sky/8 text-sky"
-                          : "text-ink/55 hover:bg-slate/5 hover:text-ink"
+                      `relative rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
+                        ? "bg-sky/8 text-sky"
+                        : "text-ink/55 hover:bg-slate/5 hover:text-ink"
                       }`
                     }
                     end={link.to === "/"}
