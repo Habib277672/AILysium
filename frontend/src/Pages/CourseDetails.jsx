@@ -167,9 +167,21 @@ export const CourseDetails = () => {
                         </p>
 
                         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+
+                            {/* Enrollment through Payment Method */}
                             <Button variant="primary" size="md" className="rounded-full px-6 shadow-lg shadow-sky/30 hover:shadow-sky/50" {...enrollButtonProps}>
                                 {enrollLabel}
                             </Button>
+
+                            {/* Enrollment through Whatsapp */}
+                            {/* <Button
+                                as="a"
+                                href="https://wa.me/03111390351"
+                                variant="primary"
+                                size="md"
+                                className="rounded-full px-6 shadow-lg shadow-sky/30 hover:shadow-sky/50">
+                                Enroll Now
+                            </Button> */}
                             <Button
                                 as="a"
                                 href="https://wa.me/03111390351"

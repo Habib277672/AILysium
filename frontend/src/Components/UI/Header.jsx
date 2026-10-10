@@ -148,84 +148,87 @@ export const Header = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — grid-template-rows animates smoothly without a
+          guessed max-height (no reflow stutter, no leftover gap) */}
       <div
         ref={menuRef}
-        className={`overflow-hidden transition-[max-height] duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${open ? "max-h-96" : "max-h-0"}`}
+        className={`transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${open ? "grid grid-rows-[1fr]" : "grid grid-rows-[0fr]"}`}
       >
-        <div className="border-slate/8 border-t bg-white">
-          <div className="mx-auto max-w-6xl px-6 py-5">
-            <nav className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className={({ isActive }) =>
-                    `relative rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? "bg-sky/8 text-sky"
-                        : "text-ink/55 hover:bg-slate/5 hover:text-ink"
-                    }`
-                  }
-                  end={link.to === "/"}
-                  onClick={() => setOpen(false)}
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
+        <div className="min-h-0 overflow-hidden">
+          <div className="border-slate/8 border-t bg-white">
+            <div className="mx-auto max-w-6xl px-6 py-5">
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `relative rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? "bg-sky/8 text-sky"
+                          : "text-ink/55 hover:bg-slate/5 hover:text-ink"
+                      }`
+                    }
+                    end={link.to === "/"}
+                    onClick={() => setOpen(false)}
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
+              </nav>
+            </div>
 
-          {/* Full-width divider, aligned with the menu's top border */}
-          <div className="border-slate/8 border-t" />
+            {/* Full-width divider, aligned with the menu's top border */}
+            <div className="border-slate/8 border-t" />
 
-          <div className="mx-auto max-w-6xl px-6 py-4">
-            <div className="flex gap-2.5">
-              {user ? (
-                <>
-                  <Button
-                    as={Link}
-                    to={accountLink.to}
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 rounded-xl"
-                    onClick={() => setOpen(false)}
-                  >
-                    {accountLink.label}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 cursor-pointer rounded-full"
-                    onClick={handleLogout}
-                  >
-                    Log out
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    as={Link}
-                    to="/login"
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 rounded-xl"
-                    onClick={() => setOpen(false)}
-                  >
-                    Log in
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/signup"
-                    variant="primary"
-                    size="sm"
-                    className="shadow-sky/25 flex-1 rounded-xl shadow-sm"
-                    onClick={() => setOpen(false)}
-                  >
-                    Sign up
-                  </Button>
-                </>
-              )}
+            <div className="mx-auto max-w-6xl px-6 py-4">
+              <div className="flex gap-2.5">
+                {user ? (
+                  <>
+                    <Button
+                      as={Link}
+                      to={accountLink.to}
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => setOpen(false)}
+                    >
+                      {accountLink.label}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 cursor-pointer rounded-full"
+                      onClick={handleLogout}
+                    >
+                      Log out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      as={Link}
+                      to="/login"
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => setOpen(false)}
+                    >
+                      Log in
+                    </Button>
+                    <Button
+                      as={Link}
+                      to="/signup"
+                      variant="primary"
+                      size="sm"
+                      className="shadow-sky/25 flex-1 rounded-xl shadow-sm"
+                      onClick={() => setOpen(false)}
+                    >
+                      Sign up
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
