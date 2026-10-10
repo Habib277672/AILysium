@@ -4,8 +4,23 @@ import toast from "react-hot-toast";
 import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { Input } from "../Components/UI/Input";
+import { ResultBadge } from "../Components/UI/ResultBadge";
 import { useAuth } from "../context/AuthContext";
-import { HiOutlineArrowLeft, HiOutlineKey, HiOutlineCheckCircle } from "react-icons/hi";
+import { HiOutlineArrowLeft, HiOutlineKey } from "react-icons/hi";
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 10 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+    },
+};
+
+const stagger = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
 
 export const ForgotPassword = () => {
     const { forgotPassword } = useAuth();
@@ -41,34 +56,49 @@ export const ForgotPassword = () => {
             className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16"
         >
             <div className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-sky/10 text-sky sm:h-14 sm:w-14">
+                <div className="bg-sky text-cloud mx-auto flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
                     <HiOutlineKey className="h-6 w-6 sm:h-7 sm:w-7" />
                 </div>
-                <h1 className="mt-3 font-heading text-2xl font-extrabold text-ink sm:text-3xl">
+                <h1 className="font-heading text-ink mt-3 text-2xl font-extrabold sm:text-3xl">
                     Forgot your password?
                 </h1>
-                <p className="mt-1 text-sm text-muted">
+                <p className="text-muted mt-1 text-sm">
                     Enter your email and we'll send you a reset link.
                 </p>
             </div>
 
-            <div className="mt-5 rounded-lg border border-slate/10 bg-white p-5 shadow-xl shadow-ink/5 sm:mt-6 sm:p-8">
+            <div className="border-slate/10 shadow-ink/5 mt-5 rounded-lg border bg-white p-5 shadow-xl sm:mt-6 sm:p-8">
                 {sent ? (
-                    <div className="flex flex-col items-center gap-3 py-6 text-center">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-                            <HiOutlineCheckCircle className="h-7 w-7" />
-                        </div>
-                        <p className="font-heading text-lg font-bold text-ink">
+                    <motion.div
+                        initial="hidden"
+                        animate="show"
+                        variants={stagger}
+                        className="flex flex-col items-center gap-3 py-6 text-center"
+                    >
+                        <ResultBadge variant="success" />
+                        <motion.p
+                            variants={fadeUp}
+                            className="font-heading text-ink text-lg font-bold"
+                        >
                             Check your inbox
-                        </p>
-                        <p className="max-w-xs text-sm leading-relaxed text-muted">
-                            If an account exists for <strong className="text-ink">{email}</strong>, a password
-                            reset link has been sent. It expires in 30 minutes.
-                        </p>
-                        <Link to="/login" className="mt-2 text-sm font-semibold text-sky transition-colors hover:text-sky-light">
-                            Back to log in
-                        </Link>
-                    </div>
+                        </motion.p>
+                        <motion.p
+                            variants={fadeUp}
+                            className="text-muted max-w-xs text-sm leading-relaxed"
+                        >
+                            If an account exists for{" "}
+                            <strong className="text-ink">{email}</strong>, a password reset
+                            link has been sent. It expires in 30 minutes.
+                        </motion.p>
+                        <motion.div variants={fadeUp}>
+                            <Link
+                                to="/login"
+                                className="text-sky hover:text-sky-light mt-2 text-sm font-semibold transition-colors"
+                            >
+                                Back to log in
+                            </Link>
+                        </motion.div>
+                    </motion.div>
                 ) : (
                     <>
                         <form onSubmit={handleSubmit} className="grid gap-5">
@@ -91,15 +121,18 @@ export const ForgotPassword = () => {
                                 variant="primary"
                                 size="lg"
                                 disabled={submitting}
-                                className="w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:shadow-xl hover:shadow-sky/35"
+                                className="shadow-sky/25 hover:shadow-sky/35 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
                             >
                                 {submitting ? "Sending..." : "Send reset link"}
                             </Button>
                         </form>
 
-                        <div className="my-5 h-px bg-slate/10" />
+                        <div className="bg-slate/10 my-5 h-px" />
 
-                        <Link to="/login" className="flex items-center justify-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-ink">
+                        <Link
+                            to="/login"
+                            className="text-muted hover:text-ink flex items-center justify-center gap-1.5 text-sm font-medium transition-colors"
+                        >
                             <HiOutlineArrowLeft className="h-4 w-4" />
                             Back to log in
                         </Link>

@@ -5,10 +5,21 @@ import { motion } from "motion/react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../Components/UI/Button";
-import {
-  HiOutlineCheckCircle,
-  HiOutlineExclamationCircle,
-} from "react-icons/hi";
+import { ResultBadge } from "../Components/UI/ResultBadge";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
 
 export const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -63,7 +74,7 @@ export const VerifyEmail = () => {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="flex min-h-[70vh] w-full items-center justify-center px-5 py-12 sm:px-6 sm:py-16"
     >
-      <div className="border-slate/10 shadow-ink/5 w-full max-w-md rounded-3xl border bg-white p-6 text-center shadow-xl sm:p-8">
+      <div className="border-slate/10 shadow-ink/5 w-full max-w-md rounded-lg border bg-white p-6 text-center shadow-xl sm:p-8">
         {status === "verifying" && (
           <div className="flex flex-col items-center">
             <div className="relative flex h-14 w-14 items-center justify-center">
@@ -80,44 +91,53 @@ export const VerifyEmail = () => {
         )}
 
         {status === "success" && (
-          <>
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-              <HiOutlineCheckCircle className="h-7 w-7" />
-            </div>
-            <h1 className="font-heading text-ink mt-4 text-2xl font-extrabold sm:text-3xl">
+          <motion.div initial="hidden" animate="show" variants={stagger}>
+            <ResultBadge variant="success" />
+            <motion.h1
+              variants={fadeUp}
+              className="font-heading text-ink mt-5 text-2xl font-extrabold sm:text-3xl"
+            >
               Email verified
-            </h1>
-            <p className="text-muted mx-auto mt-3 max-w-xs text-sm leading-relaxed">
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="text-muted mx-auto mt-3 max-w-xs text-sm leading-relaxed"
+            >
               {user
                 ? "Your email has been verified and your account is ready to go."
                 : "Your email has been verified. You can now log in to your account."}
-            </p>
-            <Button
-              as={Link}
-              to={user ? "/profile" : "/login"}
-              variant="primary"
-              size="lg"
-              className="shadow-sky/25 hover:shadow-sky/35 mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
-            >
-              {user ? "Go to my profile" : "Go to log in"}
-            </Button>
-          </>
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Button
+                as={Link}
+                to={user ? "/profile" : "/login"}
+                variant="primary"
+                className="shadow-sky/25 hover:shadow-sky/35 mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
+              >
+                {user ? "Go to my profile" : "Go to log in"}
+              </Button>
+            </motion.div>
+          </motion.div>
         )}
 
         {status === "error" && (
-          <>
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-              <HiOutlineExclamationCircle className="h-7 w-7" />
-            </div>
-            <h1 className="font-heading text-ink mt-4 text-2xl font-extrabold sm:text-3xl">
+          <motion.div initial="hidden" animate="show" variants={stagger}>
+            <ResultBadge variant="error" />
+            <motion.h1
+              variants={fadeUp}
+              className="font-heading text-ink mt-5 text-2xl font-extrabold sm:text-3xl"
+            >
               Verification failed
-            </h1>
-            <p className="text-muted mx-auto mt-3 max-w-sm text-sm leading-relaxed">
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="text-muted mx-auto mt-3 max-w-sm text-sm leading-relaxed"
+            >
               {error}
-            </p>
+            </motion.p>
 
             {user ? (
-              <>
+              <motion.div variants={fadeUp}>
                 <p className="text-muted mt-3 text-sm leading-relaxed">
                   This link has expired or was already used. You can request a
                   new one below.
@@ -143,9 +163,9 @@ export const VerifyEmail = () => {
                 >
                   Back to profile
                 </Button>
-              </>
+              </motion.div>
             ) : (
-              <>
+              <motion.div variants={fadeUp}>
                 <p className="text-muted mt-3 text-sm leading-relaxed">
                   If you already have an account, log in and resend the
                   verification email from your profile. Otherwise, sign up to
@@ -155,23 +175,13 @@ export const VerifyEmail = () => {
                   as={Link}
                   to="/login"
                   variant="primary"
-                  size="lg"
                   className="shadow-sky/25 hover:shadow-sky/35 mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
                 >
                   Go to log in
                 </Button>
-                {/* <Button
-                  as={Link}
-                  to="/signup"
-                  variant="ghost"
-                  size="md"
-                  className="mt-3 w-full rounded-full"
-                >
-                  Sign up instead
-                </Button> */}
-              </>
+              </motion.div>
             )}
-          </>
+          </motion.div>
         )}
       </div>
     </motion.div>

@@ -116,10 +116,10 @@ export const AdminContactMessageDetail = () => {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <Badge variant="sky" size="sm">
+            <Badge variant="sky" className="border border-sky" size="sm">
               {message.program}
             </Badge>
-            <Badge variant="successSoft" size="sm">
+            <Badge variant="successSoft" className="border border-emerald-500" size="sm">
               {new Date(message.createdAt).toLocaleDateString()}
             </Badge>
           </div>

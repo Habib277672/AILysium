@@ -60,7 +60,7 @@ export const Login = () => {
       className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16"
     >
       <div className="text-center">
-        <div className="bg-sky/10 text-sky mx-auto flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
+        <div className="bg-sky text-cloud mx-auto flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
           <HiOutlineLogin className="h-6 w-6 sm:h-7 sm:w-7" />
         </div>
         <h1 className="font-heading text-ink mt-3 text-2xl font-extrabold sm:text-3xl">

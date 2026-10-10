@@ -38,12 +38,12 @@ export const CourseCard = ({ course }) => {
           {course.isFree && (
             <Badge variant="success" className="text-xs">Free</Badge>
           )}
-          <span className="flex items-center gap-1.5 border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
+          <span className="flex items-center gap-1.5 text-xs border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
             <svg className="h-3.5 w-3.5 text-sky/90 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM8 4v4l2.5 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             {course.duration}
           </span>
           {course.mentor && (
-            <span className="flex items-center gap-1.5 border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
+            <span className="flex items-center gap-1.5 text-xs border border-sky rounded-full px-2.5 py-0.5 bg-sky/10 text-sky/90">
               <svg className="h-3.5 w-3.5 text-sky/90 sm:h-4 sm:w-4" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" /><path d="M3 14.5c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
               {course.mentor}
             </span>

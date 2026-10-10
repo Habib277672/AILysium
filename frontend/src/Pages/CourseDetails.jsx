@@ -139,8 +139,7 @@ export const CourseDetails = () => {
                         className="mt-5 max-w-xl"
                     >
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs text-cloud font-semibold backdrop-blur-sm ${isAvailable ? "bg-emerald-500" : "bg-amber-400"}`}>
-                                {/* <span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? "bg-emerald-500 text-cloud" : "bg-amber-500"}`} /> */}
+                            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm ${isAvailable ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500" : "bg-amber-500/10 text-amber-600 border border-amber-500"}`}>
                                 {statusLabel[course.status]}
                             </span>
                             <span className="flex items-center gap-1.5 text-xs text-slate-600 sm:text-sm">
@@ -173,7 +172,7 @@ export const CourseDetails = () => {
                             </Button>
                             <Button
                                 as="a"
-                                href="https://wa.me/12345678900"
+                                href="https://wa.me/03111390351"
                                 target="_blank"
                                 rel="noreferrer"
                                 variant="outline"
@@ -199,7 +198,7 @@ export const CourseDetails = () => {
                                     transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
+                                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky text-cloud sm:h-10 sm:w-10">
                                             <HiOutlineCheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                                         </div>
                                         <h2 className="font-heading text-lg font-bold text-ink sm:text-xl">
@@ -209,7 +208,7 @@ export const CourseDetails = () => {
                                     <ul className="mt-3 space-y-1.5 sm:space-y-2">
                                         {course.benefits.map((benefit) => (
                                             <li key={benefit} className="flex items-start gap-2.5 rounded-xl px-3 py-2 text-sm text-muted transition-colors hover:bg-slate/5 sm:gap-3 sm:px-4 sm:py-2.5">
-                                                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky/10 text-xs font-bold text-sky">
+                                                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky text-cloud text-xs font-bold shadow shadow-sky/20">
                                                     ✓
                                                 </span>
                                                 {benefit}
@@ -226,7 +225,7 @@ export const CourseDetails = () => {
                                     transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
+                                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky text-cloud sm:h-10 sm:w-10">
                                             <HiOutlineCollection className="h-4 w-4 sm:h-5 sm:w-5" />
                                         </div>
                                         <h2 className="font-heading text-lg font-bold text-ink sm:text-xl">
@@ -235,7 +234,7 @@ export const CourseDetails = () => {
                                     </div>
                                     <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2">
                                         {course.toolsCovered.map((tool) => (
-                                            <span key={tool} className="rounded-full bg-slate/5 px-3 py-1 text-xs font-medium text-muted transition-colors hover:bg-sky/10 hover:text-sky sm:px-4 sm:py-1.5 sm:text-sm">
+                                            <span key={tool} className="rounded-full bg-sky/5 border border-sky px-2 py-0.5 text-xs font-medium text-sky/80 transition-colors shadow cursor-pointer hover:bg-sky/10 hover:text-sky hover:shadow-sky/20 sm:px-4 sm:text-sm">
                                                 {tool}
                                             </span>
                                         ))}
@@ -249,7 +248,7 @@ export const CourseDetails = () => {
                                 transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/10 text-sky sm:h-10 sm:w-10">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky text-cloud sm:h-10 sm:w-10">
                                         <HiOutlineDocumentText className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </div>
                                     <h2 className="font-heading text-lg font-bold text-ink sm:text-xl">

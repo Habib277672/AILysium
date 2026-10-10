@@ -104,7 +104,7 @@ export const PrivacyPolicy = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-cloud relative overflow-hidden py-16 md:py-36">
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-42 2xl:py-58">
         <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
         <div className="bg-sky/15 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 

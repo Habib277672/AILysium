@@ -71,7 +71,7 @@ const howItWorks = [
     step: "03",
     title: "Enroll and pay securely",
     description:
-      "Pick a program, confirm your enrollment, and complete payment — your spot is locked in once it's confirmed.",
+      "Pick a program, confirm your enrollment, and complete payment, your spot is locked in once it's confirmed.",
     icon: <FaLock />,
   },
   {
@@ -308,10 +308,10 @@ export const Home = () => {
                 id={`skill-${index}`}
                 y={14}
                 delay={index * 0.07}
-                className="group border-slate/10 shadow-ink/5 hover:border-sky/25 hover:shadow-sky/10 relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border bg-white px-3 py-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                className="group border-slate/10 shadow-ink/5 hover:border-sky/25 hover:shadow-sky/10 relative flex cursor-pointer flex-col items-center gap-3.5 overflow-hidden rounded-2xl border bg-white px-3 py-5 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
                 <span className="bg-sky/5 pointer-events-none absolute -top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="from-sky/10 to-sky-light/15 text-sky group-hover:from-sky group-hover:to-sky-light group-hover:shadow-sky/40 relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-xl transition-all duration-300 group-hover:scale-110 group-hover:text-white group-hover:shadow-lg">
+                <span className="bg-sky/75 text-cloud group-hover:from-sky group-hover:to-sky-light group-hover:shadow-sky/40 relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-xl transition-all duration-300 group-hover:scale-110 group-hover:text-white group-hover:shadow-lg">
                   {category.icon}
                 </span>
                 <span className="text-ink group-hover:text-sky relative text-[13px] font-semibold transition-colors duration-200">
@@ -370,7 +370,7 @@ export const Home = () => {
 
                 {courses.length === 0 && (
                   <p className="text-muted col-span-full py-10 text-center text-sm">
-                    No featured programs are set yet — an admin can feature
+                    No featured programs are set yet, an admin can feature
                     courses from the Courses page.
                   </p>
                 )}
@@ -423,7 +423,7 @@ export const Home = () => {
                 className="group border-slate/10 shadow-ink/5 hover:shadow-ink/8 relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex items-start justify-between">
-                  <span className="bg-sky/10 text-sky group-hover:bg-sky grid h-11 w-11 place-items-center rounded-xl text-lg transition-all duration-200 group-hover:text-white">
+                  <span className="bg-sky/90 text-cloud group-hover:bg-sky grid h-11 w-11 place-items-center rounded-xl text-lg transition-all duration-200 group-hover:text-white">
                     {item.icon}
                   </span>
                   <span className="font-heading text-sky/15 group-hover:text-sky/25 text-4xl leading-none font-extrabold transition-colors select-none">

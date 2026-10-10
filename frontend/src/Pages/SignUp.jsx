@@ -5,11 +5,11 @@ import { motion } from "motion/react";
 import { Button } from "../Components/UI/Button";
 import { Input } from "../Components/UI/Input";
 import { PhoneInput } from "../Components/UI/PhoneInput";
+import { ResultBadge } from "../Components/UI/ResultBadge";
 import { useAuth } from "../context/AuthContext";
 import {
   HiOutlineArrowLeft,
   HiOutlineUserAdd,
-  HiOutlineCheckCircle,
   HiOutlineEye,
   HiOutlineEyeOff,
 } from "react-icons/hi";
@@ -30,6 +30,7 @@ export const SignUp = () => {
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [resendState, setResendState] = useState("idle");
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -79,42 +80,81 @@ export const SignUp = () => {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 text-center sm:px-6 sm:py-16"
       >
-        <div className="border-slate/10 shadow-ink/5 rounded-3xl border bg-white p-6 shadow-xl sm:p-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-            <HiOutlineCheckCircle className="h-7 w-7" />
-          </div>
-          <h1 className="font-heading text-ink mt-4 text-2xl font-extrabold sm:text-3xl">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: {
+              transition: { staggerChildren: 0.12, delayChildren: 0.05 },
+            },
+          }}
+          className="border-slate/10 shadow-ink/5 rounded-lg border bg-white p-6 shadow-xl sm:p-8"
+        >
+          <ResultBadge variant="success" />
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+              },
+            }}
+            className="font-heading text-ink mt-5 text-2xl font-extrabold sm:text-3xl"
+          >
             Check your email
-          </h1>
-          <p className="text-muted mt-3 text-sm leading-relaxed">
+          </motion.h1>
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+              },
+            }}
+            className="text-muted mt-3 text-sm leading-relaxed"
+          >
             We sent a verification link to{" "}
             <strong className="text-ink">{registeredEmail}</strong>. Verify your
             email, then log in to access your account.
-          </p>
+          </motion.p>
 
-          <Button
-            as={Link}
-            to="/login"
-            variant="primary"
-            size="lg"
-            className="shadow-sky/25 mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg"
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+              },
+            }}
           >
-            Go to log in
-          </Button>
+            <Button
+              as={Link}
+              to="/login"
+              variant="primary"
 
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={resendState !== "idle"}
-            className="text-sky hover:text-sky-light disabled:text-slate/50 mt-4 text-sm font-medium transition-colors hover:underline disabled:no-underline"
-          >
-            {resendState === "sent"
-              ? "Verification email sent"
-              : resendState === "sending"
-                ? "Sending..."
-                : "Didn't get it? Resend verification email"}
-          </button>
-        </div>
+              className="shadow-sky/25 mt-6 w-full cursor-pointer rounded-full py-2 text-base font-semibold shadow-lg"
+            >
+              Go to log in
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resendState !== "idle"}
+              className="text-sky hover:text-sky-light disabled:text-slate/50 mt-4 text-sm font-medium transition-colors hover:underline disabled:no-underline"
+            >
+              {resendState === "sent"
+                ? "Verification email sent"
+                : resendState === "sending"
+                  ? "Sending..."
+                  : "Didn't get it? Resend verification email"}
+            </button>
+          </motion.div>
+        </motion.div>
       </motion.div>
     );
   }
@@ -127,7 +167,7 @@ export const SignUp = () => {
       className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-12 sm:px-6 sm:py-16"
     >
       <div className="text-center">
-        <div className="bg-sky/10 text-sky mx-auto flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
+        <div className="bg-sky text-cloud mx-auto flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
           <HiOutlineUserAdd className="h-6 w-6 sm:h-7 sm:w-7" />
         </div>
         <h1 className="font-heading text-ink mt-3 text-2xl font-extrabold sm:text-3xl">
@@ -206,34 +246,46 @@ export const SignUp = () => {
             </label>
             <p className="text-muted mt-1.5 text-xs">At least 8 characters.</p>
           </div>
+
+          <label
+            htmlFor="acceptedTerms"
+            className="border-slate/10 hover:border-sky/30 flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-colors"
+          >
+            <input
+              id="acceptedTerms"
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(event) => setAcceptedTerms(event.target.checked)}
+              className="text-sky focus:ring-sky/20 accent-sky mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded"
+            />
+            <span className="text-muted text-xs leading-relaxed">
+              I accept the{" "}
+              <Link
+                to="/terms-and-conditions"
+                className="text-sky hover:text-sky-light font-medium transition-colors hover:underline"
+              >
+                Terms &amp; Conditions
+              </Link>{" "}
+              and{" "}
+              <Link
+                to="/privacy-policy"
+                className="text-sky hover:text-sky-light font-medium transition-colors hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
+
           <Button
             type="submit"
             variant="primary"
-            size="lg"
-            disabled={submitting}
+            disabled={submitting || !acceptedTerms}
             className="shadow-sky/25 hover:shadow-sky/35 mt-1 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
           >
             {submitting ? "Creating account..." : "Create account"}
           </Button>
         </form>
-
-        <p className="text-muted mt-4 text-center text-xs leading-relaxed">
-          By creating an account, you agree to our{" "}
-          <Link
-            to="/terms-and-conditions"
-            className="text-sky hover:text-sky-light font-medium transition-colors hover:underline"
-          >
-            Terms &amp; Conditions
-          </Link>{" "}
-          and{" "}
-          <Link
-            to="/privacy-policy"
-            className="text-sky hover:text-sky-light font-medium transition-colors hover:underline"
-          >
-            Privacy Policy
-          </Link>
-          .
-        </p>
 
         <div className="bg-slate/10 my-5 h-px" />
 

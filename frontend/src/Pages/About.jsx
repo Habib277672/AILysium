@@ -88,7 +88,7 @@ export const About = () => {
   return (
     <div>
       {/* Top section */}
-      <section className="bg-cloud relative overflow-hidden py-16 md:py-36">
+      <section className="bg-cloud relative overflow-hidden py-16 md:py-36 2xl:py-50">
         <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
         <div className="bg-sky/15 pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
 
@@ -166,7 +166,7 @@ export const About = () => {
               <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="border-slate/10 shadow-ink/4 hover:shadow-sky/8 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5">
-                    <div className="bg-sky/10 text-sky flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+                    <div className="bg-sky text-cloud flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
                       <svg
                         className="h-4 w-4 sm:h-5 sm:w-5"
                         viewBox="0 0 20 20"
@@ -195,7 +195,7 @@ export const About = () => {
                     </p>
                   </div>
                   <div className="border-slate/10 shadow-ink/4 hover:shadow-sky/8 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5">
-                    <div className="bg-sky/10 text-sky flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+                    <div className="bg-sky text-cloud flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
                       <svg
                         className="h-4 w-4 sm:h-5 sm:w-5"
                         viewBox="0 0 20 20"
@@ -226,7 +226,7 @@ export const About = () => {
                 </div>
                 <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
                   <div className="border-slate/10 shadow-ink/4 hover:shadow-sky/8 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5">
-                    <div className="bg-sky/10 text-sky flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+                    <div className="bg-sky text-cloud flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
                       <svg
                         className="h-4 w-4 sm:h-5 sm:w-5"
                         viewBox="0 0 20 20"
@@ -255,7 +255,7 @@ export const About = () => {
                     </p>
                   </div>
                   <div className="border-slate/10 shadow-ink/4 hover:shadow-sky/8 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5">
-                    <div className="bg-sky/10 text-sky flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+                    <div className="bg-sky text-cloud flex h-9 w-9 items-center justify-center rounded-xl sm:h-10 sm:w-10">
                       <svg
                         className="h-4 w-4 sm:h-5 sm:w-5"
                         viewBox="0 0 20 20"
