@@ -1,0 +1,235 @@
+import { Link, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion } from "motion/react";
+import { useAuth } from "../context/AuthContext";
+import { useCourses } from "../hooks/useCourses";
+import { useCreateEnrollment } from "../hooks/useEnrollmentMutations";
+import { Button } from "../Components/UI/Button";
+import { Skeleton } from "../Components/UI/Skeleton";
+import { HiOutlineExclamationCircle, HiOutlineClock, HiOutlineUser, HiOutlineCheckCircle, HiOutlineArrowLeft } from "react-icons/hi";
+
+export const Enroll = () => {
+    const { user } = useAuth();
+    const { courseId } = useParams();
+    const navigate = useNavigate();
+
+    // Reuses the same cached course list Courses.jsx/AllCourses.jsx already
+    // populate — if either was visited recently, this resolves instantly
+    // from cache instead of firing a fresh request.
+    const { data: courses = [], isLoading: loading, error } = useCourses();
+    const course = courses.find((c) => c.id === courseId);
+
+    const createEnrollment = useCreateEnrollment();
+
+    const handleConfirm = () => {
+        createEnrollment.mutate(courseId, {
+            onSuccess: (enrollment) => {
+                if (enrollment.course.isFree) {
+                    toast.success("You're enrolled! This course is free.");
+                    navigate("/profile", { replace: true });
+                } else {
+                    toast.success("Enrollment started — continue to payment.");
+                    navigate(`/payment?enrollmentId=${enrollment.id}`, {
+                        replace: true,
+                        // Hand the fresh enrollment to the payment page directly —
+                        // the list query is invalidated at this exact moment, so
+                        // without this the payment page flashes a skeleton first.
+                        state: { enrollment },
+                    });
+                }
+            },
+            onError: (err) => {
+                const message =
+                    err.response?.data?.error || "Couldn't start enrollment. Please try again.";
+                toast.error(message);
+            },
+        });
+    };
+
+    if (loading) {
+        return (
+            <div className="mx-auto max-w-2xl px-6 py-24">
+                <div className="space-y-4">
+                    <Skeleton className="h-8 w-56 rounded-lg" />
+                    <Skeleton className="h-4 w-full rounded-lg" />
+                    <Skeleton className="h-4 w-2/3 rounded-lg" />
+                    <Skeleton className="mt-6 h-12 w-full rounded-2xl" />
+                </div>
+            </div>
+        );
+    }
+
+    if (!course) {
+        return (
+            <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+                    <HiOutlineExclamationCircle className="h-7 w-7" />
+                </div>
+                <h1 className="mt-5 font-heading text-2xl font-bold text-ink">
+                    {error || "This course could not be found."}
+                </h1>
+                <Button as={Link} to="/courses" variant="primary" size="lg" className="mt-8 rounded-full cursor-pointer">
+                    Browse courses
+                </Button>
+            </div>
+        );
+    }
+
+    const isAvailable = course.status === "AVAILABLE";
+    const isVerified = Boolean(user?.emailVerifiedAt);
+    const confirmLabel = course.isFree ? "Enroll for free" : "Enroll";
+
+    return (
+        <div>
+            {/* Hero */}
+            <section className="relative overflow-hidden bg-cloud py-14 md:py-20">
+                <div className="pointer-events-none absolute top-0 left-0 h-48 w-full bg-gradient-to-b from-white via-white/80 to-transparent" />
+                <div className="pointer-events-none absolute top-1/2 left-0 h-150 w-150 -translate-y-1/2 -translate-x-1/3 rounded-full bg-sky/15 blur-[160px]" />
+                <div className="pointer-events-none absolute top-1/2 right-0 h-150 w-150 -translate-y-1/2 translate-x-1/3 rounded-full bg-sky-light/15 blur-[160px]" />
+
+                <div className="relative mx-auto max-w-2xl px-6 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky to-sky-light text-white shadow-lg shadow-sky/25 sm:h-16 sm:w-16">
+                            <HiOutlineCheckCircle className="h-7 w-7 sm:h-8 sm:w-8" />
+                        </div>
+                        <h1 className="mt-4 font-heading text-2xl font-extrabold leading-tight text-ink sm:text-3xl md:text-4xl">
+                            Confirm your{" "}
+                            <span className="bg-gradient-to-r from-sky to-sky-light bg-clip-text text-transparent">
+                                enrollment
+                            </span>
+                        </h1>
+                        <p className="mt-2 max-w-md mx-auto text-sm leading-relaxed text-muted sm:text-base">
+                            Review the details below before continuing to payment.
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12"
+            >
+                {/* Course card */}
+                <div className="relative overflow-hidden rounded-3xl border border-slate/10 bg-white p-5 shadow-2xl shadow-sky/10 sm:p-8">
+                    {/* Soft decorative glows */}
+                    <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-sky/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky/5 blur-3xl" />
+
+                    {/* Top accent line */}
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky/20 via-sky to-sky/20" />
+
+                    <div className="relative">
+                        {/* Header */}
+                        <div className="text-center">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-sky/20 bg-sky/8 px-3.5 py-1 text-xs font-semibold text-sky">
+                                <span className="relative flex h-2 w-2">
+                                    {isAvailable && (
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky opacity-60" />
+                                    )}
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-sky" />
+                                </span>
+                                {isAvailable ? "Enrollment open" : "Coming soon"}
+                            </span>
+
+                            <h2 className="mt-4 font-heading text-2xl font-bold tracking-tight text-ink sm:text-3xl md:text-4xl">
+                                {course.title}
+                            </h2>
+                            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
+                                {course.description}
+                            </p>
+                        </div>
+
+                        {/* Detail chips */}
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                            {course.duration && (
+                                <div className="flex items-center gap-2 rounded-full border border-sky/15 bg-sky/5 px-4 py-2 text-sm font-medium text-ink">
+                                    <HiOutlineClock className="h-4 w-4 text-sky" />
+                                    {course.duration}
+                                </div>
+                            )}
+                            {course.ageRange && (
+                                <div className="flex items-center gap-2 rounded-full border border-sky/15 bg-sky/5 px-4 py-2 text-sm font-medium text-ink">
+                                    <HiOutlineUser className="h-4 w-4 text-sky" />
+                                    Age {course.ageRange}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Price panel */}
+                        <div className="mt-6 rounded-2xl border border-sky/15 bg-gradient-to-br from-sky/8 via-sky/3 to-transparent p-5 text-center sm:mt-7">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">
+                                Price
+                            </p>
+                            <p className="mt-1 font-heading text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+                                {course.isFree ? (
+                                    <span className="text-sky">Free of Cost</span>
+                                ) : (
+                                    <>
+                                        <span className="mr-1.5 align-top text-lg font-bold text-sky sm:text-xl">
+                                            PKR
+                                        </span>
+                                        {course.price.toLocaleString()}
+                                    </>
+                                )}
+                            </p>
+                        </div>
+
+                        {/* Alerts */}
+                        {!isVerified && (
+                            <div className="mt-6 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
+                                <p className="text-sm text-amber-700">
+                                    Verify your email first.{" "}
+                                    <Link to="/profile" className="font-semibold underline decoration-amber-300 underline-offset-2 transition-colors hover:text-amber-800">
+                                        Resend
+                                    </Link>
+                                </p>
+                            </div>
+                        )}
+
+                        {!isAvailable && (
+                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" />
+                                <p className="text-sm text-amber-700">
+                                    This program isn't open for enrollment yet.
+                                </p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-red-50 px-4 py-3">
+                                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-red-500" />
+                                <p className="text-sm text-red-600">{error}</p>
+                            </div>
+                        )}
+
+                        {/* CTA */}
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            className="mt-6 w-full cursor-pointer rounded-full py-4 text-base font-semibold shadow-lg shadow-sky/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-sky/35 disabled:translate-y-0 disabled:shadow-none"
+                            onClick={handleConfirm}
+                            disabled={!isAvailable || createEnrollment.isPending || !isVerified}
+                        >
+                            {createEnrollment.isPending ? "Enrolling..." : confirmLabel}
+                        </Button>
+
+                        <Link
+                            to="/courses"
+                            className="mt-4 flex items-center justify-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-sky"
+                        >
+                            <HiOutlineArrowLeft className="h-4 w-4" />
+                            Back to courses
+                        </Link>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
