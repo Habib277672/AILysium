@@ -38,10 +38,9 @@ const AdminContactMessages = lazyPage(() => import("./Pages/Admin/ContactMessage
 const AdminContactMessageDetail = lazyPage(() => import("./Pages/Admin/ContactMessageDetail").then((m) => ({ default: m.AdminContactMessageDetail })));
 
 const PageFallback = () => (
-  <div className="flex min-h-[60vh] items-center justify-center">
-    <div className="relative flex h-10 w-10 items-center justify-center">
+  <div className="flex min-h-screen items-center justify-center">
+    <div className="relative flex h-50 w-50 items-center justify-center">
       <span className="border-sky/15 border-t-sky absolute inset-0 animate-spin rounded-full border-[3px]" />
-      <span className="bg-sky h-2 w-2 rounded-full" />
     </div>
   </div>
 );

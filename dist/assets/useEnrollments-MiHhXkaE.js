@@ -1,1 +1,0 @@
-import{Kt as e}from"./ui-vendor-ltIC3PPl.js";import{r as t}from"./index-BZksrM-a.js";var n={mine:[`me`,`enrollments`]},r=(r={})=>e({queryKey:n.mine,queryFn:async()=>{let{data:e}=await t.get(`/me/enrollments`);return e},...r});export{r as n,n as t};

@@ -1,1 +1,0 @@
-import{Kt as e}from"./ui-vendor-ltIC3PPl.js";import{r as t}from"./index-BZksrM-a.js";var n={all:[`courses`],detail:e=>[`courses`,e]},r=()=>e({queryKey:n.all,queryFn:async()=>{let{data:e}=await t.get(`/courses`);return e}}),i=r=>e({queryKey:n.detail(r),queryFn:async()=>{let{data:e}=await t.get(`/courses/${r}`);return e},enabled:!!r,retry:!1});export{i as n,r,n as t};
